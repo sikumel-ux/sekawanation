@@ -10,48 +10,47 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; }
-        .admin-card { background: white; border-radius: 2.5rem; padding: 2rem; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .input-style { width: 100%; padding: 0.85rem 1.25rem; background: #f1f5f9; border-radius: 1.2rem; border: 2px solid transparent; font-weight: 700; font-size: 0.875rem; outline: none; transition: all 0.2s; }
+        .admin-card { background: white; border-radius: 2rem; padding: 1.5rem; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .input-style { width: 100%; padding: 0.85rem 1rem; background: #f1f5f9; border-radius: 1rem; border: 2px solid transparent; font-weight: 700; font-size: 0.875rem; outline: none; transition: all 0.2s; }
         .input-style:focus { border-color: #6366f1; background: white; }
-        .btn-primary { background: #1e293b; color: white; padding: 1rem; border-radius: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; width: 100%; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #1e293b; color: white; padding: 0.85rem; border-radius: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; width: 100%; cursor: pointer; transition: all 0.2s; }
         .btn-primary:active { transform: scale(0.96); }
-        h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.1em; }
+        h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
     </style>
 </head>
 <body class="pb-24">
 
     <div class="max-w-2xl mx-auto px-6 pt-10 space-y-8">
-        
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-4xl font-black italic tracking-tighter uppercase">Admin<span class="text-indigo-600">Hub.</span></h1>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mt-1">RT Sekwan Control Center</p>
+                <h1 class="text-3xl font-black italic tracking-tighter uppercase">Admin<span class="text-indigo-600">Hub.</span></h1>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Web Sekawan Control Center</p>
             </div>
-            <div class="w-14 h-14 bg-indigo-600 rounded-3xl flex items-center justify-center text-white shadow-xl rotate-3">
-                <i class="fas fa-fingerprint text-2xl"></i>
+            <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl">
+                <i class="fas fa-hammer"></i>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="admin-card">
-                <h3 class="text-slate-400 uppercase"><i class="fas fa-wallet text-indigo-500"></i> Saldo Kas</h3>
+                <h3 class="text-xs font-black uppercase text-slate-500 tracking-widest"><i class="fas fa-wallet"></i> Saldo Kas</h3>
                 <div class="space-y-3">
                     <input type="number" id="kas" placeholder="Kas RT (Rp)" class="input-style">
                     <input type="number" id="sosial" placeholder="Dana Sosial (Rp)" class="input-style">
-                    <button onclick="handleSaldo()" class="btn-primary shadow-lg shadow-slate-200">Update Saldo</button>
+                    <button onclick="handleSaldo()" class="btn-primary">Update Saldo</button>
                 </div>
             </div>
             <div class="admin-card">
-                <h3 class="text-slate-400 uppercase"><i class="fas fa-bullhorn text-indigo-500"></i> Running Text</h3>
+                <h3 class="text-xs font-black uppercase text-slate-500 tracking-widest"><i class="fas fa-bullhorn"></i> Running Text</h3>
                 <div class="space-y-3">
-                    <textarea id="ticker_teks" placeholder="Pengumuman berjalan..." class="input-style h-[100px] resize-none"></textarea>
-                    <button onclick="handleTicker()" class="btn-primary shadow-lg shadow-slate-200">Simpan Teks</button>
+                    <textarea id="ticker_teks" placeholder="Isi pengumuman jalan..." class="input-style h-[88px]"></textarea>
+                    <button onclick="handleTicker()" class="btn-primary">Simpan Teks</button>
                 </div>
             </div>
         </div>
 
-        <div class="admin-card border-l-[12px] border-indigo-600">
-            <h3 class="text-indigo-600 uppercase"><i class="fas fa-moon"></i> Atur Jadwal Ronda</h3>
+        <div class="admin-card border-l-8 border-indigo-600">
+            <h3 class="text-xs font-black uppercase text-indigo-600 tracking-widest"><i class="fas fa-moon"></i> Atur Jadwal Ronda</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <select id="ronda_hari" class="input-style">
                     <option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option>
@@ -60,47 +59,47 @@
                 <input type="text" id="ronda_kelompok" placeholder="Nama Kelompok" class="input-style">
             </div>
             <input type="text" id="ronda_nama" placeholder="Daftar Petugas (Andi, Budi, ...)" class="input-style mt-4">
-            <button onclick="handleRonda()" class="btn-primary mt-4 bg-indigo-600 shadow-lg shadow-indigo-100">Update Jadwal</button>
+            <button onclick="handleRonda()" class="btn-primary mt-4 bg-indigo-600">Update Ronda</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="admin-card">
-                <h3 class="text-indigo-600 uppercase"><i class="fas fa-calendar-alt"></i> Agenda</h3>
+                <h3 class="text-xs font-black uppercase text-indigo-600 tracking-widest"><i class="fas fa-calendar-alt"></i> Agenda</h3>
                 <div class="space-y-3">
                     <input type="text" id="agenda_judul" placeholder="Judul Agenda" class="input-style">
                     <input type="date" id="agenda_tgl" class="input-style">
                     <input type="text" id="agenda_ket" placeholder="Keterangan" class="input-style">
-                    <button onclick="handleAgenda()" class="btn-primary bg-indigo-500 shadow-lg shadow-indigo-100">Publish</button>
+                    <button onclick="handleAgenda()" class="btn-primary">Publish Agenda</button>
                 </div>
             </div>
             <div class="admin-card">
-                <h3 class="text-blue-500 uppercase"><i class="fas fa-info-circle"></i> Informasi</h3>
+                <h3 class="text-xs font-black uppercase text-blue-500 tracking-widest"><i class="fas fa-info-circle"></i> Informasi</h3>
                 <div class="space-y-3">
-                    <input type="text" id="info_judul" placeholder="Judul Info" class="input-style">
-                    <textarea id="info_ket" placeholder="Detail..." class="input-style h-20 resize-none"></textarea>
-                    <button onclick="handleInfo()" class="btn-primary bg-blue-500 shadow-lg shadow-blue-100">Publish</button>
+                    <input type="text" id="info_judul" placeholder="Judul Informasi" class="input-style">
+                    <textarea id="info_ket" placeholder="Detail Info..." class="input-style h-20"></textarea>
+                    <button onclick="handleInfo()" class="btn-primary bg-blue-500">Publish Info</button>
                 </div>
             </div>
         </div>
 
-        <div class="admin-card border-l-[12px] border-pink-500">
-            <h3 class="text-pink-500 uppercase"><i class="fas fa-store"></i> Lapak Warga</h3>
+        <div class="admin-card border-l-8 border-pink-500">
+            <h3 class="text-xs font-black uppercase text-pink-500 tracking-widest"><i class="fas fa-store"></i> Lapak Warga</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="lapak_nama" placeholder="Pemilik" class="input-style">
-                <input type="text" id="lapak_produk" placeholder="Produk" class="input-style">
+                <input type="text" id="lapak_nama" placeholder="Nama Pemilik" class="input-style">
+                <input type="text" id="lapak_produk" placeholder="Nama Produk" class="input-style">
                 <input type="text" id="lapak_harga" placeholder="Harga" class="input-style">
                 <input type="tel" id="lapak_wa" placeholder="No WA (62...)" class="input-style">
             </div>
-            <button onclick="handleLapak()" class="btn-primary mt-4 bg-pink-500 shadow-lg shadow-pink-100">Daftarkan Produk</button>
+            <button onclick="handleLapak()" class="btn-primary mt-4 bg-pink-500">Post ke Lapak</button>
         </div>
 
-        <div class="admin-card bg-slate-900 text-white">
-            <h3 class="text-slate-400 uppercase"><i class="fas fa-user-plus text-white"></i> Registrasi Warga</h3>
+        <div class="admin-card">
+            <h3 class="text-xs font-black uppercase text-slate-400 tracking-widest"><i class="fas fa-user-plus text-slate-800"></i> Registrasi Warga</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="warga_nama" placeholder="Nama Lengkap" class="input-style !bg-slate-800 !text-white !border-none">
-                <input type="tel" id="warga_hp" placeholder="No HP/WA" class="input-style !bg-slate-800 !text-white !border-none">
+                <input type="text" id="warga_nama" placeholder="Nama KTP" class="input-style">
+                <input type="tel" id="warga_hp" placeholder="No HP/WA" class="input-style">
             </div>
-            <button onclick="handleWarga()" class="btn-primary mt-4 bg-white !text-slate-900">Simpan Data</button>
+            <button onclick="handleWarga()" class="btn-primary mt-4 bg-slate-800">Simpan Warga</button>
         </div>
 
     </div>
@@ -109,31 +108,31 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG FIREBASE RT-SEKWAN
+        // CONFIG ASLI SESUAI DATA LO
         const firebaseConfig = {
-            apiKey: "AIzaSyAs-ContohApiKey123456789",
-            authDomain: "rt-sekwan.firebaseapp.com",
-            databaseURL: "https://rt-sekwan-default-rtdb.firebaseio.com",
-            projectId: "rt-sekwan",
-            storageBucket: "rt-sekwan.appspot.com",
-            messagingSenderId: "987654321012",
-            appId: "1:987654321012:web:abcdef123456789"
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.firebaseio.com", // WAJIB ADA INI BRO!
+          storageBucket: "websekawan.firebasestorage.app",
+          messagingSenderId: "407413490869",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- GLOBAL HANDLERS ---
+        // Tempel fungsi ke window agar terbaca oleh tombol
         window.handleSaldo = () => {
             set(ref(db, 'keuangan'), { 
                 kas: document.getElementById('kas').value, 
                 sosial: document.getElementById('sosial').value 
-            }).then(() => alert("✅ Saldo Berhasil Diperbarui!"));
+            }).then(() => alert("✅ Saldo Berhasil Diupdate!"));
         };
 
         window.handleTicker = () => {
             set(ref(db, 'settings/ticker'), document.getElementById('ticker_teks').value)
-                .then(() => alert("✅ Ticker Berhasil Disimpan!"));
+                .then(() => alert("✅ Running Text Disimpan!"));
         };
 
         window.handleRonda = () => {
@@ -142,7 +141,7 @@
                 hari: hari,
                 petugas: document.getElementById('ronda_nama').value,
                 kelompok: document.getElementById('ronda_kelompok').value
-            }).then(() => alert("✅ Jadwal Ronda " + hari + " Berhasil!"));
+            }).then(() => alert("✅ Jadwal Ronda Updated!"));
         };
 
         window.handleAgenda = () => {
@@ -159,7 +158,7 @@
                 judul: document.getElementById('info_judul').value,
                 keterangan: document.getElementById('info_ket').value,
                 timestamp: Date.now()
-            }).then(() => { alert("✅ Informasi Published!"); location.reload(); });
+            }).then(() => { alert("✅ Info Published!"); location.reload(); });
         };
 
         window.handleLapak = () => {
@@ -168,16 +167,15 @@
                 produk: document.getElementById('lapak_produk').value,
                 harga: document.getElementById('lapak_harga').value,
                 wa: document.getElementById('lapak_wa').value
-            }).then(() => { alert("✅ Produk Lapak Ditambahkan!"); location.reload(); });
+            }).then(() => { alert("✅ Produk Masuk Lapak!"); location.reload(); });
         };
 
         window.handleWarga = () => {
             push(ref(db, 'warga'), {
                 nama: document.getElementById('warga_nama').value,
                 nohp: document.getElementById('warga_hp').value
-            }).then(() => { alert("✅ Warga Berhasil Terdaftar!"); location.reload(); });
+            }).then(() => { alert("✅ Warga Terdaftar!"); location.reload(); });
         };
     </script>
 </body>
-    </html>
-    
+</html>
