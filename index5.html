@@ -24,185 +24,156 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- 1. LOGIN & KAS LOGIC ---
-        // Untuk testing: buka console browser lalu ketik localStorage.setItem('isLoggedIn', 'true')
+        // --- 1. CEK LOGIN & SALDO ---
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         if (isLoggedIn) {
             document.getElementById('section-kas').classList.remove('hidden');
-            document.getElementById('login-text').innerText = "Profil";
-            document.getElementById('login-icon').className = "fas fa-user-check text-xl text-blue-600";
-            
-            onValue(ref(db, 'keuangan'), (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    document.getElementById('display-kas').innerText = 'Rp ' + (parseInt(data.kas) || 0).toLocaleString('id-ID');
-                    document.getElementById('display-sosial').innerText = 'Rp ' + (parseInt(data.sosial) || 0).toLocaleString('id-ID');
+            document.getElementById('nav-login-text').innerText = "Profil";
+            onValue(ref(db, 'keuangan'), (snap) => {
+                const d = snap.val();
+                if(d) {
+                    document.getElementById('val-kas').innerText = 'Rp ' + parseInt(d.kas).toLocaleString('id-ID');
+                    document.getElementById('val-sosial').innerText = 'Rp ' + parseInt(d.sosial).toLocaleString('id-ID');
                 }
             });
         }
 
-        // --- 2. RUNNING TEXT (TICKER) ---
+        // --- 2. TICKER (RUNNING TEXT) ---
         onValue(ref(db, 'settings/ticker'), (snap) => {
-            if (snap.exists()) {
-                document.getElementById('ticker-content').innerText = "✦ " + snap.val();
-            }
+            if (snap.exists()) document.getElementById('ticker-text').innerText = "✦ " + snap.val();
         });
 
-        // --- 3. JADWAL RONDA OTOMATIS ---
-        const hariIni = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][new Date().getDay()];
-        onValue(ref(db, 'ronda/' + hariIni.toLowerCase()), (snap) => {
-            if (snap.exists()) {
-                const data = snap.val();
-                document.getElementById('ronda-petugas').innerText = data.petugas || "Belum ada petugas";
-                document.getElementById('ronda-kelompok').innerText = data.kelompok || "-";
-            } else {
-                document.getElementById('ronda-petugas').innerText = "Jadwal " + hariIni + " belum diatur";
-            }
+        // --- 3. RONDA HARI INI ---
+        const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][new Date().getDay()];
+        onValue(ref(db, 'ronda/' + hari.toLowerCase()), (snap) => {
+            const d = snap.val();
+            document.getElementById('ronda-info').innerText = d ? d.petugas : "Belum ada jadwal";
+            document.getElementById('ronda-tag').innerText = d ? d.kelompok : "-";
         });
 
         // --- 4. AGENDA TERBARU ---
-        const agendaRef = query(ref(db, 'content/agenda'), limitToLast(1));
-        onValue(agendaRef, (snap) => {
+        onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (snap) => {
             if (snap.exists()) {
-                const rawData = snap.val();
-                const key = Object.keys(rawData)[0];
-                const data = rawData[key];
-                document.getElementById('agenda-view').innerHTML = `
-                    <h4 class="text-2xl font-black italic leading-tight uppercase">${data.judul}</h4>
-                    <p class="text-xs mt-3 font-bold opacity-90 uppercase italic text-blue-200">${data.tanggal} • ${data.keterangan}</p>
+                const data = Object.values(snap.val())[0];
+                document.getElementById('agenda-box').innerHTML = `
+                    <h3 class="text-xl font-black uppercase italic">${data.judul}</h3>
+                    <p class="text-[10px] opacity-70 font-bold mt-1">${data.tanggal} — ${data.keterangan}</p>
                 `;
+            }
+        });
+
+        // --- 5. LAPAK UMKM (SINKRON) ---
+        onValue(query(ref(db, 'lapak'), limitToLast(5)), (snap) => {
+            const list = document.getElementById('lapak-list');
+            list.innerHTML = "";
+            if (snap.exists()) {
+                Object.values(snap.val()).forEach(item => {
+                    list.innerHTML += `
+                        <div class="min-w-[140px] bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100">
+                            <p class="text-[10px] font-black text-pink-500 uppercase">${item.pemilik}</p>
+                            <h4 class="text-xs font-bold text-slate-800 my-1">${item.produk}</h4>
+                            <p class="text-[10px] font-black text-slate-400 mb-3">Rp ${item.harga}</p>
+                            <a href="https://wa.me/${item.wa}" class="text-[9px] bg-pink-50 text-pink-600 px-3 py-1 rounded-full font-black uppercase">Beli</a>
+                        </div>
+                    `;
+                });
             }
         });
     </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        :root { --biru-tua: #1C4D8D; --biru-mid: #4988C4; --biru-muda: #BDE8F5; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
-        .floating-curve { border-radius: 2.5rem; }
-        .soft-shadow { box-shadow: 0 20px 40px -10px rgba(28, 77, 141, 0.12); }
-        .ticker-container { overflow: hidden; white-space: nowrap; background: var(--biru-muda); border-radius: 50px; margin: 10px 20px; padding: 10px 0; border: 1px solid white; }
-        .ticker-wrapper { display: inline-block; animation: ticker-anim 25s linear infinite; }
-        @keyframes ticker-anim { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
+        .ticker-wrap { background: #BDE8F5; padding: 10px 0; overflow: hidden; white-space: nowrap; }
+        .ticker-move { display: inline-block; animation: move 20s linear infinite; }
+        @keyframes move { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="pb-40">
+<body class="pb-32">
 
-    <header class="p-6 pb-2 flex justify-between items-center bg-white/70 backdrop-blur-lg sticky top-0 z-50">
+    <header class="p-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-40">
         <div>
-            <h1 class="text-2xl font-black italic tracking-tighter" style="color: var(--biru-tua);">SEKWAN<span style="color: var(--biru-mid);">.</span></h1>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Smart Neighborhood</p>
+            <h1 class="text-2xl font-black italic tracking-tighter text-blue-900">SEKWAN<span class="text-blue-500">.</span></h1>
+            <p class="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em]">Digital Neighborhood</p>
         </div>
         <div class="text-right">
-            <p id="clock" class="text-xl font-black text-slate-800 tracking-tighter">00:00</p>
-            <p class="text-[9px] font-bold text-blue-500 uppercase italic">WIB</p>
+            <p id="jam" class="text-xl font-black text-slate-800 tracking-tighter">00:00</p>
+            <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest">WIB</p>
         </div>
     </header>
 
-    <div class="ticker-container soft-shadow">
-        <div class="ticker-wrapper">
-            <span id="ticker-content" class="text-[11px] font-bold text-blue-900 uppercase italic">✦ Memuat informasi terbaru dari RT...</span>
+    <div class="ticker-wrap mx-5 rounded-full shadow-inner border border-white">
+        <div class="ticker-move">
+            <span id="ticker-text" class="text-[10px] font-black text-blue-900 uppercase italic">✦ Memuat informasi terbaru...</span>
         </div>
     </div>
 
-    <main class="max-w-md mx-auto px-5 mt-4 space-y-6">
+    <main class="mt-6 px-6 space-y-6">
 
-        <section id="section-kas" class="hidden grid grid-cols-2 gap-3 px-1">
-            <div class="bg-white p-5 floating-curve soft-shadow border-2 border-blue-50">
+        <section id="section-kas" class="hidden grid grid-cols-2 gap-4">
+            <div class="bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100">
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Kas RT</p>
-                <p id="display-kas" class="text-sm font-black text-blue-900 tracking-tight">Rp --</p>
+                <p id="val-kas" class="text-sm font-black text-blue-900">Rp --</p>
             </div>
-            <div class="bg-white p-5 floating-curve soft-shadow border-2 border-pink-50">
+            <div class="bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100">
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Dana Sosial</p>
-                <p id="display-sosial" class="text-sm font-black text-pink-600 tracking-tight">Rp --</p>
+                <p id="val-sosial" class="text-sm font-black text-pink-600">Rp --</p>
             </div>
         </section>
 
-        <div class="grid grid-cols-12 gap-3 px-1">
-            <div class="col-span-5 bg-white p-5 floating-curve soft-shadow border border-white flex flex-col items-center justify-center text-center">
-                <div id="weather-icon"><i class="fas fa-sun text-amber-400 text-2xl mb-1"></i></div>
-                <h4 id="temp" class="text-xl font-black tracking-tighter" style="color: var(--biru-tua);">--°C</h4>
-                <p id="weather-desc" class="text-[8px] font-bold text-slate-400 uppercase">Cerah</p>
-            </div>
-            <div class="col-span-7 bg-white p-5 floating-curve soft-shadow border border-white flex flex-col justify-center">
-                <div class="flex justify-between items-center mb-1">
-                    <p class="text-[8px] font-black text-slate-400 uppercase italic">Berikutnya</p>
-                    <i class="fas fa-mosque text-blue-100 text-[10px]"></i>
-                </div>
-                <div class="flex justify-between items-end">
-                    <p id="next-prayer" class="text-sm font-black italic uppercase text-blue-900">--</p>
-                    <p id="prayer-time" class="text-xl font-black tracking-tighter text-blue-600">--:--</p>
-                </div>
-            </div>
-        </div>
-
-        <section class="space-y-3">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] px-4 italic text-slate-300">📅 Agenda RT</p>
-            <div class="floating-curve p-8 text-white soft-shadow relative overflow-hidden min-h-[140px] flex items-center" style="background: var(--biru-tua);">
-                <i class="fas fa-calendar-alt absolute -bottom-4 -right-4 text-9xl opacity-10"></i>
-                <div id="agenda-view" class="w-full">
-                    <p class="text-xs italic opacity-50">Memuat agenda...</p>
-                </div>
+        <section>
+            <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest ml-4 mb-2">✦ Agenda Terdekat</p>
+            <div id="agenda-box" class="bg-blue-900 text-white p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
+                <i class="fas fa-calendar-check absolute -bottom-5 -right-5 text-8xl opacity-10"></i>
+                <p class="text-xs italic opacity-50 font-bold uppercase">Belum ada agenda...</p>
             </div>
         </section>
 
-        <section class="bg-white p-6 floating-curve soft-shadow border border-white flex items-center justify-between mx-1">
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style="background: var(--biru-mid);">
-                    <i class="fas fa-moon"></i>
+        <section class="bg-white p-6 rounded-[2.5rem] shadow-sm flex items-center justify-between border border-slate-50">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-shield-halved"></i>
                 </div>
                 <div>
-                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Ronda Hari Ini</p>
-                    <p id="ronda-petugas" class="text-xs font-extrabold text-slate-700 italic uppercase">--</p>
+                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Ronda Malam Ini</p>
+                    <p id="ronda-info" class="text-xs font-black text-slate-700 italic uppercase">Memuat...</p>
                 </div>
             </div>
-            <span id="ronda-kelompok" class="text-[9px] font-black px-3 py-1 rounded-lg uppercase tracking-tighter" style="background: var(--biru-muda); color: var(--biru-tua);">--</span>
+            <span id="ronda-tag" class="text-[9px] font-black bg-slate-100 text-slate-400 px-3 py-1 rounded-full italic">--</span>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-center px-4 mb-3">
+                <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest">🛍️ Lapak Warga</p>
+                <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
+            </div>
+            <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+                <p class="text-[10px] italic text-slate-400 ml-4">Belum ada produk...</p>
+            </div>
         </section>
 
     </main>
 
-    <div class="fixed bottom-6 left-8 right-8 z-50">
-        <nav class="bg-white/95 backdrop-blur-xl floating-curve shadow-2xl p-4 flex justify-around items-center">
-            <button onclick="location.href='index.html'" class="flex flex-col items-center" style="color: var(--biru-tua);">
-                <i class="fas fa-house-chimney text-xl"></i>
-                <span class="text-[9px] mt-1 font-black uppercase italic">Home</span>
+    <div class="fixed bottom-8 left-0 right-0 px-8 z-50">
+        <nav class="bg-white/90 backdrop-blur-xl p-4 rounded-[2.5rem] shadow-2xl border border-white flex justify-around">
+            <button onclick="location.href='index.html'" class="flex flex-col items-center text-blue-900">
+                <i class="fas fa-th-large text-xl"></i>
+                <span class="text-[8px] font-black uppercase mt-1 italic">Home</span>
             </button>
             <button onclick="location.href='login.html'" class="flex flex-col items-center text-slate-300">
-                <i id="login-icon" class="fas fa-lock text-xl"></i>
-                <span id="login-text" class="text-[9px] mt-1 font-bold uppercase">Login</span>
+                <i class="fas fa-user-circle text-xl"></i>
+                <span id="nav-login-text" class="text-[8px] font-black uppercase mt-1">Login</span>
             </button>
         </nav>
     </div>
 
     <script>
-        // 1. JAM AKTIF
+        // Jam Aktif
         setInterval(() => {
             const d = new Date();
-            document.getElementById('clock').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+            document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
         }, 1000);
-
-        // 2. DATA CUACA & SHOLAT (Yogyakarta)
-        async function updateWidgets() {
-            try {
-                // Cuaca
-                const resW = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.79&longitude=110.37&current_weather=true');
-                const dataW = await resW.json();
-                document.getElementById('temp').innerText = Math.round(dataW.current_weather.temperature) + '°C';
-
-                // Sholat
-                const resS = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Yogyakarta&country=Indonesia&method=11`);
-                const dataS = await resS.json();
-                const t = dataS.data.timings;
-                const schedule = [
-                    {n:'Subuh', t:t.Fajr}, {n:'Dzuhur', t:t.Dhuhr}, {n:'Ashar', t:t.Asr}, {n:'Maghrib', t:t.Maghrib}, {n:'Isya', t:t.Isha}
-                ];
-                const now = new Date().getHours().toString().padStart(2,'0')+":"+new Date().getMinutes().toString().padStart(2,'0');
-                let next = schedule.find(s => s.t > now) || schedule[0];
-                document.getElementById('next-prayer').innerText = next.n;
-                document.getElementById('prayer-time').innerText = next.t;
-            } catch (e) { console.error("Widget Error", e); }
-        }
-        updateWidgets();
     </script>
 </body>
 </html>
