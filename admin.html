@@ -14,6 +14,7 @@
         .input-style:focus { border-color: #6366f1; background: white; }
         .btn-primary { background: #1e293b; color: white; padding: 0.85rem; border-radius: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; width: 100%; cursor: pointer; transition: all 0.2s; }
         .btn-primary:active { transform: scale(0.96); }
+        h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; color: #64748b; letter-spacing: 0.1em; }
     </style>
 </head>
 <body class="pb-24">
@@ -22,16 +23,16 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-black italic tracking-tighter uppercase">Admin<span class="text-indigo-600">Hub.</span></h1>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Server: Asia-Southeast</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Control Everything</p>
             </div>
-            <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl">
-                <i class="fas fa-bolt"></i>
-            </div>
+            <button onclick="location.href='index.html'" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-200">
+                <i class="fas fa-home text-slate-400"></i>
+            </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="admin-card">
-                <h3 class="text-xs font-black uppercase text-slate-500 mb-4 tracking-widest"><i class="fas fa-wallet"></i> Saldo Kas</h3>
+                <h3><i class="fas fa-wallet text-indigo-500"></i> Saldo Kas</h3>
                 <div class="space-y-3">
                     <input type="number" id="kas" placeholder="Kas RT (Rp)" class="input-style">
                     <input type="number" id="sosial" placeholder="Dana Sosial (Rp)" class="input-style">
@@ -39,7 +40,7 @@
                 </div>
             </div>
             <div class="admin-card">
-                <h3 class="text-xs font-black uppercase text-slate-500 mb-4 tracking-widest"><i class="fas fa-bullhorn"></i> Running Text</h3>
+                <h3><i class="fas fa-bullhorn text-indigo-500"></i> Running Text</h3>
                 <div class="space-y-3">
                     <textarea id="ticker_teks" placeholder="Isi pengumuman..." class="input-style h-[88px]"></textarea>
                     <button onclick="handleTicker()" class="btn-primary">Simpan Teks</button>
@@ -48,27 +49,59 @@
         </div>
 
         <div class="admin-card border-l-8 border-indigo-600">
-            <h3 class="text-xs font-black uppercase text-indigo-600 mb-4 tracking-widest"><i class="fas fa-moon"></i> Atur Jadwal Ronda</h3>
+            <h3><i class="fas fa-moon text-indigo-600"></i> Jadwal Ronda</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <select id="ronda_hari" class="input-style">
                     <option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option>
                     <option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option>
                 </select>
-                <input type="text" id="ronda_kelompok" placeholder="Nama Kelompok" class="input-style">
+                <input type="text" id="ronda_kelompok" placeholder="Kelompok" class="input-style">
             </div>
-            <input type="text" id="ronda_nama" placeholder="Daftar Nama (Andi, Budi, ...)" class="input-style mt-4">
-            <button onclick="handleRonda()" class="btn-primary mt-4 bg-indigo-600">Simpan Jadwal</button>
+            <input type="text" id="ronda_nama" placeholder="Daftar Nama Petugas" class="input-style mt-4">
+            <button onclick="handleRonda()" class="btn-primary mt-4 bg-indigo-600">Update Ronda</button>
         </div>
 
-        <div class="admin-card">
-            <h3 class="text-xs font-black uppercase text-indigo-600 mb-4 tracking-widest"><i class="fas fa-calendar-alt"></i> Publish Agenda</h3>
-            <div class="space-y-3">
-                <input type="text" id="agenda_judul" placeholder="Judul Agenda" class="input-style">
-                <input type="date" id="agenda_tgl" class="input-style">
-                <input type="text" id="agenda_ket" placeholder="Keterangan" class="input-style">
-                <button onclick="handleAgenda()" class="btn-primary">Update Agenda</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="admin-card">
+                <h3><i class="fas fa-calendar-alt text-blue-500"></i> Tambah Agenda</h3>
+                <div class="space-y-3">
+                    <input type="text" id="agenda_judul" placeholder="Judul Agenda" class="input-style">
+                    <input type="date" id="agenda_tgl" class="input-style">
+                    <input type="text" id="agenda_ket" placeholder="Keterangan" class="input-style">
+                    <button onclick="handleAgenda()" class="btn-primary bg-blue-600">Publish Agenda</button>
+                </div>
+            </div>
+            <div class="admin-card">
+                <h3><i class="fas fa-info-circle text-orange-500"></i> Informasi Umum</h3>
+                <div class="space-y-3">
+                    <input type="text" id="info_judul" placeholder="Judul Info" class="input-style">
+                    <textarea id="info_ket" placeholder="Detail informasi..." class="input-style h-20"></textarea>
+                    <button onclick="handleInfo()" class="btn-primary bg-orange-500">Publish Info</button>
+                </div>
             </div>
         </div>
+
+        <div class="admin-card border-l-8 border-pink-500">
+            <h3><i class="fas fa-store text-pink-500"></i> Lapak Warga (UMKM)</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" id="lapak_nama" placeholder="Pemilik" class="input-style">
+                <input type="text" id="lapak_produk" placeholder="Nama Produk" class="input-style">
+                <input type="text" id="lapak_harga" placeholder="Harga" class="input-style">
+                <input type="tel" id="lapak_wa" placeholder="WA (628...)" class="input-style">
+            </div>
+            <button onclick="handleLapak()" class="btn-primary mt-4 bg-pink-500">Tambah ke Lapak</button>
+        </div>
+
+        <div class="admin-card bg-slate-900 text-white">
+            <h3 class="text-white opacity-80"><i class="fas fa-user-plus"></i> Registrasi Akun Warga</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="warga_nama" placeholder="Nama Lengkap" class="input-style !bg-slate-800 !text-white !border-none">
+                <input type="tel" id="warga_hp" placeholder="No HP (Untuk Login)" class="input-style !bg-slate-800 !text-white !border-none">
+            </div>
+            <p class="text-[9px] mt-2 opacity-50 italic">* No HP akan digunakan sebagai ID Login di halaman warga.</p>
+            <button onclick="handleWarga()" class="btn-primary mt-4 bg-white !text-slate-900">Simpan Akun</button>
+        </div>
+
     </div>
 
     <script type="module">
@@ -79,7 +112,6 @@
           apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
           authDomain: "websekawan.firebaseapp.com",
           projectId: "websekawan",
-          // INI DIA ALAMAT YANG BENER!
           databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
           storageBucket: "websekawan.firebasestorage.app",
           messagingSenderId: "407413490869",
@@ -89,34 +121,34 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // FUNGSI UNTUK TOMBOL
+        // --- HANDLERS ---
         window.handleSaldo = async () => {
             try {
-                const k = document.getElementById('kas').value;
-                const s = document.getElementById('sosial').value;
-                await set(ref(db, 'keuangan'), { kas: k, sosial: s });
-                alert("✅ Saldo Update!");
-            } catch (e) { alert("Error: " + e.message); }
+                await set(ref(db, 'keuangan'), { 
+                    kas: document.getElementById('kas').value, 
+                    sosial: document.getElementById('sosial').value 
+                });
+                alert("✅ Saldo Berhasil Diupdate!");
+            } catch (e) { alert("Gagal: " + e.message); }
         };
 
         window.handleTicker = async () => {
             try {
-                const t = document.getElementById('ticker_teks').value;
-                await set(ref(db, 'settings/ticker'), t);
-                alert("✅ Ticker Update!");
-            } catch (e) { alert("Error: " + e.message); }
+                await set(ref(db, 'settings/ticker'), document.getElementById('ticker_teks').value);
+                alert("✅ Running Text Disimpan!");
+            } catch (e) { alert("Gagal: " + e.message); }
         };
 
         window.handleRonda = async () => {
             try {
-                const h = document.getElementById('ronda_hari').value;
-                await set(ref(db, 'ronda/' + h.toLowerCase()), {
-                    hari: h,
+                const hari = document.getElementById('ronda_hari').value;
+                await set(ref(db, 'ronda/' + hari.toLowerCase()), {
+                    hari: hari,
                     petugas: document.getElementById('ronda_nama').value,
                     kelompok: document.getElementById('ronda_kelompok').value
                 });
-                alert("✅ Ronda " + h + " Update!");
-            } catch (e) { alert("Error: " + e.message); }
+                alert("✅ Jadwal Ronda Updated!");
+            } catch (e) { alert("Gagal: " + e.message); }
         };
 
         window.handleAgenda = async () => {
@@ -128,9 +160,46 @@
                     timestamp: Date.now()
                 });
                 alert("✅ Agenda Published!");
-                location.reload();
-            } catch (e) { alert("Error: " + e.message); }
+            } catch (e) { alert("Gagal: " + e.message); }
+        };
+
+        window.handleInfo = async () => {
+            try {
+                await push(ref(db, 'content/info'), {
+                    judul: document.getElementById('info_judul').value,
+                    keterangan: document.getElementById('info_ket').value,
+                    timestamp: Date.now()
+                });
+                alert("✅ Informasi Published!");
+            } catch (e) { alert("Gagal: " + e.message); }
+        };
+
+        window.handleLapak = async () => {
+            try {
+                await push(ref(db, 'lapak'), {
+                    pemilik: document.getElementById('lapak_nama').value,
+                    produk: document.getElementById('lapak_produk').value,
+                    harga: document.getElementById('lapak_harga').value,
+                    wa: document.getElementById('lapak_wa').value
+                });
+                alert("✅ Produk Berhasil Ditambah ke Lapak!");
+            } catch (e) { alert("Gagal: " + e.message); }
+        };
+
+        window.handleWarga = async () => {
+            try {
+                const nama = document.getElementById('warga_nama').value;
+                const hp = document.getElementById('warga_hp').value;
+                // Kita simpan dengan kunci nomor HP agar mudah dicek saat login
+                await set(ref(db, 'users/' + hp), {
+                    nama: nama,
+                    nohp: hp,
+                    role: 'warga'
+                });
+                alert("✅ Akun Warga Berhasil Dibuat!");
+            } catch (e) { alert("Gagal: " + e.message); }
         };
     </script>
 </body>
-</html>
+    </html>
+    
