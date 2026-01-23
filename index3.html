@@ -8,119 +8,140 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
         
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .super-curve { border-radius: 2.2rem; }
-        .gradient-blue { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
-        .gradient-dark { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
-        
-        /* Ticker yang lebih smooth */
-        .ticker-wrap { background: #f1f5f9; padding: 12px 0; border-radius: 1rem; overflow: hidden; margin: 0 20px; }
-        .ticker-content { display: inline-block; animation: ticker-move 30s linear infinite; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #475569; }
-        @keyframes ticker-move { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        :root {
+            --biru-tua: #1C4D8D;
+            --biru-mid: #4988C4;
+            --biru-muda: #BDE8F5;
+        }
 
-        /* Smooth Fade */
-        .fade-box { display: none; animation: smoothFade 0.8s ease-in-out; }
-        @keyframes smoothFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f0f4f8; color: #1e293b; }
+        
+        .floating-curve { border-radius: 2.5rem; }
+        .soft-shadow { box-shadow: 0 20px 40px -10px rgba(28, 77, 141, 0.15); }
+
+        /* Fix Running Text (Ticker) agar tidak numpuk */
+        .ticker-container { 
+            overflow: hidden; 
+            white-space: nowrap; 
+            background: var(--biru-muda); 
+            border-radius: 50px; 
+            margin: 10px 20px;
+            padding: 8px 0;
+            border: 1px solid rgba(73, 136, 196, 0.2);
+        }
+        .ticker-wrapper {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker-anim 25s linear infinite;
+        }
+        .ticker-item {
+            display: inline-block;
+            padding-right: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--biru-tua);
+            text-transform: uppercase;
+        }
+        @keyframes ticker-anim {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Fade Animation */
+        .slide-fade { display: none; animation: fadeEffect 1s; }
+        @keyframes fadeEffect { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
-<body class="pb-36 bg-slate-50">
+<body class="pb-36">
 
-    <header class="p-6 flex justify-between items-center">
+    <header class="p-6 flex justify-between items-center bg-white/50 backdrop-blur-sm sticky top-0 z-50">
         <div>
-            <h1 class="text-xl font-extrabold tracking-tighter italic text-slate-900">SEKWAN<span class="text-blue-600">.</span></h1>
-            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Neighborhood Digital</p>
+            <h1 class="text-xl font-black italic tracking-tighter" style="color: var(--biru-tua);">SEKWAN<span style="color: var(--biru-mid);">.</span></h1>
+            <p class="text-[8px] font-black text-gray-400 uppercase tracking-[0.3em]">Digital Neighborhood</p>
         </div>
-        <div class="flex space-x-3">
-            <button onclick="location.href='pengurus.html'" class="w-10 h-10 bg-white shadow-sm rounded-2xl flex items-center justify-center text-slate-600 border border-slate-100"><i class="fas fa-users-viewfinder text-sm"></i></button>
-            <button onclick="location.href='tuntas.html'" class="w-10 h-10 bg-white shadow-sm rounded-2xl flex items-center justify-center text-slate-600 border border-slate-100"><i class="fas fa-check-double text-sm"></i></button>
-        </div>
+        <button onclick="location.href='pengurus.html'" class="w-10 h-10 rounded-2xl flex items-center justify-center bg-white shadow-sm border border-gray-100">
+            <i class="fas fa-user-group text-xs" style="color: var(--biru-mid);"></i>
+        </button>
     </header>
 
-    <div class="ticker-wrap shadow-inner">
-        <div class="ticker-content">
-            ✦ Fogging serentak hari Sabtu pukul 08.00 WIB ✦ Laporan kas warga periode Januari telah diunggah ✦ Mohon menjaga ketenangan di atas pukul 22.00 WIB ✦
+    <div class="ticker-container">
+        <div class="ticker-wrapper">
+            <span class="ticker-item italic">✦ Fogging serentak hari Sabtu pukul 08.00 WIB</span>
+            <span class="ticker-item italic">✦ Laporan kas warga periode Januari telah terbit</span>
+            <span class="ticker-item italic">✦ Tetap jaga kebersihan lingkungan kita bersama</span>
         </div>
     </div>
 
-    <main class="max-w-md mx-auto px-5 mt-8 space-y-10">
+    <main class="max-w-md mx-auto px-5 mt-6 space-y-8">
         
-        <section class="space-y-4">
-            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 flex items-center">
-                <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span> Agenda Utama
-            </h3>
-            <div id="agenda-slider" class="gradient-blue super-curve p-8 text-white shadow-2xl shadow-blue-200 min-h-[160px] relative overflow-hidden flex items-center">
-                <i class="fas fa-calendar-day absolute -bottom-6 -right-6 text-9xl opacity-10"></i>
-                <div class="fade-box w-full z-10">
+        <section class="space-y-3">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] px-4 italic text-gray-400">Jadwal Terdekat</p>
+            <div class="floating-curve p-8 text-white soft-shadow relative overflow-hidden min-h-[160px] flex items-center" style="background: var(--biru-tua);">
+                <i class="fas fa-calendar-check absolute -bottom-4 -right-4 text-8xl opacity-10"></i>
+                <div class="slide-fade w-full agenda-item">
                     <h4 class="text-2xl font-black italic leading-tight uppercase">Kerja Bakti Blok A</h4>
-                    <p class="text-xs mt-3 font-semibold opacity-90"><i class="far fa-clock mr-2"></i>25 Jan • 07:00 WIB • Lapangan</p>
+                    <p class="text-xs mt-3 font-bold opacity-80 uppercase tracking-widest" style="color: var(--biru-muda);">25 Jan • 07:00 WIB</p>
                 </div>
-                <div class="fade-box w-full z-10">
-                    <h4 class="text-2xl font-black italic leading-tight uppercase">Musyawarah RT</h4>
-                    <p class="text-xs mt-3 font-semibold opacity-90"><i class="far fa-clock mr-2"></i>30 Jan • 20:00 WIB • Balai</p>
+                <div class="slide-fade w-full agenda-item">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase">Rapat Warga</h4>
+                    <p class="text-xs mt-3 font-bold opacity-80 uppercase tracking-widest" style="color: var(--biru-muda);">30 Jan • 20:00 WIB</p>
                 </div>
-                <div class="fade-box w-full z-10">
-                    <h4 class="text-2xl font-black italic leading-tight uppercase">Posyandu Balita</h4>
-                    <p class="text-xs mt-3 font-semibold opacity-90"><i class="far fa-clock mr-2"></i>02 Feb • 09:00 WIB • Pos Ronda</p>
+                <div class="slide-fade w-full agenda-item">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase">Senam Sehat</h4>
+                    <p class="text-xs mt-3 font-bold opacity-80 uppercase tracking-widest" style="color: var(--biru-muda);">01 Feb • 06:30 WIB</p>
                 </div>
             </div>
         </section>
 
-        <section class="bg-white p-6 super-curve border border-slate-100 shadow-sm flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
-                    <i class="fas fa-moon"></i>
+        <section class="space-y-3">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] px-4 italic text-gray-400">Informasi Penting</p>
+            <div class="floating-curve p-8 border-2 soft-shadow min-h-[160px] flex items-center relative bg-white" style="border-color: var(--biru-muda);">
+                <div class="slide-fade-info w-full info-item">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase" style="color: var(--biru-tua);">Fogging Nyamuk</h4>
+                    <p class="text-xs mt-2 font-bold" style="color: var(--biru-mid);">Mohon pintu dibuka saat petugas lewat.</p>
                 </div>
-                <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ronda Malam Ini</p>
-                    <p class="text-xs font-bold text-slate-800 italic mt-1 uppercase">Andi, Budi, Cahyo, Dani, Eko</p>
+                <div class="slide-fade-info w-full info-item">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase" style="color: var(--biru-tua);">Iuran Sampah</h4>
+                    <p class="text-xs mt-2 font-bold" style="color: var(--biru-mid);">Pembayaran via Kasir RT sudah dibuka.</p>
                 </div>
-            </div>
-            <div class="text-right">
-                <span class="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg uppercase italic">Elang</span>
+                <div class="slide-fade-info w-full info-item">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase" style="color: var(--biru-tua);">Internet Desa</h4>
+                    <p class="text-xs mt-2 font-bold" style="color: var(--biru-mid);">Wifi Balai RT aktif 24 jam untuk warga.</p>
+                </div>
             </div>
         </section>
 
-        <section class="space-y-4 pb-10">
-            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 flex items-center">
-                <span class="w-2 h-2 bg-slate-800 rounded-full mr-2"></span> Informasi Terbaru
-            </h3>
-            <div id="info-slider" class="gradient-dark super-curve p-8 text-white shadow-2xl shadow-slate-300 min-h-[160px] relative overflow-hidden flex items-center">
-                <i class="fas fa-info-circle absolute -bottom-6 -right-6 text-9xl opacity-10"></i>
-                <div class="fade-box-info w-full z-10">
-                    <h4 class="text-2xl font-black italic leading-tight uppercase">Fogging Nyamuk</h4>
-                    <p class="text-xs mt-3 font-semibold opacity-90">Harap menutup makanan & buka jendela sedikit pagi ini.</p>
+        <section class="space-y-3">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-center italic text-gray-400">Petugas Ronda Malam Ini</p>
+            <div class="floating-curve p-6 flex items-center justify-between border border-white shadow-sm" style="background: var(--biru-muda);">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md" style="background: var(--biru-mid);">
+                        <i class="fas fa-shield-halved text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black uppercase tracking-widest" style="color: var(--biru-tua);">Regu Elang</p>
+                        <p class="text-xs font-bold text-gray-700 italic">Andi, Budi, Cahyo, Dani, Eko</p>
+                    </div>
                 </div>
-                <div class="fade-box-info w-full z-10">
-                    <h4 class="text-2xl font-black italic leading-tight uppercase">Iuran Sampah</h4>
-                    <p class="text-xs mt-3 font-semibold opacity-90">Penyesuaian tarif mulai Februari menjadi Rp 30.000,-</p>
-                </div>
-                <div class="fade-box-info w-full z-10">
-                    <h4 class="text-2xl font-black italic leading-tight uppercase">Wifi Warga</h4>
-                    <p class="text-xs mt-3 font-semibold opacity-90">Koneksi gratis di area taman sudah bisa digunakan.</p>
-                </div>
+                <i class="fas fa-moon opacity-20 text-blue-900"></i>
             </div>
         </section>
 
     </main>
 
-    <div class="fixed bottom-8 left-8 right-8 z-50">
-        <nav class="glass super-curve shadow-2xl p-4 flex justify-around items-center border border-white/50">
-            <button onclick="location.href='index.html'" class="flex flex-col items-center text-blue-600">
-                <i class="fas fa-house-user text-xl"></i>
-                <span class="text-[9px] mt-1 font-black uppercase italic">Home</span>
+    <div class="fixed bottom-6 left-6 right-6 z-50">
+        <nav class="bg-white/90 backdrop-blur-lg floating-curve shadow-2xl p-4 flex justify-around items-center border border-white/50">
+            <button onclick="location.href='index.html'" class="flex flex-col items-center" style="color: var(--biru-tua);">
+                <i class="fas fa-house-chimney text-lg"></i>
+                <span class="text-[8px] mt-1 font-black uppercase italic">Home</span>
             </button>
-            <button class="flex flex-col items-center text-slate-400">
-                <i class="fas fa-calendar-alt text-xl"></i>
-                <span class="text-[9px] mt-1 font-bold uppercase tracking-tighter">Agenda</span>
-            </button>
-            <button class="flex flex-col items-center text-slate-400">
-                <i class="fas fa-bullhorn text-xl"></i>
-                <span class="text-[9px] mt-1 font-bold uppercase tracking-tighter">Info</span>
+            <button class="flex flex-col items-center text-gray-300">
+                <i class="fas fa-calendar-alt text-lg"></i>
+                <span class="text-[8px] mt-1 font-black uppercase">Agenda</span>
             </button>
             <button onclick="location.href='login.html'" class="flex flex-col items-center">
-                <div class="bg-blue-600 w-12 h-12 rounded-[1.2rem] flex items-center justify-center shadow-lg shadow-blue-200 text-white transform hover:rotate-6 transition">
+                <div class="w-12 h-12 rounded-[1.5rem] flex items-center justify-center shadow-lg shadow-blue-100 text-white transition transform active:scale-90" style="background: var(--biru-tua);">
                     <i class="fas fa-vault text-lg"></i>
                 </div>
             </button>
@@ -128,19 +149,19 @@
     </div>
 
     <script>
-        function runSlider(className) {
-            let index = 0;
+        function setupSlider(className) {
+            let idx = 0;
             const slides = document.getElementsByClassName(className);
-            function show() {
+            function next() {
                 for (let i = 0; i < slides.length; i++) slides[i].style.display = "none";
-                index++; if (index > slides.length) index = 1;
-                slides[index-1].style.display = "block";
-                setTimeout(show, 5000);
+                idx++; if (idx > slides.length) idx = 1;
+                slides[idx-1].style.display = "block";
+                setTimeout(next, 5000);
             }
-            show();
+            next();
         }
-        runSlider("fade-box");
-        runSlider("fade-box-info");
+        setupSlider("agenda-item");
+        setupSlider("info-item");
     </script>
 </body>
 </html>
