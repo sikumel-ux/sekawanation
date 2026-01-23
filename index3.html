@@ -7,123 +7,151 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #ffffff; 
-            color: #1a1a1a;
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfc; color: #334155; }
+        
+        .deep-curve { border-radius: 2.2rem; }
+        .soft-shadow { box-shadow: 0 15px 35px -10px rgba(0,0,0,0.05); }
+
+        /* Animation Fade */
+        .fade-slide { display: none; animation: fadeInOut 5s infinite; }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(5px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-5px); }
         }
-        .soft-shadow {
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+
+        /* News Ticker */
+        .ticker-container { overflow: hidden; white-space: nowrap; background: #eff6ff; }
+        .ticker-text { display: inline-block; animation: ticker 20s linear infinite; font-size: 10px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 1px; }
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
-        .deep-curve {
-            border-radius: 2rem;
-        }
-        /* Menghilangkan scrollbar tapi tetap bisa di-scroll */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="pb-32">
 
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md px-6 py-6 flex justify-between items-center">
-        <h1 class="font-extrabold italic text-sm tracking-tighter text-gray-900 uppercase">RT Sekwan.</h1>
-        <div class="flex space-x-6">
-            <button onclick="location.href='pengurus.html'" class="text-[9px] font-bold uppercase text-gray-400 tracking-widest">Pengurus</button>
-            <button onclick="location.href='tuntas.html'" class="text-[9px] font-bold uppercase text-gray-400 tracking-widest">Tuntas</button>
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100 px-6 py-5 flex justify-between items-center">
+        <h1 class="font-extrabold italic text-sm tracking-tighter text-blue-600 uppercase">RT Sekwan.</h1>
+        <div class="flex space-x-5">
+            <button onclick="location.href='pengurus.html'" class="text-[9px] font-black uppercase text-gray-400">Pengurus</button>
+            <button onclick="location.href='tuntas.html'" class="text-[9px] font-black uppercase text-gray-400">Tuntas</button>
         </div>
     </nav>
 
-    <main class="max-w-md mx-auto px-6 pt-4 space-y-12">
+    <div class="ticker-container py-2 border-b border-blue-50">
+        <div class="ticker-text">
+            ⚠️ Info: Fogging serentak besok pagi jam 08.00 • Laporan kas bulan Januari sudah terbit • Segera update data KK di sekretariat •
+        </div>
+    </div>
+
+    <main class="max-w-md mx-auto px-6 pt-8 space-y-10">
         
         <div class="space-y-1">
-            <p class="text-[9px] font-bold text-gray-300 uppercase tracking-[0.3em]">Jumat, 23 Jan 2026</p>
-            <h2 class="text-2xl font-bold tracking-tight text-gray-900">Selamat datang, <span class="italic font-extrabold text-blue-600">Tetangga.</span></h2>
+            <h2 class="text-2xl font-black tracking-tight text-slate-800 italic uppercase">Portal Warga.</h2>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Lingkungan Sekwan Aman & Digital</p>
         </div>
 
-        <section class="space-y-6">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] italic">Prioritas Pekan Ini</h3>
-            
-            <div class="bg-white border border-gray-50 soft-shadow deep-curve overflow-hidden">
-                
-                <button onclick="location.href='agenda.html'" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition border-b border-gray-50">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
-                            <i class="fas fa-calendar-alt text-xs"></i>
-                        </div>
-                        <div class="text-left">
-                            <h4 class="text-xs font-bold text-gray-800 uppercase italic">Kerja Bakti Blok A</h4>
-                            <p class="text-[9px] text-gray-400 font-medium mt-0.5 uppercase tracking-tighter">Minggu • 07:00 WIB</p>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right text-[10px] text-gray-200"></i>
-                </button>
-
-                <button onclick="location.href='informasi.html'" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition border-b border-gray-50">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
-                            <i class="fas fa-bullhorn text-xs"></i>
-                        </div>
-                        <div class="text-left">
-                            <h4 class="text-xs font-bold text-gray-800 uppercase italic">Fogging Nyamuk</h4>
-                            <p class="text-[9px] text-gray-400 font-medium mt-0.5 uppercase tracking-tighter">Besok Pagi • Harap Bersiap</p>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right text-[10px] text-gray-200"></i>
-                </button>
-
-                <button onclick="location.href='informasi.html'" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
-                            <i class="fas fa-tag text-xs"></i>
-                        </div>
-                        <div class="text-left">
-                            <h4 class="text-xs font-bold text-gray-800 uppercase italic">Iuran Sampah</h4>
-                            <p class="text-[9px] text-gray-400 font-medium mt-0.5 uppercase tracking-tighter">Update Tarif Per Februari</p>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right text-[10px] text-gray-200"></i>
-                </button>
+        <section class="space-y-3">
+            <h3 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] italic ml-2">📌 Agenda Pekan Ini</h3>
+            <div id="agenda-container" class="bg-blue-50 border border-blue-100 deep-curve h-32 flex items-center px-8 relative overflow-hidden soft-shadow">
+                <div class="fade-slide w-full">
+                    <h4 class="text-xs font-black text-blue-600 uppercase italic">Kerja Bakti Blok A</h4>
+                    <p class="text-[10px] text-blue-400 font-bold mt-1">25 Jan • 07:00 WIB • Lapangan</p>
+                </div>
+                <div class="fade-slide w-full">
+                    <h4 class="text-xs font-black text-blue-600 uppercase italic">Rapat Koordinasi</h4>
+                    <p class="text-[10px] text-blue-400 font-bold mt-1">30 Jan • 20:00 WIB • Balai</p>
+                </div>
+                <div class="fade-slide w-full">
+                    <h4 class="text-xs font-black text-blue-600 uppercase italic">Senam Pagi Bersama</h4>
+                    <p class="text-[10px] text-blue-400 font-bold mt-1">01 Feb • 06:30 WIB • Gazebo</p>
+                </div>
+                <i class="fas fa-calendar-check absolute right-8 text-3xl text-blue-200"></i>
             </div>
         </section>
 
-        <section class="space-y-4">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] italic">Petugas Ronda</h3>
-            <div class="bg-gray-50/50 border border-gray-100 p-5 deep-curve flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-moon text-gray-300 text-xs"></i>
-                    <div>
-                        <p class="text-[10px] font-bold text-gray-800 italic">Regu Elang</p>
-                        <p class="text-[9px] text-gray-400 font-medium tracking-tight">Andi, Budi, Cahyo, Dani, Eko</p>
-                    </div>
+        <section class="space-y-3">
+            <h3 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] italic ml-2">📢 Informasi Terbaru</h3>
+            <div id="info-container" class="bg-slate-900 deep-curve h-32 flex items-center px-8 relative overflow-hidden soft-shadow shadow-slate-200">
+                <div class="fade-slide-info w-full">
+                    <h4 class="text-xs font-black text-white uppercase italic">Fogging Nyamuk</h4>
+                    <p class="text-[10px] text-slate-400 font-bold mt-1">Besok Pagi • Harap Tutup Makanan</p>
                 </div>
-                <div class="h-1.5 w-1.5 rounded-full bg-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                <div class="fade-slide-info w-full">
+                    <h4 class="text-xs font-black text-white uppercase italic">Iuran Sampah 2026</h4>
+                    <p class="text-[10px] text-slate-400 font-bold mt-1">Update tarif per bulan Februari</p>
+                </div>
+                <div class="fade-slide-info w-full">
+                    <h4 class="text-xs font-black text-white uppercase italic">Wifi Area Aktif</h4>
+                    <p class="text-[10px] text-slate-400 font-bold mt-1">User: RT-SEKWAN • Pass: Warga2026</p>
+                </div>
+                <i class="fas fa-info-circle absolute right-8 text-3xl text-slate-700"></i>
+            </div>
+        </section>
+
+        <section class="space-y-3">
+            <h3 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] italic ml-2 text-center">🌙 Petugas Ronda Malam Ini</h3>
+            <div class="bg-white border border-slate-100 p-6 deep-curve soft-shadow flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] font-black text-slate-800 italic uppercase">Regu Elang</p>
+                    <p class="text-[9px] text-slate-400 font-medium mt-1">Andi, Budi, Cahyo, Dani, Eko</p>
+                </div>
+                <div class="h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6]"></div>
             </div>
         </section>
 
     </main>
 
     <div class="fixed bottom-8 left-10 right-10 z-50">
-        <nav class="bg-white/90 backdrop-blur-xl border border-gray-50 deep-curve soft-shadow p-4 flex justify-around items-center">
+        <nav class="bg-white/90 backdrop-blur-xl border border-slate-100 deep-curve shadow-2xl p-4 flex justify-around items-center px-6">
             <button onclick="location.href='index.html'" class="flex flex-col items-center text-blue-600">
-                <i class="fas fa-circle text-[6px] mb-1.5"></i>
-                <span class="text-[8px] font-black uppercase italic tracking-widest">Home</span>
+                <i class="fas fa-house-chimney text-lg"></i>
+                <span class="text-[8px] mt-1 font-black uppercase italic tracking-tighter">Home</span>
             </button>
-            <button class="flex flex-col items-center text-gray-300">
-                <i class="fas fa-calendar-minus text-sm"></i>
+            <button class="flex flex-col items-center text-slate-300">
+                <i class="fas fa-calendar-day text-lg"></i>
                 <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter">Agenda</span>
             </button>
-            <button class="flex flex-col items-center text-gray-300">
-                <i class="fas fa-info-circle text-sm"></i>
+            <button class="flex flex-col items-center text-slate-300">
+                <i class="fas fa-bullhorn text-lg"></i>
                 <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter">Info</span>
             </button>
-            <button onclick="location.href='login.html'" class="flex flex-col items-center text-gray-900">
-                <div class="w-8 h-8 bg-gray-900 rounded-xl flex items-center justify-center text-white text-[10px]">
-                    <i class="fas fa-key"></i>
+            <button onclick="location.href='login.html'" class="flex flex-col items-center text-amber-500">
+                <div class="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
+                    <i class="fas fa-vault text-lg"></i>
                 </div>
             </button>
         </nav>
     </div>
 
+    <script>
+        // Script untuk Fade Loop Agenda
+        let agendaIndex = 0;
+        const agendaSlides = document.getElementsByClassName("fade-slide");
+        function showAgenda() {
+            for (let i = 0; i < agendaSlides.length; i++) agendaSlides[i].style.display = "none";
+            agendaIndex++;
+            if (agendaIndex > agendaSlides.length) agendaIndex = 1;
+            agendaSlides[agendaIndex-1].style.display = "block";
+            setTimeout(showAgenda, 5000);
+        }
+
+        // Script untuk Fade Loop Info
+        let infoIndex = 0;
+        function showInfo() {
+            const infoSlides = document.getElementsByClassName("fade-slide-info");
+            for (let i = 0; i < infoSlides.length; i++) infoSlides[i].style.display = "none";
+            infoIndex++;
+            if (infoIndex > infoSlides.length) infoIndex = 1;
+            infoSlides[infoIndex-1].style.display = "block";
+            setTimeout(showInfo, 5000);
+        }
+
+        showAgenda();
+        showInfo();
+    </script>
 </body>
 </html>
