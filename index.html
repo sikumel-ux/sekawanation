@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App RT Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-5">
+
+    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold mb-4 text-center text-blue-600">Input Kas RT</h2>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Keterangan</label>
+                <input type="text" id="keterangan" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="Contoh: Iuran Bulanan">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Nominal (Rp)</label>
+                <input type="number" id="nominal" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="100000">
+            </div>
+            <button onclick="simpanData()" id="btnSimpan" class="w-full bg-blue-500 text-white p-3 rounded-lg font-bold hover:bg-blue-600 transition">
+                SIMPAN DATA
+            </button>
+        </div>
+
+        <div id="status" class="mt-4 text-center text-sm hidden"></div>
+    </div>
+
+    <script type="module">
+        // Import Firebase dari versi 10.x.x (lebih stabil untuk CDN)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // CONFIG KAMU
+        const firebaseConfig = {
+            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+            authDomain: "websekawan.firebaseapp.com",
+            projectId: "websekawan",
+            storageBucket: "websekawan.firebasestorage.app",
+            messagingSenderId: "407413490869",
+            appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Fungsi Simpan agar bisa dipanggil dari tombol
+        window.simpanData = async () => {
+            const ket = document.getElementById('keterangan').value;
+            const nom = document.getElementById('nominal').value;
+            const btn = document.getElementById('btnSimpan');
+            const status = document.getElementById('status');
+
+            if(!ket || !nom) return alert("Isi keterangannya dulu bro!");
+
+            btn.disabled = true;
+            btn.innerText = "Sabar, lagi proses...";
+
+            try {
+                // 1. Simpan ke Firestore
+                await addDoc(collection(db, "kas_rt"), {
+                    keterangan: ket,
+                    nominal: parseInt(nom),
+                    tanggal: serverTimestamp()
+                });
+
+                // 2. Kirim ke Google Apps Script (Sesuai API Memory-mu)
+                const apiURL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
+                
+                await fetch(apiURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ keterangan: ket, nominal: nom })
+                });
+
+                status.innerText = "✅ Mantap! Data masuk Firebase & Sheets.";
+                status.className = "mt-4 text-center text-sm text-green-600 font-bold";
+                status.classList.remove('hidden');
+                
+                document.getElementById('keterangan').value = "";
+                document.getElementById('nominal').value = "";
+
+            } catch (e) {
+                status.innerText = "❌ Aduh Gagal: " + e.message;
+                status.className = "mt-4 text-center text-sm text-red-600 font-bold";
+                status.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "SIMPAN DATA";
+            }
+        }
+    </script>
+</body>
+</html>
