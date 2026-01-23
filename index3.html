@@ -3,125 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RT Sekwan Digital</title>
+    <title>RT Digital Sekwan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .hide-scroll::-webkit-scrollbar { display: none; }
-        .curve-deep { border-radius: 2.2rem; }
-        .banner-card { min-width: 88%; scroll-snap-align: center; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfdfe; }
+        .bubble-card { border-radius: 2.8rem; }
+        .inner-glow { box-shadow: inset 0 2px 4px rgba(255,255,255,0.3); }
     </style>
 </head>
 <body class="pb-32">
 
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100 px-6 py-4 flex justify-between items-center">
+    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-50 px-6 py-5 flex justify-between items-center">
         <div class="flex items-center space-x-2">
-            <div class="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-200">
+            <div class="bg-blue-600 p-2 rounded-2xl text-white shadow-lg shadow-blue-100">
                 <i class="fas fa-city text-xs"></i>
             </div>
             <h1 class="font-black italic text-sm tracking-tighter uppercase">RT SEKWAN</h1>
         </div>
-        <div class="flex space-x-5">
-            <button onclick="location.href='pengurus.html'" class="text-[9px] font-black uppercase text-gray-400 tracking-widest">Pengurus</button>
-            <button onclick="location.href='tuntas.html'" class="text-[9px] font-black uppercase text-gray-400 tracking-widest">Tuntas</button>
+        <div class="flex space-x-4">
+            <button onclick="location.href='pengurus.html'" class="text-[9px] font-black uppercase text-gray-400 tracking-[0.2em]">Pengurus</button>
+            <button onclick="location.href='tuntas.html'" class="text-[9px] font-black uppercase text-gray-400 tracking-[0.2em]">Tuntas</button>
         </div>
     </nav>
 
-    <main class="max-w-md mx-auto px-5 pt-6 space-y-10">
+    <main class="max-w-md mx-auto px-5 pt-8 space-y-10">
         
         <div class="px-2">
-            <p class="text-[10px] font-black text-blue-600 bg-blue-50 inline-block px-3 py-1 rounded-full border border-blue-100 italic uppercase tracking-widest mb-2">23 Jan 2026</p>
-            <h2 class="text-2xl font-black text-gray-800 italic leading-none">Portal Warga Digital</h2>
+            <h2 class="text-3xl font-black text-gray-900 italic leading-none tracking-tighter">Portal Lingkungan.</h2>
+            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] mt-3 flex items-center">
+                <span class="w-8 h-[1px] bg-blue-500 mr-2"></span> Jumat, 23 Jan 2026
+            </p>
         </div>
 
-        <div class="space-y-4">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-2 italic flex items-center">
-                <i class="fas fa-calendar-alt mr-2"></i> Agenda Mendatang
-            </h3>
-            <div class="flex overflow-x-auto space-x-4 hide-scroll py-2 px-1 snap-x snap-mandatory">
-                <div class="banner-card bg-blue-600 curve-deep p-7 text-white shadow-xl shadow-blue-100 relative overflow-hidden">
-                    <i class="fas fa-broom absolute -bottom-4 -right-4 text-7xl opacity-20 rotate-12"></i>
-                    <h4 class="text-lg font-black italic uppercase leading-tight">Kerja Bakti Blok A</h4>
-                    <p class="text-[10px] mt-2 opacity-80 font-bold">Minggu, 25 Jan • 07:00 WIB</p>
+        <section class="space-y-4">
+            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] px-4 italic">📌 Agenda Mendatang</h3>
+            <div class="space-y-3">
+                <div class="bubble-card bg-blue-600 p-6 text-white inner-glow shadow-xl shadow-blue-100 flex items-center space-x-5 transform hover:scale-[1.02] transition">
+                    <div class="bg-white/20 p-4 bubble-card text-center min-w-[65px]">
+                        <p class="text-[9px] font-bold uppercase">Jan</p>
+                        <p class="text-xl font-black">25</p>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black italic uppercase leading-none">Kerja Bakti Blok A</h4>
+                        <p class="text-[10px] mt-2 opacity-70 font-medium italic">07:00 WIB • Lapangan Tengah</p>
+                    </div>
                 </div>
-                <div class="banner-card bg-indigo-600 curve-deep p-7 text-white shadow-xl shadow-indigo-100 relative overflow-hidden">
-                    <i class="fas fa-users absolute -bottom-4 -right-4 text-7xl opacity-20 rotate-12"></i>
-                    <h4 class="text-lg font-black italic uppercase leading-tight">Rapat Bulanan</h4>
-                    <p class="text-[10px] mt-2 opacity-80 font-bold">Jumat, 30 Jan • 20:00 WIB</p>
-                </div>
-                <div class="banner-card bg-slate-800 curve-deep p-7 text-white shadow-xl shadow-slate-100 relative overflow-hidden">
-                    <i class="fas fa-Syringe absolute -bottom-4 -right-4 text-7xl opacity-20 rotate-12"></i>
-                    <h4 class="text-lg font-black italic uppercase leading-tight">Vaksin Booster</h4>
-                    <p class="text-[10px] mt-2 opacity-80 font-bold">Senin, 02 Feb • Balai RW</p>
+                <div class="bubble-card bg-indigo-500 p-6 text-white inner-glow shadow-lg shadow-indigo-100 flex items-center space-x-5">
+                    <div class="bg-white/20 p-4 bubble-card text-center min-w-[65px]">
+                        <p class="text-[9px] font-bold uppercase">Jan</p>
+                        <p class="text-xl font-black">30</p>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black italic uppercase leading-none">Rapat Bulanan</h4>
+                        <p class="text-[10px] mt-2 opacity-70 font-medium italic">20:00 WIB • Rumah Bpk. RT</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="space-y-4">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-2 italic flex items-center">
-                <i class="fas fa-moon mr-2 text-indigo-500"></i> Ronda Malam Ini
-            </h3>
-            <div class="bg-white p-6 curve-deep border border-gray-100 shadow-sm flex items-center justify-between">
-                <div class="flex -space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center font-bold text-blue-600 text-xs italic">AD</div>
-                    <div class="w-10 h-10 rounded-full bg-green-100 border-2 border-white flex items-center justify-center font-bold text-green-600 text-xs italic">BM</div>
-                    <div class="w-10 h-10 rounded-full bg-amber-100 border-2 border-white flex items-center justify-center font-bold text-amber-600 text-xs italic">SR</div>
+        <section class="space-y-4">
+            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] px-4 italic">📢 Informasi Terkini</h3>
+            <div class="space-y-3">
+                <div class="bubble-card bg-white p-6 border border-gray-100 shadow-sm flex items-center space-x-5">
+                    <div class="bg-amber-100 text-amber-600 p-4 bubble-card">
+                        <i class="fas fa-spray-can text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black italic text-gray-800 uppercase leading-none">Fogging Nyamuk</h4>
+                        <p class="text-[10px] mt-2 text-gray-400 font-bold italic">Sabtu Pagi • Harap Tutup Makanan</p>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-sm font-black italic text-gray-800">Regu Elang</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">Bpk. Andi, Bpk. Budi, +4 Lainnya</p>
+                <div class="bubble-card bg-white p-6 border border-gray-100 shadow-sm flex items-center space-x-5">
+                    <div class="bg-emerald-100 text-emerald-600 p-4 bubble-card">
+                        <i class="fas fa-trash-can text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black italic text-gray-800 uppercase leading-none">Iuran Sampah</h4>
+                        <p class="text-[10px] mt-2 text-gray-400 font-bold italic">Penyesuaian Tarif Februari 2026</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="space-y-4">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-2 italic flex items-center">
-                <i class="fas fa-info-circle mr-2"></i> Pusat Informasi
-            </h3>
-            <div class="flex overflow-x-auto space-x-4 hide-scroll py-2 px-1 snap-x snap-mandatory">
-                <div class="banner-card bg-white curve-deep p-7 border border-gray-100 shadow-sm relative overflow-hidden">
-                    <i class="fas fa-spray-can absolute -bottom-4 -right-4 text-7xl text-gray-50 rotate-12"></i>
-                    <h4 class="text-lg font-black italic uppercase leading-tight text-gray-800">Fogging Nyamuk</h4>
-                    <p class="text-[10px] mt-2 text-gray-500 font-bold italic">Sabtu Pagi, Harap buka jendela sedikit.</p>
-                </div>
-                <div class="banner-card bg-white curve-deep p-7 border border-gray-100 shadow-sm relative overflow-hidden">
-                    <i class="fas fa-trash-alt absolute -bottom-4 -right-4 text-7xl text-gray-50 rotate-12"></i>
-                    <h4 class="text-lg font-black italic uppercase leading-tight text-gray-800">Tarif Sampah</h4>
-                    <p class="text-[10px] mt-2 text-gray-500 font-bold italic">Penyesuaian tarif per Februari 2026.</p>
-                </div>
-                <div class="banner-card bg-white curve-deep p-7 border border-gray-100 shadow-sm relative overflow-hidden">
-                    <i class="fas fa-wifi absolute -bottom-4 -right-4 text-7xl text-gray-50 rotate-12"></i>
-                    <h4 class="text-lg font-black italic uppercase leading-tight text-gray-800">Wifi Gratis</h4>
-                    <p class="text-[10px] mt-2 text-gray-500 font-bold italic">Sudah aktif di area Taman Bermain.</p>
+        <section class="space-y-4">
+            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] px-4 italic text-center">🌙 Petugas Ronda Malam Ini</h3>
+            <div class="bubble-card bg-gray-900 p-8 text-white relative overflow-hidden shadow-2xl">
+                <i class="fas fa-moon absolute -top-4 -right-4 text-8xl opacity-10"></i>
+                <div class="flex justify-between items-center relative z-10">
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest italic">Regu Elang</p>
+                        <h4 class="text-lg font-black italic tracking-tighter uppercase">Bpk. Andi, Bpk. Budi,<br>Sdr. Cahyo, Bpk. Dani</h4>
+                    </div>
+                    <div class="text-right">
+                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20">
+                            <i class="fas fa-shield-halved text-blue-400"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
     </main>
 
-    <div class="fixed bottom-6 left-10 right-10 z-50">
-        <nav class="bg-white/90 backdrop-blur-xl border border-gray-100 curve-deep shadow-2xl p-4 flex justify-around items-center px-4">
+    <div class="fixed bottom-8 left-10 right-10 z-50">
+        <nav class="bg-white/90 backdrop-blur-xl border border-gray-100 bubble-card shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-4 flex justify-around items-center">
             <button onclick="location.href='index.html'" class="flex flex-col items-center text-blue-600">
                 <i class="fas fa-house text-lg"></i>
                 <span class="text-[8px] mt-1 font-black uppercase italic tracking-tighter">Home</span>
             </button>
-            <button class="flex flex-col items-center text-gray-400">
+            <button class="flex flex-col items-center text-gray-300">
                 <i class="fas fa-calendar-minus text-lg"></i>
                 <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter">Agenda</span>
             </button>
-            <button class="flex flex-col items-center text-gray-400">
+            <button class="flex flex-col items-center text-gray-300">
                 <i class="fas fa-info-circle text-lg"></i>
-                <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter text-nowrap">Informasi</span>
+                <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter">Info</span>
             </button>
             <button onclick="location.href='login.html'" class="flex flex-col items-center text-amber-500">
                 <i class="fas fa-vault text-lg"></i>
-                <span class="text-[8px] mt-1 font-black uppercase tracking-tighter italic">Kas</span>
+                <span class="text-[8px] mt-1 font-black uppercase italic tracking-tighter">Kas</span>
             </button>
         </nav>
     </div>
 
 </body>
-                                                                                                                  </html>
-                                                                                                                  
+</html>
+
