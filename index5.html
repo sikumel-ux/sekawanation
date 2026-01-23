@@ -24,7 +24,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- 1. LOGIN & KAS ---
+        // --- 1. LOGIN & KAS (Wajib Login) ---
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         if (isLoggedIn) {
             document.getElementById('section-kas').classList.remove('hidden');
@@ -38,12 +38,12 @@
             });
         }
 
-        // --- 2. TICKER ---
+        // --- 2. RUNNING TEXT ---
         onValue(ref(db, 'settings/ticker'), (snap) => {
             if (snap.exists()) document.getElementById('ticker-text').innerText = "✦ " + snap.val();
         });
 
-        // --- 3. RONDA ---
+        // --- 3. JADWAL RONDA ---
         const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][new Date().getDay()];
         onValue(ref(db, 'ronda/' + hari.toLowerCase()), (snap) => {
             const d = snap.val();
@@ -51,18 +51,29 @@
             document.getElementById('ronda-tag').innerText = d ? d.kelompok : "-";
         });
 
-        // --- 4. AGENDA ---
+        // --- 4. AGENDA TERBARU ---
         onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (snap) => {
             if (snap.exists()) {
                 const data = Object.values(snap.val())[0];
-                document.getElementById('agenda-box').innerHTML = `
+                document.getElementById('agenda-view').innerHTML = `
                     <h3 class="text-xl font-black uppercase italic">${data.judul}</h3>
                     <p class="text-[10px] opacity-70 font-bold mt-1">${data.tanggal} — ${data.keterangan}</p>
                 `;
             }
         });
 
-        // --- 5. UMKM ---
+        // --- 5. INFORMASI TERBARU ---
+        onValue(query(ref(db, 'content/info'), limitToLast(1)), (snap) => {
+            if (snap.exists()) {
+                const data = Object.values(snap.val())[0];
+                document.getElementById('info-view').innerHTML = `
+                    <h4 class="text-sm font-black text-slate-800 uppercase">${data.judul}</h4>
+                    <p class="text-[10px] text-slate-500 mt-1 leading-relaxed">${data.keterangan}</p>
+                `;
+            }
+        });
+
+        // --- 6. LAPAK UMKM ---
         onValue(ref(db, 'lapak'), (snap) => {
             const list = document.getElementById('lapak-list');
             list.innerHTML = "";
@@ -73,7 +84,7 @@
                             <p class="text-[9px] font-black text-pink-500 uppercase tracking-tighter mb-1">${item.pemilik}</p>
                             <h4 class="text-xs font-black text-slate-800 leading-tight">${item.produk}</h4>
                             <p class="text-[10px] font-bold text-slate-400 mt-1 mb-4">Rp ${item.harga}</p>
-                            <a href="https://wa.me/${item.wa}" class="inline-block bg-pink-500 text-white text-[8px] font-black px-4 py-2 rounded-full uppercase shadow-lg shadow-pink-100">Beli</a>
+                            <a href="https://wa.me/${item.wa}" class="inline-block bg-pink-500 text-white text-[8px] font-black px-4 py-2 rounded-full uppercase">Beli</a>
                         </div>
                     `;
                 });
@@ -83,7 +94,7 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; }
         .ticker-move { display: inline-block; animation: move 20s linear infinite; }
         @keyframes move { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -94,17 +105,17 @@
     <header class="p-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-40">
         <div>
             <h1 class="text-2xl font-black italic tracking-tighter text-blue-900 leading-none">SEKWAN<span class="text-blue-500">.</span></h1>
-            <p class="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mt-1">Digital Neighborhood</p>
+            <p class="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mt-1">Smart RT System</p>
         </div>
         <div class="text-right">
             <p id="jam" class="text-xl font-black text-slate-800 tracking-tighter leading-none">00:00</p>
-            <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest mt-1 italic">WIB</p>
+            <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest mt-1">WIB</p>
         </div>
     </header>
 
     <div class="mx-5 bg-blue-100/50 rounded-full py-2 overflow-hidden border border-white">
         <div class="ticker-move">
-            <span id="ticker-text" class="text-[10px] font-black text-blue-900 uppercase italic">✦ Memuat info warga...</span>
+            <span id="ticker-text" class="text-[10px] font-black text-blue-900 uppercase italic">✦ Memuat kabar warga hari ini...</span>
         </div>
     </div>
 
@@ -113,57 +124,61 @@
         <section id="section-kas" class="hidden grid grid-cols-2 gap-4">
             <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-50">
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Kas RT</p>
-                <p id="val-kas" class="text-xs font-black text-blue-900">Rp --</p>
+                <p id="val-kas" class="text-xs font-black text-blue-900 font-mono">Rp --</p>
             </div>
             <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-50">
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Dana Sosial</p>
-                <p id="val-sosial" class="text-xs font-black text-pink-600">Rp --</p>
+                <p id="val-sosial" class="text-xs font-black text-pink-600 font-mono">Rp --</p>
             </div>
         </section>
 
         <div class="grid grid-cols-12 gap-4">
             <div class="col-span-5 bg-white p-5 rounded-[2.5rem] shadow-sm border border-white flex flex-col items-center justify-center text-center">
-                <i class="fas fa-cloud-sun text-amber-400 text-2xl mb-1"></i>
+                <i class="fas fa-sun text-amber-400 text-2xl mb-1"></i>
                 <h4 id="temp" class="text-xl font-black text-blue-900">--°</h4>
-                <p class="text-[8px] font-black text-slate-400 uppercase italic">Yogyakarta</p>
+                <p class="text-[7px] font-black text-slate-400 uppercase italic leading-none">Cerah</p>
             </div>
-            <div class="col-span-7 bg-white p-5 rounded-[2.5rem] shadow-sm border border-white flex flex-col justify-center">
-                <div class="flex justify-between items-start mb-1">
-                    <p class="text-[8px] font-black text-slate-300 uppercase">Jadwal Sholat</p>
-                    <i class="fas fa-mosque text-[10px] text-blue-200"></i>
-                </div>
+            <div class="col-span-7 bg-white p-5 rounded-[2.5rem] shadow-sm border border-white">
+                <p class="text-[7px] font-black text-slate-300 uppercase mb-1">Jadwal Sholat</p>
                 <div class="flex justify-between items-end">
-                    <p id="sholat-nama" class="text-xs font-black text-blue-900 uppercase italic">--</p>
+                    <p id="sholat-nama" class="text-[10px] font-black text-blue-900 uppercase italic">--</p>
                     <p id="sholat-waktu" class="text-xl font-black text-blue-600 tracking-tighter">--:--</p>
                 </div>
             </div>
         </div>
 
+        <section class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-50 relative overflow-hidden">
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-1.5 h-4 bg-orange-500 rounded-full"></div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Warta RT</p>
+            </div>
+            <div id="info-view">
+                <p class="text-xs italic text-slate-300">Belum ada informasi terbaru.</p>
+            </div>
+        </section>
+
         <section>
-            <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] ml-4 mb-2">📅 Agenda</p>
-            <div id="agenda-box" class="bg-blue-900 text-white p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
-                <i class="fas fa-calendar-check absolute -bottom-5 -right-5 text-8xl opacity-10"></i>
+            <div id="agenda-view" class="bg-blue-900 text-white p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
+                <i class="fas fa-calendar-alt absolute -bottom-5 -right-5 text-8xl opacity-10"></i>
                 <p class="text-xs italic opacity-50 font-bold uppercase">Memuat agenda...</p>
             </div>
         </section>
 
-        <section class="bg-white p-6 rounded-[2.5rem] shadow-sm flex items-center justify-between">
+        <section class="bg-slate-900 p-6 rounded-[2.5rem] shadow-sm flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100">
-                    <i class="fas fa-shield-halved"></i>
+                <div class="w-10 h-10 bg-white/10 text-white rounded-xl flex items-center justify-center">
+                    <i class="fas fa-shield-halved text-xs"></i>
                 </div>
                 <div>
-                    <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest">Ronda Malam</p>
-                    <p id="ronda-info" class="text-[10px] font-black text-slate-700 italic uppercase leading-none">--</p>
+                    <p class="text-[8px] font-black text-slate-500 uppercase">Ronda Malam</p>
+                    <p id="ronda-info" class="text-[10px] font-black text-white italic uppercase">--</p>
                 </div>
             </div>
-            <span id="ronda-tag" class="text-[8px] font-black bg-blue-50 text-blue-600 px-3 py-1 rounded-full italic uppercase">--</span>
+            <span id="ronda-tag" class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter" id="ronda-tag">--</span>
         </section>
 
         <section>
-            <div class="flex justify-between items-center px-4 mb-3">
-                <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest">🛍️ Lapak Warga</p>
-            </div>
+            <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest ml-4 mb-3">🛍️ Lapak UMKM</p>
             <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 </div>
         </section>
@@ -173,7 +188,7 @@
     <div class="fixed bottom-8 left-0 right-0 px-8 z-50">
         <nav class="bg-white/90 backdrop-blur-xl p-4 rounded-[2.5rem] shadow-2xl border border-white flex justify-around">
             <button onclick="location.href='index.html'" class="flex flex-col items-center text-blue-900">
-                <i class="fas fa-house-chimney text-xl"></i>
+                <i class="fas fa-home text-xl"></i>
                 <span class="text-[8px] font-black uppercase mt-1 italic">Home</span>
             </button>
             <button onclick="location.href='login.html'" class="flex flex-col items-center text-slate-300">
@@ -184,34 +199,30 @@
     </div>
 
     <script>
-        // JAM & WIDGETS
+        // JAM AKTIF
         setInterval(() => {
             const d = new Date();
             document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
         }, 1000);
 
-        async function loadWidgets() {
+        // WIDGET API
+        async function fetchWidgets() {
             try {
-                // Weather
                 const w = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.79&longitude=110.37&current_weather=true');
                 const wd = await w.json();
                 document.getElementById('temp').innerText = Math.round(wd.current_weather.temperature) + '°';
 
-                // Prayer
                 const s = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Yogyakarta&country=Indonesia&method=11');
                 const sd = await s.json();
                 const t = sd.data.timings;
-                const schedule = [
-                    {n:'Subuh', t:t.Fajr}, {n:'Dzuhur', t:t.Dhuhr}, {n:'Ashar', t:t.Asr}, {n:'Maghrib', t:t.Maghrib}, {n:'Isya', t:t.Isha}
-                ];
+                const schedule = [{n:'Subuh', t:t.Fajr}, {n:'Dzuhur', t:t.Dhuhr}, {n:'Ashar', t:t.Asr}, {n:'Maghrib', t:t.Maghrib}, {n:'Isya', t:t.Isha}];
                 const now = new Date().getHours().toString().padStart(2,'0')+":"+new Date().getMinutes().toString().padStart(2,'0');
                 let next = schedule.find(x => x.t > now) || schedule[0];
                 document.getElementById('sholat-nama').innerText = next.n;
                 document.getElementById('sholat-waktu').innerText = next.t;
-            } catch (e) { console.log(e) }
+            } catch (e) { console.error(e); }
         }
-        loadWidgets();
+        fetchWidgets();
     </script>
 </body>
-                </html>
-                
+</html>
