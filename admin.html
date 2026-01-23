@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control - RT Sekwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "rt-sekwan.firebaseapp.com",
+            databaseURL: "https://rt-sekwan-default-rtdb.firebaseio.com",
+            projectId: "rt-sekwan",
+            storageBucket: "rt-sekwan.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 1. Update Kas & Saldo
+        window.saveSaldo = function() {
+            const kas = document.getElementById('kas').value;
+            const sosial = document.getElementById('sosial').value;
+            update(ref(db, 'keuangan'), { kas, sosial })
+            .then(() => alert("Saldo Berhasil Diupdate!"));
+        };
+
+        // 2. Tambah Warga
+        window.addWarga = function() {
+            const nama = document.getElementById('warga_nama').value;
+            const nohp = document.getElementById('warga_hp').value;
+            const newWargaRef = push(ref(db, 'warga'));
+            set(newWargaRef, { nama, nohp })
+            .then(() => { alert("Warga Ditambahkan!"); document.getElementById('warga_nama').value=''; document.getElementById('warga_hp').value=''; });
+        };
+
+        // 3. Update Running Text
+        window.saveTicker = function() {
+            const teks = document.getElementById('ticker_teks').value;
+            set(ref(db, 'settings/ticker'), teks)
+            .then(() => alert("Running Text Berhasil Diubah!"));
+        };
+
+        // 4. Input Agenda & Info (Ganti Data Slider)
+        window.saveContent = function(type) {
+            const title = document.getElementById(type + '_title').value;
+            const desc = document.getElementById(type + '_desc').value;
+            // Kita simpan di node content sesuai type (agenda/info)
+            const contentRef = push(ref(db, 'content/' + type));
+            set(contentRef, { title, desc, timestamp: Date.now() })
+            .then(() => alert(type.toUpperCase() + " Berhasil Dipublish!"));
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; }
+        .admin-card { background: white; border-radius: 2rem; padding: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .input-style { width: 100%; padding: 0.75rem 1rem; background: #f8fafc; border-radius: 1rem; border: 1px solid #e2e8f0; font-weight: 600; font-size: 0.875rem; outline: none; }
+        .btn-primary { background: #1e293b; color: white; padding: 0.75rem; border-radius: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; width: 100%; transition: all 0.2s; }
+        .btn-primary:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div class="max-w-2xl mx-auto px-6 pt-10 space-y-8">
+        
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter text-slate-800 italic">ADMIN CONTROL<span class="text-indigo-500">.</span></h1>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dashboard RT Sekwan</p>
+            </div>
+            <i class="fas fa-user-shield text-2xl text-slate-300"></i>
+        </div>
+
+        <div class="admin-card space-y-4">
+            <h3 class="text-xs font-black uppercase text-indigo-500 tracking-widest"><i class="fas fa-wallet mr-2"></i> Update Saldo Kas</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <input type="number" id="kas" placeholder="Total Kas RT" class="input-style">
+                <input type="number" id="sosial" placeholder="Dana Sosial" class="input-style">
+            </div>
+            <button onclick="saveSaldo()" class="btn-primary">Update Saldo</button>
+        </div>
+
+        <div class="admin-card space-y-4">
+            <h3 class="text-xs font-black uppercase text-indigo-500 tracking-widest"><i class="fas fa-users mr-2"></i> Tambah Warga Baru</h3>
+            <div class="space-y-3">
+                <input type="text" id="warga_nama" placeholder="Nama Lengkap" class="input-style">
+                <input type="tel" id="warga_hp" placeholder="No WhatsApp (08...)" class="input-style">
+            </div>
+            <button onclick="addWarga()" class="btn-primary">Daftarkan Warga</button>
+        </div>
+
+        <div class="admin-card space-y-4">
+            <h3 class="text-xs font-black uppercase text-indigo-500 tracking-widest"><i class="fas fa-bullhorn mr-2"></i> Ubah Running Teks</h3>
+            <textarea id="ticker_teks" placeholder="Tulis pengumuman di sini..." class="input-style h-20"></textarea>
+            <button onclick="saveTicker()" class="btn-primary">Simpan Running Teks</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="admin-card space-y-4">
+                <h3 class="text-xs font-black uppercase text-indigo-500 tracking-widest">📅 Input Agenda</h3>
+                <input type="text" id="agenda_title" placeholder="Judul Kegiatan" class="input-style">
+                <input type="text" id="agenda_desc" placeholder="Waktu & Tempat" class="input-style">
+                <button onclick="saveContent('agenda')" class="btn-primary" style="background: #4f46e5;">Publish Agenda</button>
+            </div>
+            <div class="admin-card space-y-4">
+                <h3 class="text-xs font-black uppercase text-indigo-500 tracking-widest">📢 Input Informasi</h3>
+                <input type="text" id="info_title" placeholder="Judul Info" class="input-style">
+                <input type="text" id="info_desc" placeholder="Detail Singkat" class="input-style">
+                <button onclick="saveContent('info')" class="btn-primary" style="background: #4f46e5;">Publish Info</button>
+            </div>
+        </div>
+
+        <button onclick="location.href='index.html'" class="w-full text-[10px] font-black uppercase text-slate-400 tracking-widest py-4">
+            <i class="fas fa-arrow-left mr-2"></i> Kembali ke Beranda
+        </button>
+
+    </div>
+
+</body>
+              </html>
+              
