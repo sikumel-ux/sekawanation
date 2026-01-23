@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal RT Sekwan - Beranda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .bg-gradient-blue { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-10">
+
+    <header class="bg-gradient-blue text-white rounded-b-[2.5rem] px-6 py-12 shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 opacity-10 -mr-10 -mt-10">
+            <i class="fas fa-city text-[200px]"></i>
+        </div>
+        
+        <nav class="flex justify-between items-center mb-10 relative z-10">
+            <div class="flex items-center space-x-2">
+                <div class="bg-white p-2 rounded-lg">
+                    <i class="fas fa-home text-blue-600"></i>
+                </div>
+                <h1 class="font-extrabold text-lg tracking-tighter">RT SEKWAN</h1>
+            </div>
+            <a href="login.html" class="bg-blue-400/30 hover:bg-blue-400/50 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest backdrop-blur-md border border-white/20 transition">
+                Login Warga
+            </a>
+        </nav>
+
+        <div class="relative z-10">
+            <h2 class="text-3xl font-black leading-tight italic">Portal Informasi Lingkungan</h2>
+            <p class="mt-3 text-blue-100 text-sm opacity-90 leading-relaxed font-medium">Mewujudkan warga yang harmonis, aman, dan transparan melalui digitalisasi.</p>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 -mt-8 space-y-6 relative z-20">
+        
+        <div class="bg-white p-5 rounded-3xl shadow-xl border border-gray-100">
+            <div class="flex items-center space-x-2 mb-3">
+                <span class="flex h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
+                <h3 class="text-xs font-bold text-red-500 uppercase tracking-widest">Pengumuman Penting</h3>
+            </div>
+            <p class="text-sm font-semibold text-gray-700 leading-snug">
+                Penyemprotan nyamuk (Fogging) akan dilaksanakan pada hari Sabtu ini pukul 08.00 WIB. Mohon kondisikan hewan peliharaan.
+            </p>
+        </div>
+
+        <div class="space-y-3">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Agenda RT</h3>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
+                <div class="bg-blue-50 text-blue-600 px-3 py-2 rounded-xl text-center">
+                    <p class="text-[10px] font-bold uppercase">Jan</p>
+                    <p class="text-lg font-black leading-none">25</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold">Kerja Bakti Massal</h4>
+                    <p class="text-[10px] text-gray-400 italic">Lokasi: Fasum Tengah Blok A</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4 opacity-70">
+                <div class="bg-gray-50 text-gray-400 px-3 py-2 rounded-xl text-center">
+                    <p class="text-[10px] font-bold uppercase">Feb</p>
+                    <p class="text-lg font-black leading-none">05</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold">Rapat Koordinasi Pengurus</h4>
+                    <p class="text-[10px] text-gray-400 italic">Lokasi: Rumah Bapak RT</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-6 text-center italic">Struktur Pengurus</h3>
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="space-y-2 transform hover:scale-105 transition">
+                    <div class="w-14 h-14 bg-blue-100 rounded-2xl mx-auto flex items-center justify-center text-blue-600 shadow-inner">
+                        <i class="fas fa-user-shield text-xl"></i>
+                    </div>
+                    <p class="text-[10px] font-black leading-tight">Pak RT<br><span class="text-[8px] font-normal text-gray-400 uppercase tracking-tighter italic">Ketua</span></p>
+                </div>
+                <div class="space-y-2 transform hover:scale-105 transition">
+                    <div class="w-14 h-14 bg-green-100 rounded-2xl mx-auto flex items-center justify-center text-green-600 shadow-inner">
+                        <i class="fas fa-hand-holding-usd text-xl"></i>
+                    </div>
+                    <p class="text-[10px] font-black leading-tight">Ibu Ani<br><span class="text-[8px] font-normal text-gray-400 uppercase tracking-tighter italic">Bendahara</span></p>
+                </div>
+                <div class="space-y-2 transform hover:scale-105 transition">
+                    <div class="w-14 h-14 bg-purple-100 rounded-2xl mx-auto flex items-center justify-center text-purple-600 shadow-inner">
+                        <i class="fas fa-file-signature text-xl"></i>
+                    </div>
+                    <p class="text-[10px] font-black leading-tight">Bpk. Budi<br><span class="text-[8px] font-normal text-gray-400 uppercase tracking-tighter italic">Sekretaris</span></p>
+                </div>
+            </div>
+        </div>
+
+        <a href="login.html" class="block bg-gray-900 text-white p-6 rounded-3xl shadow-2xl text-center group transition-all active:scale-95">
+            <i class="fas fa-key mb-2 text-yellow-400 group-hover:rotate-12 transition"></i>
+            <h4 class="font-bold text-sm">Masuk Portal Keuangan</h4>
+            <p class="text-[9px] opacity-60 mt-1 uppercase tracking-widest font-bold">Khusus Warga Terdaftar</p>
+        </a>
+
+    </main>
+
+    <footer class="mt-12 text-center">
+        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-loose">
+            &copy; 2026 RT Sekwan Digital Community <br>
+            <span class="text-[8px] font-normal italic lowercase opacity-50">v1.0.4 build-mobile</span>
+        </p>
+    </footer>
+
+</body>
+</html>
