@@ -7,127 +7,123 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfdfe; }
-        .bubble-card { border-radius: 2.8rem; }
-        .inner-glow { box-shadow: inset 0 2px 4px rgba(255,255,255,0.3); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #ffffff; 
+            color: #1a1a1a;
+        }
+        .soft-shadow {
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+        }
+        .deep-curve {
+            border-radius: 2rem;
+        }
+        /* Menghilangkan scrollbar tapi tetap bisa di-scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="pb-32">
 
-    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-50 px-6 py-5 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <div class="bg-blue-600 p-2 rounded-2xl text-white shadow-lg shadow-blue-100">
-                <i class="fas fa-city text-xs"></i>
-            </div>
-            <h1 class="font-black italic text-sm tracking-tighter uppercase">RT SEKWAN</h1>
-        </div>
-        <div class="flex space-x-4">
-            <button onclick="location.href='pengurus.html'" class="text-[9px] font-black uppercase text-gray-400 tracking-[0.2em]">Pengurus</button>
-            <button onclick="location.href='tuntas.html'" class="text-[9px] font-black uppercase text-gray-400 tracking-[0.2em]">Tuntas</button>
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md px-6 py-6 flex justify-between items-center">
+        <h1 class="font-extrabold italic text-sm tracking-tighter text-gray-900 uppercase">RT Sekwan.</h1>
+        <div class="flex space-x-6">
+            <button onclick="location.href='pengurus.html'" class="text-[9px] font-bold uppercase text-gray-400 tracking-widest">Pengurus</button>
+            <button onclick="location.href='tuntas.html'" class="text-[9px] font-bold uppercase text-gray-400 tracking-widest">Tuntas</button>
         </div>
     </nav>
 
-    <main class="max-w-md mx-auto px-5 pt-8 space-y-10">
+    <main class="max-w-md mx-auto px-6 pt-4 space-y-12">
         
-        <div class="px-2">
-            <h2 class="text-3xl font-black text-gray-900 italic leading-none tracking-tighter">Portal Lingkungan.</h2>
-            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] mt-3 flex items-center">
-                <span class="w-8 h-[1px] bg-blue-500 mr-2"></span> Jumat, 23 Jan 2026
-            </p>
+        <div class="space-y-1">
+            <p class="text-[9px] font-bold text-gray-300 uppercase tracking-[0.3em]">Jumat, 23 Jan 2026</p>
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900">Selamat datang, <span class="italic font-extrabold text-blue-600">Tetangga.</span></h2>
         </div>
 
-        <section class="space-y-4">
-            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] px-4 italic">📌 Agenda Mendatang</h3>
-            <div class="space-y-3">
-                <div class="bubble-card bg-blue-600 p-6 text-white inner-glow shadow-xl shadow-blue-100 flex items-center space-x-5 transform hover:scale-[1.02] transition">
-                    <div class="bg-white/20 p-4 bubble-card text-center min-w-[65px]">
-                        <p class="text-[9px] font-bold uppercase">Jan</p>
-                        <p class="text-xl font-black">25</p>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-black italic uppercase leading-none">Kerja Bakti Blok A</h4>
-                        <p class="text-[10px] mt-2 opacity-70 font-medium italic">07:00 WIB • Lapangan Tengah</p>
-                    </div>
-                </div>
-                <div class="bubble-card bg-indigo-500 p-6 text-white inner-glow shadow-lg shadow-indigo-100 flex items-center space-x-5">
-                    <div class="bg-white/20 p-4 bubble-card text-center min-w-[65px]">
-                        <p class="text-[9px] font-bold uppercase">Jan</p>
-                        <p class="text-xl font-black">30</p>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-black italic uppercase leading-none">Rapat Bulanan</h4>
-                        <p class="text-[10px] mt-2 opacity-70 font-medium italic">20:00 WIB • Rumah Bpk. RT</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="space-y-4">
-            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] px-4 italic">📢 Informasi Terkini</h3>
-            <div class="space-y-3">
-                <div class="bubble-card bg-white p-6 border border-gray-100 shadow-sm flex items-center space-x-5">
-                    <div class="bg-amber-100 text-amber-600 p-4 bubble-card">
-                        <i class="fas fa-spray-can text-lg"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-black italic text-gray-800 uppercase leading-none">Fogging Nyamuk</h4>
-                        <p class="text-[10px] mt-2 text-gray-400 font-bold italic">Sabtu Pagi • Harap Tutup Makanan</p>
-                    </div>
-                </div>
-                <div class="bubble-card bg-white p-6 border border-gray-100 shadow-sm flex items-center space-x-5">
-                    <div class="bg-emerald-100 text-emerald-600 p-4 bubble-card">
-                        <i class="fas fa-trash-can text-lg"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-black italic text-gray-800 uppercase leading-none">Iuran Sampah</h4>
-                        <p class="text-[10px] mt-2 text-gray-400 font-bold italic">Penyesuaian Tarif Februari 2026</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="space-y-4">
-            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] px-4 italic text-center">🌙 Petugas Ronda Malam Ini</h3>
-            <div class="bubble-card bg-gray-900 p-8 text-white relative overflow-hidden shadow-2xl">
-                <i class="fas fa-moon absolute -top-4 -right-4 text-8xl opacity-10"></i>
-                <div class="flex justify-between items-center relative z-10">
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest italic">Regu Elang</p>
-                        <h4 class="text-lg font-black italic tracking-tighter uppercase">Bpk. Andi, Bpk. Budi,<br>Sdr. Cahyo, Bpk. Dani</h4>
-                    </div>
-                    <div class="text-right">
-                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20">
-                            <i class="fas fa-shield-halved text-blue-400"></i>
+        <section class="space-y-6">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] italic">Prioritas Pekan Ini</h3>
+            
+            <div class="bg-white border border-gray-50 soft-shadow deep-curve overflow-hidden">
+                
+                <button onclick="location.href='agenda.html'" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition border-b border-gray-50">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
+                            <i class="fas fa-calendar-alt text-xs"></i>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="text-xs font-bold text-gray-800 uppercase italic">Kerja Bakti Blok A</h4>
+                            <p class="text-[9px] text-gray-400 font-medium mt-0.5 uppercase tracking-tighter">Minggu • 07:00 WIB</p>
                         </div>
                     </div>
+                    <i class="fas fa-chevron-right text-[10px] text-gray-200"></i>
+                </button>
+
+                <button onclick="location.href='informasi.html'" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition border-b border-gray-50">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
+                            <i class="fas fa-bullhorn text-xs"></i>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="text-xs font-bold text-gray-800 uppercase italic">Fogging Nyamuk</h4>
+                            <p class="text-[9px] text-gray-400 font-medium mt-0.5 uppercase tracking-tighter">Besok Pagi • Harap Bersiap</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-[10px] text-gray-200"></i>
+                </button>
+
+                <button onclick="location.href='informasi.html'" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
+                            <i class="fas fa-tag text-xs"></i>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="text-xs font-bold text-gray-800 uppercase italic">Iuran Sampah</h4>
+                            <p class="text-[9px] text-gray-400 font-medium mt-0.5 uppercase tracking-tighter">Update Tarif Per Februari</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-[10px] text-gray-200"></i>
+                </button>
+            </div>
+        </section>
+
+        <section class="space-y-4">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] italic">Petugas Ronda</h3>
+            <div class="bg-gray-50/50 border border-gray-100 p-5 deep-curve flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-moon text-gray-300 text-xs"></i>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-800 italic">Regu Elang</p>
+                        <p class="text-[9px] text-gray-400 font-medium tracking-tight">Andi, Budi, Cahyo, Dani, Eko</p>
+                    </div>
                 </div>
+                <div class="h-1.5 w-1.5 rounded-full bg-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
             </div>
         </section>
 
     </main>
 
     <div class="fixed bottom-8 left-10 right-10 z-50">
-        <nav class="bg-white/90 backdrop-blur-xl border border-gray-100 bubble-card shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-4 flex justify-around items-center">
+        <nav class="bg-white/90 backdrop-blur-xl border border-gray-50 deep-curve soft-shadow p-4 flex justify-around items-center">
             <button onclick="location.href='index.html'" class="flex flex-col items-center text-blue-600">
-                <i class="fas fa-house text-lg"></i>
-                <span class="text-[8px] mt-1 font-black uppercase italic tracking-tighter">Home</span>
+                <i class="fas fa-circle text-[6px] mb-1.5"></i>
+                <span class="text-[8px] font-black uppercase italic tracking-widest">Home</span>
             </button>
             <button class="flex flex-col items-center text-gray-300">
-                <i class="fas fa-calendar-minus text-lg"></i>
+                <i class="fas fa-calendar-minus text-sm"></i>
                 <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter">Agenda</span>
             </button>
             <button class="flex flex-col items-center text-gray-300">
-                <i class="fas fa-info-circle text-lg"></i>
+                <i class="fas fa-info-circle text-sm"></i>
                 <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter">Info</span>
             </button>
-            <button onclick="location.href='login.html'" class="flex flex-col items-center text-amber-500">
-                <i class="fas fa-vault text-lg"></i>
-                <span class="text-[8px] mt-1 font-black uppercase italic tracking-tighter">Kas</span>
+            <button onclick="location.href='login.html'" class="flex flex-col items-center text-gray-900">
+                <div class="w-8 h-8 bg-gray-900 rounded-xl flex items-center justify-center text-white text-[10px]">
+                    <i class="fas fa-key"></i>
+                </div>
             </button>
         </nav>
     </div>
 
 </body>
 </html>
-
