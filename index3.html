@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RT Sekwan Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .banner-glow { box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.4); }
+        .curve-deep { border-radius: 2.2rem; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div class="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-200">
+                <i class="fas fa-city text-xs"></i>
+            </div>
+            <h1 class="font-black italic text-sm tracking-tighter">RT SEKWAN</h1>
+        </div>
+        <div class="flex space-x-4 overflow-x-auto hide-scroll px-2">
+            <button onclick="location.href='pengurus.html'" class="text-[9px] font-black uppercase text-gray-400">Pengurus</button>
+            <button onclick="location.href='login.html'" class="text-[9px] font-black uppercase text-amber-500">Kas</button>
+            <button onclick="location.href='login.html'" class="text-[9px] font-black uppercase text-amber-500">Lapor</button>
+        </div>
+    </nav>
+
+    <main class="max-w-md mx-auto px-5 pt-6 space-y-8">
+        
+        <div class="flex justify-between items-end px-2">
+            <div>
+                <p id="greeting" class="text-xs font-bold text-gray-400 uppercase tracking-widest">Selamat Malam</p>
+                <h2 class="text-xl font-black text-gray-800 italic leading-none mt-1">Halo, Tetangga!</h2>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 italic">23 Jan 2026</p>
+            </div>
+        </div>
+
+        <div class="flex overflow-x-auto space-x-4 hide-scroll py-2 snap-x snap-mandatory">
+            <div class="min-w-[85%] snap-center bg-blue-600 curve-deep p-6 text-white banner-glow relative overflow-hidden">
+                <i class="fas fa-calendar-check absolute -bottom-4 -right-4 text-7xl opacity-20 rotate-12"></i>
+                <span class="bg-white/20 px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest">Agenda Terdekat</span>
+                <h3 class="text-lg font-black mt-3 italic leading-tight uppercase">Kerja Bakti Massal Blok A</h3>
+                <p class="text-[10px] mt-2 opacity-80 font-medium">Minggu, 25 Januari 2026 • 07:00 WIB</p>
+            </div>
+            <div class="min-w-[85%] snap-center bg-indigo-900 curve-deep p-6 text-white relative overflow-hidden">
+                <i class="fas fa-shield-virus absolute -bottom-4 -right-4 text-7xl opacity-20 rotate-12"></i>
+                <span class="bg-white/20 px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest">Informasi</span>
+                <h3 class="text-lg font-black mt-3 italic leading-tight uppercase">Fogging Serentak</h3>
+                <p class="text-[10px] mt-2 opacity-80 font-medium">Besok Pagi! Harap tutup makanan & buka jendela sedikit.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white p-5 curve-deep shadow-sm border border-gray-100">
+                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Status Lingkungan</p>
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-sm font-extrabold italic text-gray-700 uppercase">Aman</span>
+                </div>
+            </div>
+            <div class="bg-white p-5 curve-deep shadow-sm border border-gray-100">
+                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Total Warga</p>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-users text-blue-500 text-xs"></i>
+                    <span class="text-sm font-extrabold italic text-gray-700 uppercase">124 KK</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-2 italic">Layanan Cepat</h3>
+            <div class="grid grid-cols-4 gap-4 px-2">
+                <button class="flex flex-col items-center group">
+                    <div class="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center group-active:scale-90 transition shadow-sm border border-red-100"><i class="fas fa-phone-alt"></i></div>
+                    <span class="text-[8px] font-bold mt-2 uppercase">Darurat</span>
+                </button>
+                <button class="flex flex-col items-center group">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center group-active:scale-90 transition shadow-sm border border-blue-100"><i class="fas fa-map-marker-alt"></i></div>
+                    <span class="text-[8px] font-bold mt-2 uppercase">Lokasi</span>
+                </button>
+                <button class="flex flex-col items-center group">
+                    <div class="w-12 h-12 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center group-active:scale-90 transition shadow-sm border border-green-100"><i class="fas fa-trash-alt"></i></div>
+                    <span class="text-[8px] font-bold mt-2 uppercase">Sampah</span>
+                </button>
+                <button class="flex flex-col items-center group">
+                    <div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center group-active:scale-90 transition shadow-sm border border-purple-100"><i class="fas fa-info-circle"></i></div>
+                    <span class="text-[8px] font-bold mt-2 uppercase">Bantuan</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed bottom-6 left-6 right-6 z-50">
+        <nav class="bg-white/90 backdrop-blur-xl border border-gray-100 curve-deep shadow-2xl p-4 flex justify-between items-center px-10">
+            <button onclick="location.href='index.html'" class="flex flex-col items-center text-blue-600">
+                <i class="fas fa-house text-lg"></i>
+                <span class="text-[8px] mt-1 font-black uppercase italic tracking-tighter">Home</span>
+            </button>
+            <button onclick="location.href='index.html'" class="flex flex-col items-center text-gray-400">
+                <i class="fas fa-calendar-minus text-lg"></i>
+                <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter">Agenda</span>
+            </button>
+            <button onclick="location.href='index.html'" class="flex flex-col items-center text-gray-400">
+                <i class="fas fa-info-circle text-lg"></i>
+                <span class="text-[8px] mt-1 font-bold uppercase tracking-tighter text-nowrap">Informasi</span>
+            </button>
+            <button onclick="location.href='login.html'" class="flex flex-col items-center">
+                <div class="bg-blue-600 w-10 h-10 -mt-10 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 border-4 border-white">
+                    <i class="fas fa-user text-white text-xs"></i>
+                </div>
+                <span class="text-[8px] mt-1 font-black uppercase tracking-tighter text-blue-600">Login</span>
+            </button>
+        </nav>
+    </div>
+
+</body>
+</html>
