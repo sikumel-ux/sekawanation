@@ -3,37 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App RT Digital</title>
+    <title>App RT Digital - Monitoring Kas</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-100 p-5">
+<body class="bg-gray-50 min-h-screen pb-10">
 
-    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h2 class="text-2xl font-bold mb-4 text-center text-blue-600">Input Kas RT</h2>
+    <nav class="bg-blue-600 p-4 text-white shadow-lg mb-6 text-center">
+        <h1 class="text-xl font-bold">RT DIGITAL SEKWAN</h1>
+        <p class="text-xs opacity-80">Transparansi Keuangan Warga</p>
+    </nav>
+
+    <div class="max-w-md mx-auto px-4 space-y-6">
         
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Keterangan</label>
-                <input type="text" id="keterangan" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="Contoh: Iuran Bulanan">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold mb-4 text-gray-800 flex items-center">
+                <span class="bg-blue-100 text-blue-600 p-2 rounded-lg mr-2">📝</span>
+                Input Kas Baru
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Keterangan</label>
+                    <input type="text" id="keterangan" class="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Contoh: Iuran Keamanan">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nominal (Rp)</label>
+                    <input type="number" id="nominal" class="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="50000">
+                </div>
+                <button onclick="simpanData()" id="btnSimpan" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold shadow-md hover:bg-blue-700 active:scale-95 transition-all">
+                    SIMPAN DATA
+                </button>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Nominal (Rp)</label>
-                <input type="number" id="nominal" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="100000">
-            </div>
-            <button onclick="simpanData()" id="btnSimpan" class="w-full bg-blue-500 text-white p-3 rounded-lg font-bold hover:bg-blue-600 transition">
-                SIMPAN DATA
-            </button>
+
+            <div id="status" class="mt-4 text-center text-sm hidden animate-pulse"></div>
         </div>
 
-        <div id="status" class="mt-4 text-center text-sm hidden"></div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold mb-4 text-gray-800 flex items-center">
+                <span class="bg-green-100 text-green-600 p-2 rounded-lg mr-2">📊</span>
+                Riwayat Kas
+            </h2>
+            <div class="overflow-hidden rounded-xl border border-gray-50">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-50 text-gray-500 font-semibold">
+                        <tr>
+                            <th class="px-4 py-3">Keterangan</th>
+                            <th class="px-4 py-3 text-right">Nominal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelKas" class="divide-y divide-gray-100">
+                        <tr>
+                            <td colspan="2" class="px-4 py-8 text-center text-gray-400 italic">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
-        // Import Firebase dari versi 10.x.x (lebih stabil untuk CDN)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIG KAMU
+        // Config Kamu (Sudah terpasang)
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
             authDomain: "websekawan.firebaseapp.com",
@@ -45,51 +82,80 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const kasCollection = collection(db, "kas_rt");
 
-        // Fungsi Simpan agar bisa dipanggil dari tombol
+        // --- 1. FUNGSI TAMPIL DATA (REAL-TIME) ---
+        const q = query(kasCollection, orderBy("tanggal", "desc"), limit(10));
+
+        onSnapshot(q, (snapshot) => {
+            const tabel = document.getElementById('tabelKas');
+            tabel.innerHTML = "";
+            
+            if (snapshot.empty) {
+                tabel.innerHTML = '<tr><td colspan="2" class="px-4 py-8 text-center text-gray-400">Belum ada data kas.</td></tr>';
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const row = `
+                    <tr class="hover:bg-blue-50 transition">
+                        <td class="px-4 py-3 font-medium text-gray-700">${data.keterangan}</td>
+                        <td class="px-4 py-3 text-right font-bold text-green-600">
+                            Rp ${Number(data.nominal).toLocaleString('id-ID')}
+                        </td>
+                    </tr>
+                `;
+                tabel.innerHTML += row;
+            });
+        });
+
+        // --- 2. FUNGSI SIMPAN DATA ---
         window.simpanData = async () => {
             const ket = document.getElementById('keterangan').value;
             const nom = document.getElementById('nominal').value;
             const btn = document.getElementById('btnSimpan');
             const status = document.getElementById('status');
 
-            if(!ket || !nom) return alert("Isi keterangannya dulu bro!");
+            if(!ket || !nom) return alert("Woi bro, isi dulu dong datanya!");
 
             btn.disabled = true;
-            btn.innerText = "Sabar, lagi proses...";
+            btn.innerHTML = "Sedang Mengirim...";
 
             try {
-                // 1. Simpan ke Firestore
-                await addDoc(collection(db, "kas_rt"), {
+                // Simpan ke Firestore
+                await addDoc(kasCollection, {
                     keterangan: ket,
                     nominal: parseInt(nom),
                     tanggal: serverTimestamp()
                 });
 
-                // 2. Kirim ke Google Apps Script (Sesuai API Memory-mu)
+                // Kirim ke API Google Apps Script kamu
                 const apiURL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
                 
                 await fetch(apiURL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ keterangan: ket, nominal: nom })
                 });
 
-                status.innerText = "✅ Mantap! Data masuk Firebase & Sheets.";
-                status.className = "mt-4 text-center text-sm text-green-600 font-bold";
-                status.classList.remove('hidden');
-                
+                // Reset Form
                 document.getElementById('keterangan').value = "";
                 document.getElementById('nominal').value = "";
+                
+                status.innerText = "✅ Berhasil! Data sudah di-backup ke Sheets.";
+                status.className = "mt-4 text-center text-sm text-green-600 font-bold";
+                status.classList.remove('hidden');
 
             } catch (e) {
-                status.innerText = "❌ Aduh Gagal: " + e.message;
-                status.className = "mt-4 text-center text-sm text-red-600 font-bold";
+                console.error(e);
+                status.innerText = "❌ Eror: " + e.message;
+                status.className = "mt-4 text-center text-sm text-red-500 font-bold";
                 status.classList.remove('hidden');
             } finally {
                 btn.disabled = false;
-                btn.innerText = "SIMPAN DATA";
+                btn.innerHTML = "SIMPAN DATA";
+                setTimeout(() => status.classList.add('hidden'), 5000);
             }
         }
     </script>
