@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RT Digital Sekwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // CONFIG FIREBASE (Ganti dengan punyamu)
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "rt-sekwan.firebaseapp.com",
+            databaseURL: "https://rt-sekwan-default-rtdb.firebaseio.com",
+            projectId: "rt-sekwan"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- 1. CEK STATUS LOGIN & TAMPILKAN KAS ---
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const sectionKas = document.getElementById('section-kas');
+        const loginBtn = document.getElementById('login-nav-btn');
+
+        if (isLoggedIn) {
+            sectionKas.classList.remove('hidden');
+            loginBtn.innerHTML = '<i class="fas fa-user-check text-xl"></i><span class="text-[9px] mt-1 font-black uppercase italic">Profil</span>';
+            
+            // Tarik Data Saldo dari Firebase
+            onValue(ref(db, 'keuangan'), (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    document.getElementById('display-kas').innerText = 'Rp ' + parseInt(data.kas).toLocaleString('id-ID');
+                    document.getElementById('display-sosial').innerText = 'Rp ' + parseInt(data.sosial).toLocaleString('id-ID');
+                }
+            });
+        }
+
+        // --- 2. TARIK DATA TICKER (RUNNING TEXT) ---
+        onValue(ref(db, 'settings/ticker'), (snapshot) => {
+            if (snapshot.exists()) {
+                document.getElementById('ticker-wrapper').innerHTML = `<span class="ticker-item italic">✦ ${snapshot.val()}</span>`;
+            }
+        });
+
+        // --- 3. TARIK JADWAL RONDA (SESUAI HARI INI) ---
+        const hariIni = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][new Date().getDay()];
+        onValue(ref(db, 'ronda/' + hariIni.toLowerCase()), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById('ronda-petugas').innerText = data.petugas;
+                document.getElementById('ronda-kelompok').innerText = data.kelompok;
+            }
+        });
+
+        // --- 4. TARIK AGENDA TERBARU ---
+        const agendaRef = query(ref(db, 'content/agenda'), limitToLast(1));
+        onValue(agendaRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = Object.values(snapshot.val())[0];
+                document.getElementById('agenda-view').innerHTML = `
+                    <h4 class="text-2xl font-black italic leading-tight uppercase">${data.judul}</h4>
+                    <p class="text-xs mt-3 font-bold opacity-90 uppercase italic text-blue-200">${data.tanggal} • ${data.keterangan}</p>
+                `;
+            }
+        });
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        :root { --biru-tua: #1C4D8D; --biru-mid: #4988C4; --biru-muda: #BDE8F5; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .floating-curve { border-radius: 2.5rem; }
+        .soft-shadow { box-shadow: 0 20px 40px -10px rgba(28, 77, 141, 0.12); }
+        .ticker-container { overflow: hidden; white-space: nowrap; background: var(--biru-muda); border-radius: 50px; margin: 10px 20px; padding: 10px 0; border: 1px solid white; }
+        .ticker-wrapper { display: inline-block; animation: ticker-anim 20s linear infinite; }
+        .ticker-item { display: inline-block; padding-right: 60px; font-size: 11px; font-weight: 800; color: var(--biru-tua); text-transform: uppercase; }
+        @keyframes ticker-anim { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+    </style>
+</head>
+<body class="pb-40">
+
+    <header class="p-6 pb-2 flex justify-between items-center bg-white/70 backdrop-blur-lg sticky top-0 z-50">
+        <div>
+            <h1 class="text-2xl font-black italic tracking-tighter" style="color: var(--biru-tua);">SEKWAN<span style="color: var(--biru-mid);">.</span></h1>
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em]">RT Digital Hub</p>
+        </div>
+        <div class="text-right">
+            <p id="clock" class="text-xl font-black text-slate-800 tracking-tighter">00:00</p>
+        </div>
+    </header>
+
+    <div class="ticker-container soft-shadow">
+        <div class="ticker-wrapper" id="ticker-wrapper">
+            <span class="ticker-item italic">✦ Memuat informasi terbaru...</span>
+        </div>
+    </div>
+
+    <main class="max-w-md mx-auto px-5 mt-4 space-y-6">
+
+        <section id="section-kas" class="hidden grid grid-cols-2 gap-3 px-1">
+            <div class="bg-white p-5 floating-curve soft-shadow border-2 border-blue-50">
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Kas RT</p>
+                <p id="display-kas" class="text-sm font-black text-blue-900 tracking-tight">Rp --</p>
+            </div>
+            <div class="bg-white p-5 floating-curve soft-shadow border-2 border-pink-50">
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Dana Sosial</p>
+                <p id="display-sosial" class="text-sm font-black text-pink-600 tracking-tight">Rp --</p>
+            </div>
+        </section>
+        
+        <div class="grid grid-cols-12 gap-3 px-1">
+             </div>
+
+        <section class="space-y-3">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] px-4 italic text-slate-300">📅 Agenda RT</p>
+            <div class="floating-curve p-8 text-white soft-shadow relative overflow-hidden min-h-[140px] flex items-center" style="background: var(--biru-tua);">
+                <i class="fas fa-calendar-alt absolute -bottom-4 -right-4 text-9xl opacity-10"></i>
+                <div id="agenda-view" class="w-full">
+                    <p class="text-xs italic opacity-50">Memuat agenda...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white p-6 floating-curve soft-shadow border border-white flex items-center justify-between mx-1">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style="background: var(--biru-mid);">
+                    <i class="fas fa-moon"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Ronda Malam Ini</p>
+                    <p id="ronda-petugas" class="text-xs font-extrabold text-slate-700 italic uppercase">--</p>
+                </div>
+            </div>
+            <span id="ronda-kelompok" class="text-[9px] font-black px-3 py-1 rounded-lg uppercase tracking-tighter" style="background: var(--biru-muda); color: var(--biru-tua);">--</span>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-6 left-8 right-8 z-50">
+        <nav class="bg-white/95 backdrop-blur-xl floating-curve shadow-2xl p-4 flex justify-around items-center">
+            <button onclick="location.href='index.html'" class="flex flex-col items-center" style="color: var(--biru-tua);">
+                <i class="fas fa-house-chimney text-xl"></i>
+                <span class="text-[9px] mt-1 font-black uppercase italic">Home</span>
+            </button>
+            <button id="login-nav-btn" onclick="location.href='login.html'" class="flex flex-col items-center text-slate-300">
+                <i class="fas fa-lock text-xl"></i>
+                <span class="text-[9px] mt-1 font-bold uppercase">Login</span>
+            </button>
+        </nav>
+    </div>
+
+</body>
+</html>
