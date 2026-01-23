@@ -8,103 +8,151 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        :root { --biru-tua: #1C4D8D; --biru-mid: #4988C4; --biru-muda: #BDE8F5; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfdfe; color: #1e293b; }
-        .floating-curve { border-radius: 2.2rem; }
-        .soft-shadow { box-shadow: 0 12px 30px -10px rgba(28, 77, 141, 0.1); }
         
-        /* Ticker Style */
-        .ticker-box { background: var(--biru-muda); border-radius: 50px; overflow: hidden; height: 32px; display: flex; align-items: center; border: 1px solid white; }
-        .ticker-move { display: inline-block; white-space: nowrap; animation: move 25s linear infinite; font-size: 10px; font-weight: 800; color: var(--biru-tua); text-transform: uppercase; }
-        @keyframes move { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        :root {
+            --biru-tua: #1C4D8D;
+            --biru-mid: #4988C4;
+            --biru-muda: #BDE8F5;
+        }
 
-        /* Animation */
-        .fade-item { display: none; animation: fadeIn 0.8s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f4f8fb; 
+            color: #1e293b; 
+        }
+        
+        .floating-curve { border-radius: 2.5rem; }
+        .soft-shadow { box-shadow: 0 20px 40px -10px rgba(28, 77, 141, 0.15); }
+
+        /* Ticker Animation Fix */
+        .ticker-container { 
+            overflow: hidden; 
+            white-space: nowrap; 
+            background: var(--biru-muda); 
+            border-radius: 50px; 
+            margin: 10px 20px;
+            padding: 10px 0;
+            border: 1px solid rgba(73, 136, 196, 0.3);
+        }
+        .ticker-wrapper {
+            display: inline-block;
+            animation: ticker-anim 25s linear infinite;
+        }
+        .ticker-item {
+            display: inline-block;
+            padding-right: 50px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--biru-tua);
+            text-transform: uppercase;
+        }
+        @keyframes ticker-anim {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Fade Animation for Banners */
+        .slide-fade { display: none; animation: fadeEffect 1s ease-in-out; }
+        @keyframes fadeEffect { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="pb-36">
 
     <header class="p-6 pb-2 flex justify-between items-center bg-white/50 backdrop-blur-md sticky top-0 z-50">
         <div>
-            <h1 class="text-xl font-black italic tracking-tighter" style="color: var(--biru-tua);">SEKWAN<span style="color: var(--biru-mid);">.</span></h1>
-            <p class="text-[8px] font-black text-gray-300 uppercase tracking-[0.3em]">Smart Neighborhood</p>
+            <h1 class="text-2xl font-black italic tracking-tighter" style="color: var(--biru-tua);">SEKWAN<span style="color: var(--biru-mid);">.</span></h1>
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em]">Neighborhood Digital</p>
         </div>
         <div class="text-right">
-            <p id="clock" class="text-sm font-black text-slate-800 tracking-tighter">21:22</p>
-            <p class="text-[8px] font-bold text-blue-500 uppercase">WIB</p>
+            <p id="clock" class="text-lg font-black text-slate-900 tracking-tighter">00:00</p>
+            <p class="text-[9px] font-bold text-blue-500 uppercase">WIB</p>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-5 space-y-6 pt-2">
-
-        <div class="ticker-box mx-1 shadow-sm">
-            <div class="ticker-move italic">
-                ✦ Fogging serentak hari Sabtu pukul 08.00 ✦ Laporan kas warga periode Januari telah terbit ✦ Jaga keamanan lingkungan ✦
-            </div>
+    <div class="ticker-container shadow-sm">
+        <div class="ticker-wrapper">
+            <span class="ticker-item italic">✦ Fogging serentak hari Sabtu pukul 08.00 WIB</span>
+            <span class="ticker-item italic">✦ Laporan kas warga periode Januari telah terbit</span>
+            <span class="ticker-item italic">✦ Tetap jaga kebersihan dan keamanan lingkungan bersama</span>
         </div>
+    </div>
+
+    <main class="max-w-md mx-auto px-5 mt-4 space-y-8">
         
-        <div class="grid grid-cols-12 gap-3 px-1">
-            <div class="col-span-5 bg-white p-4 floating-curve soft-shadow border border-slate-50 flex flex-col items-center justify-center text-center">
-                <i class="fas fa-cloud-showers-heavy text-blue-400 text-xl mb-1"></i>
-                <h4 class="text-lg font-black tracking-tighter" style="color: var(--biru-tua);">26°C</h4>
-                <p class="text-[8px] font-bold text-slate-400 uppercase">Hujan Ringan</p>
+        <div class="grid grid-cols-12 gap-3">
+            <div class="col-span-5 bg-white p-5 floating-curve soft-shadow border border-white flex flex-col items-center justify-center text-center">
+                <div id="weather-icon">
+                    <i class="fas fa-circle-notch fa-spin text-blue-200"></i>
+                </div>
+                <h4 id="temp" class="text-xl font-black tracking-tighter" style="color: var(--biru-tua);">--°C</h4>
+                <p id="weather-desc" class="text-[8px] font-bold text-slate-400 uppercase">Memuat...</p>
             </div>
-            <div class="col-span-7 bg-white p-4 floating-curve soft-shadow border border-slate-50 flex flex-col justify-center">
+            <div class="col-span-7 bg-white p-5 floating-curve soft-shadow border border-white flex flex-col justify-center">
                 <div class="flex justify-between items-center mb-2">
                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Jadwal Sholat</p>
-                    <i class="fas fa-mosque text-blue-200 text-xs"></i>
+                    <i class="fas fa-mosque text-blue-100 text-xs"></i>
                 </div>
                 <div class="flex justify-between items-center">
                     <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Selanjutnya</p>
-                        <p class="text-sm font-black italic uppercase" style="color: var(--biru-tua);">Subuh</p>
+                        <p id="prayer-name" class="text-[10px] font-bold text-slate-400 uppercase">Berikutnya</p>
+                        <p id="next-prayer" class="text-sm font-black italic uppercase" style="color: var(--biru-tua);">--</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-lg font-black tracking-tighter text-blue-600">04:15</p>
+                        <p id="prayer-time" class="text-xl font-black tracking-tighter text-blue-600">--:--</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <section class="space-y-3">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] px-4 italic text-slate-300">📅 Agenda RT</h3>
-            <div class="floating-curve p-8 text-white soft-shadow relative overflow-hidden min-h-[160px] flex items-center" style="background: var(--biru-tua);">
-                <i class="fas fa-calendar-day absolute -bottom-4 -right-4 text-8xl opacity-10"></i>
-                <div class="fade-item w-full agenda-loop">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] px-4 italic text-gray-400">📅 Agenda RT</p>
+            <div class="floating-curve p-8 text-white soft-shadow relative overflow-hidden min-h-[160px] flex items-center cursor-pointer" style="background: var(--biru-tua);" onclick="location.href='agenda.html'">
+                <i class="fas fa-calendar-check absolute -bottom-4 -right-4 text-9xl opacity-10"></i>
+                <div class="slide-fade w-full agenda-loop">
                     <h4 class="text-2xl font-black italic leading-tight uppercase">Kerja Bakti Blok A</h4>
-                    <p class="text-xs mt-3 font-bold opacity-80 italic" style="color: var(--biru-muda);">25 Januari • 07:00 WIB • Lapangan</p>
+                    <p class="text-xs mt-3 font-bold opacity-90 uppercase italic" style="color: var(--biru-muda);">25 Jan • 07:00 WIB • Lapangan</p>
                 </div>
-                <div class="fade-item w-full agenda-loop">
-                    <h4 class="text-2xl font-black italic leading-tight uppercase">Rapat Pengurus</h4>
-                    <p class="text-xs mt-3 font-bold opacity-80 italic" style="color: var(--biru-muda);">30 Januari • 20:00 WIB • Balai</p>
+                <div class="slide-fade w-full agenda-loop">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase">Rapat Warga</h4>
+                    <p class="text-xs mt-3 font-bold opacity-90 uppercase italic" style="color: var(--biru-muda);">30 Jan • 20:00 WIB • Balai</p>
                 </div>
-            </div>
-        </section>
-
-        <section class="bg-white p-6 floating-curve soft-shadow border border-slate-50 flex items-center justify-between mx-1">
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style="background: var(--biru-mid);">
-                    <i class="fas fa-moon text-lg"></i>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Petugas Ronda</p>
-                    <p class="text-xs font-extrabold text-slate-700 italic uppercase">Andi, Budi, Cahyo, Dani, Eko</p>
+                <div class="slide-fade w-full agenda-loop">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase">Senam Sehat</h4>
+                    <p class="text-xs mt-3 font-bold opacity-90 uppercase italic" style="color: var(--biru-muda);">01 Feb • 06:30 WIB • Gazebo</p>
                 </div>
             </div>
-            <span class="text-[8px] font-black px-3 py-1 rounded-lg uppercase tracking-widest" style="background: var(--biru-muda); color: var(--biru-tua);">Elang</span>
         </section>
 
         <section class="space-y-3">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] px-4 italic text-slate-300">📢 Info Terkini</h3>
-            <div class="floating-curve p-8 border-2 soft-shadow min-h-[160px] flex items-center relative bg-white" style="border-color: var(--biru-muda);">
-                <div class="fade-item-info w-full info-loop">
-                    <h4 class="text-2xl font-black italic leading-tight uppercase" style="color: var(--biru-tua);">Fogging Nyamuk</h4>
-                    <p class="text-xs mt-2 font-extrabold italic text-slate-400">Harap menutup makanan di meja makan.</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-center italic text-gray-400">Petugas Ronda Malam Ini</p>
+            <div class="floating-curve p-6 flex items-center justify-between border border-white shadow-sm" style="background: var(--biru-muda);">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md" style="background: var(--biru-mid);">
+                        <i class="fas fa-shield-halved text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black uppercase tracking-widest" style="color: var(--biru-tua);">Regu Elang</p>
+                        <p class="text-xs font-bold text-gray-800 italic">Andi, Budi, Cahyo, Dani, Eko</p>
+                    </div>
                 </div>
-                <div class="fade-item-info w-full info-loop">
+                <i class="fas fa-moon opacity-20 text-blue-900"></i>
+            </div>
+        </section>
+
+        <section class="space-y-3 pb-10">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] px-4 italic text-gray-400">📢 Info Terkini</p>
+            <div class="floating-curve p-8 border-2 soft-shadow min-h-[160px] flex items-center relative bg-white cursor-pointer" style="border-color: var(--biru-muda);" onclick="location.href='informasi.html'">
+                <div class="slide-fade w-full info-loop">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase" style="color: var(--biru-tua);">Fogging Nyamuk</h4>
+                    <p class="text-xs mt-2 font-bold italic" style="color: var(--biru-mid);">Mohon pintu dibuka saat petugas lewat.</p>
+                </div>
+                <div class="slide-fade w-full info-loop">
                     <h4 class="text-2xl font-black italic leading-tight uppercase" style="color: var(--biru-tua);">Iuran Sampah</h4>
-                    <p class="text-xs mt-2 font-extrabold italic text-slate-400">Penyesuaian tarif per Februari 2026.</p>
+                    <p class="text-xs mt-2 font-bold italic" style="color: var(--biru-mid);">Update tarif per Februari 2026.</p>
+                </div>
+                <div class="slide-fade w-full info-loop">
+                    <h4 class="text-2xl font-black italic leading-tight uppercase" style="color: var(--biru-tua);">Wifi Area</h4>
+                    <p class="text-xs mt-2 font-bold italic" style="color: var(--biru-mid);">Hotspot Balai RT sudah aktif kembali.</p>
                 </div>
             </div>
         </section>
@@ -114,40 +162,89 @@
     <div class="fixed bottom-6 left-8 right-8 z-50">
         <nav class="bg-white/95 backdrop-blur-xl floating-curve shadow-2xl p-4 flex justify-around items-center border border-white/50">
             <button onclick="location.href='index.html'" class="flex flex-col items-center" style="color: var(--biru-tua);">
-                <i class="fas fa-house-chimney text-lg"></i>
-                <span class="text-[8px] mt-1 font-black uppercase italic tracking-tighter">Home</span>
+                <i class="fas fa-house-chimney text-xl"></i>
+                <span class="text-[9px] mt-1 font-black uppercase italic tracking-tighter">Home</span>
             </button>
             <button class="flex flex-col items-center text-slate-300">
-                <i class="fas fa-file-invoice-dollar text-lg"></i>
-                <span class="text-[8px] mt-1 font-bold uppercase">Laporan</span>
+                <i class="fas fa-file-invoice-dollar text-xl"></i>
+                <span class="text-[9px] mt-1 font-bold uppercase">Laporan</span>
             </button>
             <button onclick="location.href='login.html'" class="flex flex-col items-center">
-                <div class="w-12 h-12 rounded-[1.6rem] flex items-center justify-center shadow-lg text-white transform active:scale-95 transition" style="background: var(--biru-tua);">
-                    <i class="fas fa-vault text-lg"></i>
+                <div class="w-14 h-14 rounded-full flex items-center justify-center shadow-lg text-white transition transform active:scale-90 border-4 border-white" style="background: var(--biru-tua);">
+                    <i class="fas fa-vault text-xl"></i>
                 </div>
             </button>
         </nav>
     </div>
 
     <script>
-        function runLoop(name) {
-            let i = 0; const items = document.getElementsByClassName(name);
+        // --- 1. SLIDER LOGIC ---
+        function setupSlider(className) {
+            let idx = 0;
+            const slides = document.getElementsByClassName(className);
             function next() {
-                for (let x=0; x<items.length; x++) items[x].style.display="none";
-                i++; if (i > items.length) i = 1;
-                items[i-1].style.display="block";
-                setTimeout(next, 5000);
+                for (let i = 0; i < slides.length; i++) slides[i].style.display = "none";
+                idx++; if (idx > slides.length) idx = 1;
+                slides[idx-1].style.display = "block";
+                setTimeout(next, 5000); // Ganti tiap 5 detik
             }
             next();
         }
-        runLoop("agenda-loop"); runLoop("info-loop");
+        setupSlider("agenda-loop");
+        setupSlider("info-loop");
 
-        // Simple Clock
+        // --- 2. WEATHER DATA (BANTUL) ---
+        async function getWeatherData() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
+                const data = await res.json();
+                const temp = Math.round(data.current_weather.temperature);
+                document.getElementById('temp').innerText = temp + '°C';
+                
+                const iconEl = document.getElementById('weather-icon');
+                if (temp > 30) {
+                    iconEl.innerHTML = '<i class="fas fa-sun text-amber-400 text-2xl mb-1"></i>';
+                    document.getElementById('weather-desc').innerText = 'Cerah';
+                } else {
+                    iconEl.innerHTML = '<i class="fas fa-cloud-sun text-blue-400 text-2xl mb-1"></i>';
+                    document.getElementById('weather-desc').innerText = 'Berawan';
+                }
+            } catch (e) { document.getElementById('weather-desc').innerText = 'Offline'; }
+        }
+
+        // --- 3. PRAYER TIMES (BANTUL) ---
+        async function getPrayerData() {
+            try {
+                const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Bantul&country=Indonesia&method=11`);
+                const data = await res.json();
+                const timings = data.data.timings;
+                const schedule = [
+                    { name: 'Subuh', time: timings.Fajr },
+                    { name: 'Dzuhur', time: timings.Dhuhr },
+                    { name: 'Ashar', time: timings.Asr },
+                    { name: 'Maghrib', time: timings.Maghrib },
+                    { name: 'Isya', time: timings.Isha }
+                ];
+
+                const now = new Date();
+                const currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+                let next = schedule.find(s => s.time > currentTime) || schedule[0];
+
+                document.getElementById('next-prayer').innerText = next.name;
+                document.getElementById('prayer-time').innerText = next.time;
+            } catch (e) { document.getElementById('next-prayer').innerText = 'Error'; }
+        }
+
+        // --- 4. CLOCK ---
         setInterval(() => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            const d = new Date();
+            document.getElementById('clock').innerText = d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
         }, 1000);
+
+        // Run all
+        getWeatherData();
+        getPrayerData();
     </script>
 </body>
-                </html>
-                
+    </html>
+                    
