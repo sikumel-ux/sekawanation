@@ -27,22 +27,19 @@
 
         // Global Save Function
         window.saveData = function(path, data, msg) {
-            const dbRef = ref(db, path);
-            set(dbRef, data)
-            .then(() => { alert(msg + " Berhasil Diupdate!"); location.reload(); })
+            set(ref(db, path), data)
+            .then(() => { alert(msg + " Berhasil!"); location.reload(); })
             .catch((e) => alert("Gagal: " + e));
         };
 
         // Handlers
         window.handleRonda = () => {
             const hari = document.getElementById('ronda_hari').value;
-            const data = {
+            saveData('ronda/' + hari.toLowerCase(), {
                 hari: hari,
                 petugas: document.getElementById('ronda_nama').value,
                 kelompok: document.getElementById('ronda_kelompok').value
-            };
-            // Kita simpan berdasarkan hari biar gampang nariknya
-            saveData('ronda/' + hari.toLowerCase(), data, "Jadwal Ronda " + hari);
+            }, "Jadwal Ronda " + hari);
         };
 
         window.handleSaldo = () => saveData('keuangan', { 
@@ -60,6 +57,15 @@
                 keterangan: document.getElementById('agenda_ket').value,
                 timestamp: Date.now()
             }).then(() => { alert("Agenda Terpublish!"); location.reload(); });
+        };
+
+        window.handleInfo = () => {
+            const newRef = push(ref(db, 'content/info'));
+            set(newRef, {
+                judul: document.getElementById('info_judul').value,
+                keterangan: document.getElementById('info_ket').value,
+                timestamp: Date.now()
+            }).then(() => { alert("Informasi Terpublish!"); location.reload(); });
         };
 
         window.handleLapak = () => {
@@ -98,29 +104,11 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-black italic tracking-tighter">ADMIN<span class="text-indigo-600">HUB.</span></h1>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">RT Digital Control Center</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Integrated Control Center</p>
             </div>
             <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl">
-                <i class="fas fa-fingerprint text-xl"></i>
+                <i class="fas fa-screwdriver-wrench"></i>
             </div>
-        </div>
-
-        <div class="admin-card border-l-8 border-indigo-600">
-            <h3 class="text-xs font-black uppercase text-indigo-600 tracking-widest mb-4"><i class="fas fa-moon mr-2"></i> Atur Jadwal Ronda</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <select id="ronda_hari" class="input-style">
-                    <option value="Senin">Senin</option>
-                    <option value="Selasa">Selasa</option>
-                    <option value="Rabu">Rabu</option>
-                    <option value="Kamis">Kamis</option>
-                    <option value="Jumat">Jumat</option>
-                    <option value="Sabtu">Sabtu</option>
-                    <option value="Minggu">Minggu</option>
-                </select>
-                <input type="text" id="ronda_kelompok" placeholder="Nama Kelompok (Ex: Elang)" class="input-style">
-            </div>
-            <input type="text" id="ronda_nama" placeholder="Nama Petugas (Pisahkan dengan koma: Andi, Budi...)" class="input-style mt-4">
-            <button onclick="handleRonda()" class="btn-primary mt-4 bg-indigo-600">Update Jadwal Hari Terpilih</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -135,24 +123,47 @@
             <div class="admin-card">
                 <h3 class="text-xs font-black uppercase text-slate-500 tracking-widest mb-4"><i class="fas fa-bullhorn mr-2"></i> Ticker</h3>
                 <div class="space-y-3">
-                    <textarea id="ticker_teks" placeholder="Isi pengumuman..." class="input-style h-[88px]"></textarea>
+                    <textarea id="ticker_teks" placeholder="Isi pengumuman jalan..." class="input-style h-[88px]"></textarea>
                     <button onclick="handleTicker()" class="btn-primary">Simpan Teks</button>
                 </div>
             </div>
         </div>
 
-        <div class="admin-card">
-            <h3 class="text-xs font-black uppercase text-indigo-600 tracking-widest mb-4"><i class="fas fa-calendar-alt mr-2"></i> Publish Agenda</h3>
+        <div class="admin-card border-l-8 border-indigo-600">
+            <h3 class="text-xs font-black uppercase text-indigo-600 tracking-widest mb-4"><i class="fas fa-moon mr-2"></i> Atur Jadwal Ronda</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="agenda_judul" placeholder="Judul" class="input-style">
-                <input type="date" id="agenda_tgl" class="input-style">
+                <select id="ronda_hari" class="input-style">
+                    <option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option>
+                    <option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option>
+                </select>
+                <input type="text" id="ronda_kelompok" placeholder="Nama Kelompok" class="input-style">
             </div>
-            <input type="text" id="agenda_ket" placeholder="Keterangan Tempat/Waktu" class="input-style mt-4">
-            <button onclick="handleAgenda()" class="btn-primary mt-4">Simpan Agenda</button>
+            <input type="text" id="ronda_nama" placeholder="Daftar Petugas (Pisahkan dengan koma)" class="input-style mt-4">
+            <button onclick="handleRonda()" class="btn-primary mt-4 bg-indigo-600">Simpan Jadwal Ronda</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="admin-card">
+                <h3 class="text-xs font-black uppercase text-indigo-600 tracking-widest mb-4"><i class="fas fa-calendar-alt mr-2"></i> Agenda</h3>
+                <div class="space-y-3">
+                    <input type="text" id="agenda_judul" placeholder="Judul Agenda" class="input-style">
+                    <input type="date" id="agenda_tgl" class="input-style">
+                    <input type="text" id="agenda_ket" placeholder="Keterangan" class="input-style">
+                    <button onclick="handleAgenda()" class="btn-primary">Publish Agenda</button>
+                </div>
+            </div>
+            <div class="admin-card">
+                <h3 class="text-xs font-black uppercase text-blue-500 tracking-widest mb-4"><i class="fas fa-info-circle mr-2"></i> Informasi</h3>
+                <div class="space-y-3">
+                    <input type="text" id="info_judul" placeholder="Judul Informasi" class="input-style">
+                    <textarea id="info_ket" placeholder="Detail Informasi..." class="input-style h-20"></textarea>
+                    <button onclick="handleInfo()" class="btn-primary bg-blue-500">Publish Info</button>
+                </div>
+            </div>
         </div>
 
         <div class="admin-card border-l-8 border-pink-500">
-            <h3 class="text-xs font-black uppercase text-pink-500 tracking-widest mb-4"><i class="fas fa-store mr-2"></i> Tambah Lapak UMKM</h3>
+            <h3 class="text-xs font-black uppercase text-pink-500 tracking-widest mb-4"><i class="fas fa-store mr-2"></i> Lapak Warga</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="text" id="lapak_nama" placeholder="Nama Pemilik" class="input-style">
                 <input type="text" id="lapak_produk" placeholder="Nama Produk" class="input-style">
