@@ -2,159 +2,246 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Warga - RT Sekwan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RT Digital Sekwan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        /* Sembunyikan konten utama sebelum satpam izinkan lewat */
-        #mainContent { display: none; }
-    </style>
-</head>
-<body class="bg-gray-100 min-h-screen pb-10">
-
-    <div id="mainContent">
-        <nav class="bg-blue-700 p-5 text-white shadow-md sticky top-0 z-10 flex justify-between items-center">
-            <div class="text-left">
-                <h1 class="text-lg font-bold">PORTAL WARGA</h1>
-                <p id="userStatus" class="text-[10px] text-yellow-300">Memverifikasi...</p>
-            </div>
-            <button id="btnLogout" class="bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md">LOGOUT</button>
-        </nav>
-
-        <div class="max-w-md mx-auto px-4 mt-6 space-y-6">
-            
-            <div class="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-3xl shadow-xl text-white text-center">
-                <p class="text-sm opacity-80 mb-1">Total Saldo Kas RT</p>
-                <h2 id="totalSaldo" class="text-4xl font-bold italic">Rp 0</h2>
-                <div id="tglUpdate" class="mt-4 text-[10px] opacity-70 italic">-</div>
-            </div>
-
-            <div id="adminPanel" class="bg-white p-6 rounded-2xl shadow-sm border-2 border-blue-400">
-                <h3 class="text-md font-bold mb-4 text-blue-700 flex items-center">
-                    <span class="mr-2">➕</span> Input Data Kas
-                </h3>
-                <div class="space-y-4">
-                    <input type="text" id="keterangan" class="w-full border border-gray-300 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="Keterangan (Contoh: Iuran Keamanan)">
-                    <input type="number" id="nominal" class="w-full border border-gray-300 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nominal Rp">
-                    <button onclick="simpanData()" id="btnSimpan" class="w-full bg-blue-600 text-white p-3 rounded-xl font-bold shadow-lg active:scale-95 transition-all">SIMPAN DATA</button>
-                </div>
-                <div id="status" class="mt-3 text-center text-xs hidden font-bold"></div>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between">
-                    <h3 class="font-bold text-gray-700 text-xs uppercase tracking-widest">10 Transaksi Terakhir</h3>
-                </div>
-                <table class="w-full text-sm">
-                    <tbody id="tabelKas" class="divide-y divide-gray-100">
-                        <tr><td class="p-10 text-center text-gray-400 italic">Memuat riwayat...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
-            authDomain: "websekawan.firebaseapp.com",
-            projectId: "websekawan",
-            storageBucket: "websekawan.firebasestorage.app",
-            messagingSenderId: "407413490869",
-            appId: "1:407413490869:web:093f8a187261c68ea36afc"
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          storageBucket: "websekawan.firebasestorage.app",
+          messagingSenderId: "407413490869",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+        const db = getDatabase(app);
 
-        // --- SATPAM: CEK LOGIN ---
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                // GAK LOGIN? TENDANG BALIK KE DEPAN!
-                window.location.href = "index.html";
+        // --- 1. CORE LOGIC: AUTH & KAS (WAJIB LOGIN) ---
+        function handleAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const sectionKas = document.getElementById('section-kas');
+            const loginText = document.getElementById('nav-login-text');
+
+            if (isLoggedIn) {
+                sectionKas.classList.remove('hidden');
+                if(loginText) loginText.innerText = "Profil";
+                
+                onValue(ref(db, 'keuangan'), (snap) => {
+                    const d = snap.val();
+                    if(d) {
+                        document.getElementById('val-kas').innerText = 'Rp ' + parseInt(d.kas).toLocaleString('id-ID');
+                        document.getElementById('val-sosial').innerText = 'Rp ' + parseInt(d.sosial).toLocaleString('id-ID');
+                    }
+                });
             } else {
-                // LOLOS! Tampilkan konten dashboard
-                document.getElementById('mainContent').style.display = "block";
-                document.getElementById('userStatus').innerText = "Halo, " + user.displayName;
-                muatData();
+                sectionKas.classList.add('hidden');
+                if(loginText) loginText.innerText = "Login";
+            }
+        }
+
+        // --- 2. RUNNING TEXT (TICKER) ---
+        onValue(ref(db, 'settings/ticker'), (snap) => {
+            if (snap.exists()) document.getElementById('ticker-text').innerText = "✦ " + snap.val();
+        });
+
+        // --- 3. JADWAL RONDA (BERDASARKAN HARI) ---
+        const hariArr = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
+        const hariIni = hariArr[new Date().getDay()];
+        onValue(ref(db, 'ronda/' + hariIni), (snap) => {
+            const d = snap.val();
+            document.getElementById('ronda-info').innerText = d ? d.petugas : "Belum ada jadwal";
+            document.getElementById('ronda-tag').innerText = d ? d.kelompok : "-";
+        });
+
+        // --- 4. AGENDA ---
+        onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (snap) => {
+            if (snap.exists()) {
+                const data = Object.values(snap.val())[0];
+                document.getElementById('agenda-view').innerHTML = `
+                    <h3 class="text-xl font-black uppercase italic">${data.judul}</h3>
+                    <p class="text-[10px] opacity-70 font-bold mt-1">${data.tanggal} — ${data.keterangan}</p>
+                `;
             }
         });
 
-        // Logout
-        document.getElementById('btnLogout').onclick = () => signOut(auth);
-
-        // --- MUAT DATA RIWAYAT & SALDO ---
-        function muatData() {
-            const q = query(collection(db, "kas_rt"), orderBy("tanggal", "desc"));
-            onSnapshot(q, (snapshot) => {
-                let total = 0;
-                const tabel = document.getElementById('tabelKas');
-                tabel.innerHTML = "";
-                
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const nominal = parseInt(data.nominal || 0);
-                    total += nominal;
-                    if(snapshot.docs.indexOf(doc) < 10) {
-                        tabel.innerHTML += `
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="p-4 text-gray-700">${data.keterangan}</td>
-                                <td class="p-4 text-right text-green-600 font-bold">Rp ${nominal.toLocaleString('id-ID')}</td>
-                            </tr>`;
-                    }
-                });
-                document.getElementById('totalSaldo').innerText = "Rp " + total.toLocaleString('id-ID');
-                document.getElementById('tglUpdate').innerText = "Sinkronisasi: " + new Date().toLocaleTimeString('id-ID');
-            });
-        }
-
-        // --- SIMPAN DATA (Sama seperti sebelumnya) ---
-        window.simpanData = async () => {
-            const ket = document.getElementById('keterangan').value;
-            const nom = document.getElementById('nominal').value;
-            const btn = document.getElementById('btnSimpan');
-            const status = document.getElementById('status');
-
-            if(!ket || !nom) return alert("Isi yang lengkap, Bos!");
-
-            btn.disabled = true;
-            btn.innerText = "Processing...";
-
-            try {
-                await addDoc(collection(db, "kas_rt"), {
-                    keterangan: ket,
-                    nominal: parseInt(nom),
-                    tanggal: serverTimestamp(),
-                    admin: auth.currentUser.displayName
-                });
-
-                // API Google Apps Script
-                fetch("https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec", {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ keterangan: ket, nominal: nom, admin: auth.currentUser.displayName })
-                });
-
-                document.getElementById('keterangan').value = "";
-                document.getElementById('nominal').value = "";
-                status.innerHTML = "<span class='text-green-600'>✅ Data Berhasil Masuk!</span>";
-                status.classList.remove('hidden');
-            } catch (err) {
-                status.innerHTML = "<span class='text-red-500'>❌ Eror: " + err.message + "</span>";
-                status.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "SIMPAN DATA";
-                setTimeout(() => status.classList.add('hidden'), 3000);
+        // --- 5. INFORMASI (WARTA RT) ---
+        onValue(query(ref(db, 'content/info'), limitToLast(1)), (snap) => {
+            if (snap.exists()) {
+                const data = Object.values(snap.val())[0];
+                document.getElementById('info-view').innerHTML = `
+                    <h4 class="text-sm font-black text-slate-800 uppercase leading-tight">${data.judul}</h4>
+                    <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">${data.keterangan}</p>
+                `;
             }
-        };
+        });
+
+        // --- 6. LAPAK UMKM ---
+        onValue(ref(db, 'lapak'), (snap) => {
+            const list = document.getElementById('lapak-list');
+            list.innerHTML = "";
+            if (snap.exists()) {
+                Object.values(snap.val()).forEach(item => {
+                    list.innerHTML += `
+                        <div class="min-w-[160px] bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-50">
+                            <p class="text-[9px] font-black text-pink-500 uppercase mb-1 tracking-tighter">${item.pemilik}</p>
+                            <h4 class="text-xs font-black text-slate-800 leading-tight h-8 overflow-hidden">${item.produk}</h4>
+                            <p class="text-[10px] font-bold text-slate-400 mt-2 mb-4">Rp ${item.harga}</p>
+                            <a href="https://wa.me/${item.wa}" class="inline-block w-full text-center bg-pink-500 text-white text-[9px] font-black py-2 rounded-full uppercase shadow-lg shadow-pink-100">Pesan</a>
+                        </div>
+                    `;
+                });
+            }
+        });
+
+        // Inisialisasi Auth
+        handleAuth();
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; overflow-x: hidden; }
+        .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
+        @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="pb-36">
+
+    <header class="p-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-40">
+        <div>
+            <h1 class="text-2xl font-black italic tracking-tighter text-blue-900 leading-none">SEKWAN<span class="text-blue-500">.</span></h1>
+            <p class="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mt-1">Digital Neighborhood</p>
+        </div>
+        <div class="text-right">
+            <p id="jam" class="text-xl font-black text-slate-800 tracking-tighter leading-none">00:00</p>
+            <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest mt-1 italic">WIB</p>
+        </div>
+    </header>
+
+    <div class="mx-5 bg-blue-100/50 rounded-full py-2 overflow-hidden border border-white">
+        <div class="ticker-move">
+            <span id="ticker-text" class="text-[10px] font-black text-blue-900 uppercase italic">✦ Menyambung silaturahmi digital...</span>
+        </div>
+    </div>
+
+    <main class="mt-6 px-6 space-y-6">
+
+        <section id="section-kas" class="hidden grid grid-cols-2 gap-4">
+            <div class="bg-white p-5 rounded-[2.5rem] shadow-sm border border-white">
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Kas RT</p>
+                <p id="val-kas" class="text-xs font-black text-blue-900">Rp --</p>
+            </div>
+            <div class="bg-white p-5 rounded-[2.5rem] shadow-sm border border-white">
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Dana Sosial</p>
+                <p id="val-sosial" class="text-xs font-black text-pink-600">Rp --</p>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-5 bg-white p-5 rounded-[2.5rem] shadow-sm border border-white flex flex-col items-center justify-center text-center">
+                <i id="weather-icon" class="fas fa-cloud-sun text-amber-400 text-2xl mb-1"></i>
+                <h4 id="temp" class="text-xl font-black text-blue-900">--°</h4>
+                <p class="text-[8px] font-black text-slate-400 uppercase italic">Sleman</p>
+            </div>
+            <div class="col-span-7 bg-white p-5 rounded-[2.5rem] shadow-sm border border-white flex flex-col justify-center">
+                <p class="text-[8px] font-black text-slate-300 uppercase mb-1">Jadwal Sholat</p>
+                <div class="flex justify-between items-end">
+                    <p id="sholat-nama" class="text-xs font-black text-blue-900 uppercase italic leading-none">--</p>
+                    <p id="sholat-waktu" class="text-xl font-black text-blue-600 tracking-tighter leading-none">--:--</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-50 relative overflow-hidden">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-1.5 h-4 bg-orange-500 rounded-full"></div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Warta RT</p>
+            </div>
+            <div id="info-view">
+                <p class="text-xs italic text-slate-300">Memuat warta...</p>
+            </div>
+        </section>
+
+        <section>
+            <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] ml-4 mb-2">📅 Agenda Warga</p>
+            <div id="agenda-view" class="bg-blue-900 text-white p-8 rounded-[3rem] shadow-xl relative overflow-hidden">
+                <i class="fas fa-bullhorn absolute -bottom-5 -right-5 text-8xl opacity-10"></i>
+                <p class="text-xs italic opacity-50 font-bold uppercase">Belum ada agenda terdekat.</p>
+            </div>
+        </section>
+
+        <section class="bg-slate-900 p-6 rounded-[2.5rem] shadow-sm flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-white/10 text-white rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-shield-halved text-xs text-blue-400"></i>
+                </div>
+                <div>
+                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">Ronda Malam</p>
+                    <p id="ronda-info" class="text-[11px] font-black text-white italic uppercase">--</p>
+                </div>
+            </div>
+            <span id="ronda-tag" class="text-[8px] font-black bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full uppercase italic">--</span>
+        </section>
+
+        <section>
+            <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest ml-4 mb-3">🛍️ Lapak Warga</p>
+            <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 px-2">
+                </div>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-8 left-0 right-0 px-8 z-50">
+        <nav class="bg-white/90 backdrop-blur-xl p-4 rounded-[3rem] shadow-2xl border border-white flex justify-around items-center">
+            <button onclick="location.href='index.html'" class="flex flex-col items-center text-blue-900">
+                <i class="fas fa-house-chimney text-xl"></i>
+                <span class="text-[8px] font-black uppercase mt-1 italic">Beranda</span>
+            </button>
+            <div class="w-px h-6 bg-slate-100"></div>
+            <button onclick="location.href='login.html'" class="flex flex-col items-center text-slate-300">
+                <i class="fas fa-user-circle text-xl"></i>
+                <span id="nav-login-text" class="text-[8px] font-black uppercase mt-1">Login</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // JAM SISTEM
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+        }, 1000);
+
+        // API WIDGETS
+        async function fetchWidgets() {
+            try {
+                // Weather Yogyakarta
+                const w = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.79&longitude=110.37&current_weather=true');
+                const wd = await w.json();
+                document.getElementById('temp').innerText = Math.round(wd.current_weather.temperature) + '°';
+
+                // Sholat Yogyakarta
+                const s = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Yogyakarta&country=Indonesia&method=11');
+                const sd = await s.json();
+                const t = sd.data.timings;
+                const schedule = [
+                    {n:'Subuh', t:t.Fajr}, {n:'Dzuhur', t:t.Dhuhr}, {n:'Ashar', t:t.Asr}, {n:'Maghrib', t:t.Maghrib}, {n:'Isya', t:t.Isha}
+                ];
+                const now = new Date().getHours().toString().padStart(2,'0')+":"+new Date().getMinutes().toString().padStart(2,'0');
+                let next = schedule.find(x => x.t > now) || schedule[0];
+                document.getElementById('sholat-nama').innerText = next.n;
+                document.getElementById('sholat-waktu').innerText = next.t;
+            } catch (e) { console.error("Widget Error:", e); }
+        }
+        fetchWidgets();
     </script>
 </body>
 </html>
