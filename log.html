@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login Warga - RT Sekwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // KONFIGURASI FIREBASE (Ganti dengan milikmu nanti)
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "rt-sekwan.firebaseapp.com",
+            databaseURL: "https://rt-sekwan-default-rtdb.firebaseio.com",
+            projectId: "rt-sekwan",
+            storageBucket: "rt-sekwan.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Fungsi Request OTP
+        window.requestOTP = async function() {
+            const namaInput = document.getElementById('nama').value.trim();
+            const nohpInput = document.getElementById('nohp').value.trim();
+            const btn = document.getElementById('btn-otp');
+
+            if(!namaInput || !nohpInput) return alert("Isi Nama & No HP dulu, Bro!");
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cek Database...';
+            btn.disabled = true;
+
+            try {
+                const dbRef = ref(db);
+                // Kita asumsikan data disimpan di path "warga"
+                const snapshot = await get(child(dbRef, `warga` Sunting));
+                
+                let userFound = false;
+                if (snapshot.exists()) {
+                    const dataWarga = snapshot.val();
+                    // Cari warga yang cocok
+                    for (let id in dataWarga) {
+                        if (dataWarga[id].nama.toLowerCase() === namaInput.toLowerCase() && dataWarga[id].nohp === nohpInput) {
+                            userFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (userFound) {
+                    // Generate & Kirim OTP via WA
+                    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+                    sessionStorage.setItem('temp_otp', otp);
+                    sessionStorage.setItem('temp_user', namaInput);
+
+                    let waPhone = nohpInput.startsWith('0') ? '62' + nohpInput.slice(1) : nohpInput;
+                    const msg = encodeURIComponent(`*PORTAL RT SEKWAN*\n\nKode OTP Anda: *${otp}*\n\n_Silakan kembali ke web dan masukkan kode tersebut._`);
+                    
+                    window.open(`https://wa.me/${waPhone}?text=${msg}`, '_blank');
+
+                    document.getElementById('step-1').classList.add('hidden');
+                    document.getElementById('step-2').classList.remove('hidden');
+                } else {
+                    alert("Maaf Bro, Nama atau No HP tidak terdaftar di database RT.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Gagal koneksi ke Firebase!");
+            } finally {
+                btn.innerHTML = '<span>Minta Kode OTP</span> <i class="fab fa-whatsapp text-lg"></i>';
+                btn.disabled = false;
+            }
+        };
+
+        // Fungsi Verifikasi
+        window.verifyLogin = function() {
+            const inputOtp = document.getElementById('otp-code').value;
+            const savedOtp = sessionStorage.getItem('temp_otp');
+
+            if(inputOtp === savedOtp) {
+                localStorage.setItem('session_warga', sessionStorage.getItem('temp_user'));
+                location.href = 'index.html';
+            } else {
+                alert("Kode OTP Salah!");
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        :root { --biru-tua: #1C4D8D; --biru-mid: #4988C4; --biru-muda: #BDE8F5; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f4f8; }
+        .floating-curve { border-radius: 2.5rem; }
+        .input-curve { border-radius: 1.2rem; }
+        .soft-shadow { box-shadow: 0 20px 40px -15px rgba(28, 77, 141, 0.15); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-6">
+
+    <div class="max-w-md w-full space-y-8">
+        <div class="text-center">
+            <h1 class="text-3xl font-black italic tracking-tighter" style="color: var(--biru-tua);">SEKWAN<span style="color: var(--biru-mid);">.</span></h1>
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] mt-2">Warga Login</p>
+        </div>
+
+        <div class="bg-white/90 backdrop-blur-xl p-8 floating-curve soft-shadow border border-white">
+            <div id="step-1" class="space-y-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-black uppercase ml-4 text-slate-400 tracking-widest">Nama Lengkap</label>
+                        <input type="text" id="nama" placeholder="Sesuai Database" class="w-full mt-1 p-4 bg-slate-100 border-none input-curve text-sm font-bold focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black uppercase ml-4 text-slate-400 tracking-widest">No. WhatsApp</label>
+                        <input type="tel" id="nohp" placeholder="08xxxxxxx" class="w-full mt-1 p-4 bg-slate-100 border-none input-curve text-sm font-bold focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+                </div>
+                <button onclick="requestOTP()" id="btn-otp" class="w-full p-4 input-curve text-white font-black italic uppercase tracking-widest shadow-lg transition active:scale-95 flex items-center justify-center space-x-2" style="background: var(--biru-tua);">
+                    <span>Minta Kode OTP</span>
+                    <i class="fab fa-whatsapp text-lg"></i>
+                </button>
+            </div>
+
+            <div id="step-2" class="hidden space-y-6">
+                <div class="text-center">
+                    <h2 class="text-xl font-black italic text-slate-800">VERIFIKASI</h2>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Input 4 Digit Kode</p>
+                </div>
+                <input type="text" maxlength="4" id="otp-code" class="w-full p-4 bg-slate-100 border-none input-curve text-center text-2xl font-black tracking-[0.5em] focus:ring-2 focus:ring-blue-400 outline-none">
+                <button onclick="verifyLogin()" class="w-full p-4 input-curve text-white font-black italic uppercase tracking-widest shadow-lg" style="background: var(--biru-mid);">
+                    Masuk Sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
