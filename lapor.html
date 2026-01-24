@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lapor Warga</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body class="bg-[#F8FAFB]">
+    <div class="bg-red-500 p-8 rounded-b-[3.5rem] text-white shadow-xl">
+        <button onclick="history.back()" class="mb-4 opacity-80"><i class="fas fa-arrow-left"></i></button>
+        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">Lapor <span class="text-black/20">Warga.</span></h1>
+    </div>
+
+    <main class="p-6 space-y-4">
+        <p class="text-[11px] font-bold text-slate-400 px-4 uppercase tracking-widest">Pilih Kategori Laporan</p>
+        
+        <div onclick="kirimWA('KEAMANAN')" class="bg-white p-5 rounded-[2.5rem] flex items-center gap-4 border border-slate-100 active:scale-95 transition-all">
+            <div class="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center"><i class="fas fa-shield-alt"></i></div>
+            <div>
+                <h3 class="text-xs font-black text-[#005461]">MASALAH KEAMANAN</h3>
+                <p class="text-[9px] text-slate-400">Pencurian, orang asing, dll.</p>
+            </div>
+        </div>
+
+        <div onclick="kirimWA('INFRASTRUKTUR')" class="bg-white p-5 rounded-[2.5rem] flex items-center gap-4 border border-slate-100 active:scale-95 transition-all">
+            <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center"><i class="fas fa-tools"></i></div>
+            <div>
+                <h3 class="text-xs font-black text-[#005461]">KERUSAKAN FASILITAS</h3>
+                <p class="text-[9px] text-slate-400">Lampu jalan mati, selokan mampet, dll.</p>
+            </div>
+        </div>
+
+        <div onclick="kirimWA('SOSIAL')" class="bg-white p-5 rounded-[2.5rem] flex items-center gap-4 border border-slate-100 active:scale-95 transition-all">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center"><i class="fas fa-hand-holding-heart"></i></div>
+            <div>
+                <h3 class="text-xs font-black text-[#005461]">SOSIAL & SARAN</h3>
+                <p class="text-[9px] text-slate-400">Kematian, bantuan, atau saran RT.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function kirimWA(hal) {
+            const no = "628123456789"; // GANTI NOMOR PAK RT DI SINI
+            const msg = `Halo Admin RT Sekwan, saya ingin lapor perihal *${hal}*:\n\n(Tulis detail laporan di sini)`;
+            window.location.href = `https://wa.me/${no}?text=${encodeURIComponent(msg)}`;
+        }
+    </script>
+</body>
+</html>
