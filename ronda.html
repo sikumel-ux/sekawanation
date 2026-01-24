@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Ronda - Sekwan Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+    </style>
+</head>
+<body class="pb-32">
+    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative overflow-hidden">
+        <p class="text-[10px] font-black tracking-[0.3em] opacity-60 uppercase mb-2 text-[#00B7B5]">Keamanan Lingkungan</p>
+        <h1 class="text-3xl font-black tracking-tighter italic uppercase">Jadwal<br>Ronda.</h1>
+        <i class="fas fa-shield-halved absolute -right-4 -bottom-4 text-9xl text-white/5 rotate-12"></i>
+    </header>
+
+    <main class="p-6 -mt-6">
+        <div id="container-ronda" class="space-y-4">
+            <p class="text-center text-xs font-bold opacity-50 py-10">MEMUAT JADWAL...</p>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-6 left-6 right-6 bg-[#005461]/90 backdrop-blur-lg rounded-[2.5rem] p-4 shadow-2xl z-50 border border-white/10 text-white/50">
+        <div class="flex justify-around items-center">
+            <a href="index.html" class="flex flex-col items-center"><i class="fas fa-home text-xl"></i></a>
+            <a href="ronda.html" class="text-[#00B7B5] flex flex-col items-center"><i class="fas fa-shield-halved text-xl"></i></a>
+            <a href="layanan.html" class="flex flex-col items-center"><i class="fas fa-file-invoice text-xl"></i></a>
+            <a href="admin.html" class="flex flex-col items-center"><i class="fas fa-user-shield text-xl"></i></a>
+        </div>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        onValue(ref(db, 'content/ronda'), (snap) => {
+            const container = document.getElementById('container-ronda');
+            container.innerHTML = "";
+            if(!snap.exists()) {
+                container.innerHTML = "<p class='text-center text-xs font-bold opacity-40 py-10'>BELUM ADA JADWAL.</p>";
+                return;
+            }
+            snap.forEach(child => {
+                const d = child.val();
+                container.innerHTML += `
+                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs font-black text-[#018790] uppercase tracking-widest">${d.hari}</h3>
+                        <span class="bg-[#00B7B5]/10 text-[#018790] text-[9px] px-3 py-1 rounded-full font-black">REGU JAGA</span>
+                    </div>
+                    <p class="text-lg font-black leading-tight text-slate-800 uppercase">${d.petugas}</p>
+                </div>`;
+            });
+        });
+    </script>
+</body>
+</html>
