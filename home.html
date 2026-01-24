@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RT Digital Sekwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- SISTEM LOGIN SYNC ---
+        window.syncAuth = () => {
+            const sectionKas = document.getElementById('section-kas');
+            const btnAuth = document.getElementById('btn-auth');
+            const txtAuth = document.getElementById('txt-auth');
+            const status = localStorage.getItem('isLoggedIn');
+
+            if (status === 'true') {
+                sectionKas.style.display = 'grid';
+                txtAuth.innerText = "LOGOUT";
+                btnAuth.onclick = () => {
+                    localStorage.removeItem('isLoggedIn');
+                    location.reload();
+                };
+                
+                onValue(ref(db, 'keuangan'), (snap) => {
+                    const d = snap.val();
+                    if(d) {
+                        document.getElementById('val-kas').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
+                        document.getElementById('val-sosial').innerText = 'Rp ' + (parseInt(d.sosial) || 0).toLocaleString('id-ID');
+                    }
+                });
+            } else {
+                sectionKas.style.display = 'none';
+                txtAuth.innerText = "LOGIN";
+                btnAuth.onclick = () => { location.href = 'login.html'; };
+            }
+        };
+
+        syncAuth();
+
+        // --- REALTIME DATA CONTENT ---
+        
+        // 1. Ticker (Running Text)
+        onValue(ref(db, 'settings/ticker'), (snap) => {
+            if (snap.exists()) document.getElementById('ticker-text').innerText = "✦ " + snap.val();
+        });
+
+        // 2. Quote / Pesan Hari Ini (DI SINI PERBAIKANNYA)
+        onValue(ref(db, 'settings/quote'), (snap) => {
+            if (snap.exists()) {
+                document.getElementById('quote-text').innerText = `"${snap.val()}"`;
+            } else {
+                document.getElementById('quote-text').innerText = "Warga kompak, RT Sekwan mantap!";
+            }
+        });
+
+        // 3. Jadwal Ronda
+        const hariArr = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
+        onValue(ref(db, 'ronda/' + hariArr[new Date().getDay()]), (snap) => {
+            const d = snap.val();
+            document.getElementById('ronda-info').innerText = d ? d.petugas : "Libur";
+            document.getElementById('ronda-tag').innerText = d ? d.kelompok : "-";
+        });
+
+        // 4. Warta/Info Terkini
+        onValue(query(ref(db, 'content/info'), limitToLast(1)), (snap) => {
+            if (snap.exists()) {
+                const data = Object.values(snap.val())[0];
+                document.getElementById('info-view').innerHTML = `
+                    <h4 class="text-sm font-black text-[#005461] uppercase leading-tight">${data.judul}</h4>
+                    <p class="text-[10px] text-slate-500 mt-2 line-clamp-2">${data.keterangan}</p>
+                `;
+            }
+        });
+
+        // 5. Agenda Terdekat (Sync dengan AdminHub)
+        onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (snap) => {
+            if (snap.exists()) {
+                const data = Object.values(snap.val())[0];
+                document.getElementById('agenda-view').innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="bg-[#018790] text-white p-2 rounded-lg text-center min-w-[45px]">
+                            <p class="text-[10px] font-black">${data.tgl || '--'}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-black text-[#005461]">${data.judul || 'Belum ada agenda'}</h4>
+                            <p class="text-[9px] text-slate-400">Pukul 07:00 - Selesai</p>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        // 6. Lapak Warga (Sync dengan AdminHub)
+        onValue(ref(db, 'lapak'), (snap) => {
+            const list = document.getElementById('lapak-list');
+            list.innerHTML = "";
+            if (snap.exists()) {
+                Object.values(snap.val()).forEach(item => {
+                    list.innerHTML += `
+                        <div class="min-w-[140px] bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100">
+                            <h4 class="text-xs font-black text-[#005461] truncate">${item.produk}</h4>
+                            <p class="text-[10px] font-bold text-[#00B7B5] mt-1">Rp ${(parseInt(item.harga) || 0).toLocaleString('id-ID')}</p>
+                            <a href="https://wa.me/${item.wa}" class="block w-full text-center bg-[#005461] text-white text-[9px] font-black py-2 rounded-full mt-3 uppercase">Pesan</a>
+                        </div>
+                    `;
+                });
+            } else {
+                list.innerHTML = "<p class='text-[10px] text-slate-400 italic px-4'>Belum ada produk tayang...</p>";
+            }
+        });
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; overflow-x: hidden; }
+        .ticker-move { display: inline-block; animation: move 25s linear infinite; white-space: nowrap; }
+        @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .btn-more { font-size: 8px; font-weight: 800; text-transform: uppercase; color: #00B7B5; letter-spacing: 0.1em; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-[#018790]/10">
+        <div>
+            <h1 class="text-2xl font-black italic text-[#005461]">SEKWAN<span class="text-[#00B7B5]">.</span></h1>
+            <p class="text-[8px] font-bold text-[#018790] uppercase tracking-widest">Digital Hub</p>
+        </div>
+        <div class="text-right">
+            <p id="jam" class="text-xl font-black text-[#005461]">00:00</p>
+            <p class="text-[8px] font-bold text-[#00B7B5] uppercase italic">WIB</p>
+        </div>
+    </header>
+
+    <div class="mx-5 mt-2 bg-[#005461]/5 rounded-full py-2 overflow-hidden border border-[#005461]/5">
+        <div class="ticker-move text-[10px] font-bold text-[#018790] uppercase italic" id="ticker-text">✦ Memuat informasi...</div>
+    </div>
+
+    <main class="mt-4 px-6 space-y-5">
+        
+        <section class="bg-gradient-to-br from-[#005461] to-[#018790] p-6 rounded-[2.5rem] shadow-xl text-center relative overflow-hidden">
+            <i class="fas fa-quote-left absolute top-4 left-4 text-white/10 text-4xl"></i>
+            <p id="quote-text" class="text-white text-xs font-bold italic relative z-10">"Memuat pesan hari ini..."</p>
+            <p class="text-[8px] text-[#00B7B5] font-black uppercase tracking-[0.3em] mt-3 tracking-tighter">— Pesan Admin RT</p>
+        </section>
+
+        <section id="section-kas" style="display:none;" class="grid grid-cols-2 gap-3">
+            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden" onclick="location.href='keuangan.html'">
+                <p class="text-[8px] font-bold opacity-70 uppercase mb-1">Kas RT</p>
+                <p id="val-kas" class="text-sm font-black text-[#00B7B5]">Rp --</p>
+                <i class="fas fa-arrow-right absolute bottom-4 right-4 text-[10px] opacity-30"></i>
+            </div>
+            <div class="bg-white p-5 rounded-[2.5rem] border border-[#018790]/10 shadow-sm relative" onclick="location.href='keuangan.html'">
+                <p class="text-[8px] font-bold text-[#018790] uppercase mb-1">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black text-[#005461]">Rp --</p>
+                <i class="fas fa-arrow-right absolute bottom-4 right-4 text-[10px] text-[#018790]/30"></i>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 gap-5">
+            <section class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/5">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Warta Sekwan</p>
+                    <a href="informasi.html" class="btn-more">Lainnya <i class="fas fa-chevron-right ml-1"></i></a>
+                </div>
+                <div id="info-view"></div>
+            </section>
+
+            <section class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/5">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Agenda Terdekat</p>
+                    <a href="agenda.html" class="btn-more">Detail <i class="fas fa-chevron-right ml-1"></i></a>
+                </div>
+                <div id="agenda-view"></div>
+            </section>
+        </div>
+
+        <section class="bg-white p-5 rounded-[2.5rem] shadow-sm flex items-center justify-between border border-[#018790]/5" onclick="location.href='ronda.html'">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-[#00B7B5]/10 text-[#00B7B5] rounded-xl flex items-center justify-center"><i class="fas fa-moon"></i></div>
+                <div>
+                    <p class="text-[8px] font-bold text-[#018790] uppercase">Jadwal Ronda</p>
+                    <p id="ronda-info" class="text-xs font-black text-[#005461] uppercase italic">--</p>
+                </div>
+            </div>
+            <span id="ronda-tag" class="text-[8px] font-black bg-[#F4F4F4] text-[#018790] px-3 py-1 rounded-full uppercase italic">--</span>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-center px-4 mb-3">
+                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Lapak Warga</p>
+                <a href="lapak.html" class="btn-more">Semua <i class="fas fa-chevron-right ml-1"></i></a>
+            </div>
+            <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-2"></div>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5]">
+                <i class="fas fa-th-large text-xl"></i>
+            </button>
+            <button id="btn-auth" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
+                <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
+                <span id="txt-auth" class="text-[10px] font-bold uppercase tracking-widest">LOGIN</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+        }, 1000);
+    </script>
+</body>
+</html>
