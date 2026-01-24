@@ -3,53 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lapor Warga - Sekwan</title>
+    <title>Lapor Sekwan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap'); body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-[#F8FAFB] pb-40">
-
-    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-20 border-b-4 border-red-500">
+<body class="bg-[#F8FAFB] pb-32">
+    <header class="p-8 pb-16 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-red-500">
         <button onclick="history.back()" class="mb-4 opacity-70 text-[10px] font-black uppercase tracking-widest"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
-        <h1 class="text-2xl font-black tracking-tighter uppercase">LAPOR <span class="text-red-500">KEJADIAN.</span></h1>
+        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">Lapor <span class="text-red-500">Warga.</span></h1>
     </header>
 
-    <main class="p-6 space-y-4">
-        <div onclick="kirim('KEAMANAN')" class="bg-white p-6 rounded-[2.5rem] flex items-center gap-5 border border-slate-100 shadow-sm active:scale-95 transition-all">
-            <div class="w-14 h-14 bg-red-50 text-red-500 rounded-[1.5rem] flex items-center justify-center"><i class="fas fa-shield-alt text-xl"></i></div>
-            <div>
-                <h3 class="text-xs font-black text-[#005461] uppercase">Keamanan</h3>
-                <p class="text-[10px] text-slate-400">Pencurian, konflik, atau tamu asing.</p>
-            </div>
+    <section class="relative z-30 -mt-8 px-8">
+        <div class="bg-white p-3 rounded-[2rem] shadow-xl border border-slate-50 flex justify-between items-center gap-2">
+            <a href="keuangan.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-wallet text-[#005461] text-sm"></i></a>
+            <a href="lapor.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-[#005461]"><i class="fas fa-bullhorn text-white text-sm"></i></a>
+            <a href="pengurus.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-users-cog text-[#005461] text-sm"></i></a>
+            <a href="lapak.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-store text-[#005461] text-sm"></i></a>
         </div>
-        <div onclick="kirim('INFRASTRUKTUR')" class="bg-white p-6 rounded-[2.5rem] flex items-center gap-5 border border-slate-100 shadow-sm active:scale-95 transition-all">
-            <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-[1.5rem] flex items-center justify-center"><i class="fas fa-tools text-xl"></i></div>
-            <div>
-                <h3 class="text-xs font-black text-[#005461] uppercase">Infrastruktur</h3>
-                <p class="text-[10px] text-slate-400">Lampu jalan, jalan rusak, selokan.</p>
-            </div>
+    </section>
+
+    <main class="p-6 mt-6 space-y-4">
+        <div onclick="kirim('KEAMANAN')" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 flex items-center gap-4 active:scale-95 transition-all">
+            <div class="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center"><i class="fas fa-shield-alt"></i></div>
+            <div><h3 class="text-xs font-black text-[#005461] uppercase">Keamanan</h3><p class="text-[9px] text-slate-400 tracking-tight">Lapor pencurian atau hal mencurigakan.</p></div>
+        </div>
+        <div onclick="kirim('FASILITAS')" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 flex items-center gap-4 active:scale-95 transition-all">
+            <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center"><i class="fas fa-tools"></i></div>
+            <div><h3 class="text-xs font-black text-[#005461] uppercase">Fasilitas Umum</h3><p class="text-[9px] text-slate-400 tracking-tight">Lampu jalan mati, jalan rusak, selokan.</p></div>
         </div>
     </main>
 
-    <section class="grid grid-cols-4 gap-2 px-10 mt-10 opacity-40">
-        <a href="keuangan.html" class="flex flex-col items-center"><div class="w-10 h-10 bg-slate-200 rounded-2xl flex items-center justify-center"><i class="fas fa-wallet text-[#005461] text-xs"></i></div></a>
-        <a href="lapor.html" class="flex flex-col items-center"><div class="w-10 h-10 bg-[#005461] rounded-2xl flex items-center justify-center"><i class="fas fa-bullhorn text-white text-xs"></i></div></a>
-        <a href="pengurus.html" class="flex flex-col items-center"><div class="w-10 h-10 bg-slate-200 rounded-2xl flex items-center justify-center"><i class="fas fa-users-cog text-[#005461] text-xs"></i></div></a>
-        <a href="lapak.html" class="flex flex-col items-center"><div class="w-10 h-10 bg-slate-200 rounded-2xl flex items-center justify-center"><i class="fas fa-store text-[#005461] text-xs"></i></div></a>
-    </section>
+    <script>function kirim(h){ window.location.href=`https://wa.me/628123456789?text=Halo%20Admin,%20saya%20lapor%20hal%20*${h}*`; }</script>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full active:scale-90 transition-all"><i class="fas fa-home text-lg"></i></button>
+            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home text-lg"></i></button>
             <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white"><i class="fas fa-user-circle text-lg text-[#00B7B5]"></i><span class="text-[10px] font-black uppercase tracking-widest">Akun</span></button>
         </nav>
     </div>
-
-    <script>
-        function kirim(hal) {
-            const msg = `Halo Admin Sekwan, saya lapor hal: *${hal}*`;
-            window.location.href = `https://wa.me/628123456789?text=${encodeURIComponent(msg)}`;
-        }
-    </script>
 </body>
 </html>
