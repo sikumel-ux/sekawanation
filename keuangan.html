@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keuangan RT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        const firebaseConfig = { databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        onValue(ref(db, 'keuangan'), (s) => {
+            const d = s.val();
+            if(d) {
+                document.getElementById('kas-utama').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
+                document.getElementById('kas-sosial').innerText = 'Rp ' + (parseInt(d.sosial) || 0).toLocaleString('id-ID');
+            }
+        });
+    </script>
+</head>
+<body class="bg-[#F8FAFB] pb-10">
+    <div class="bg-[#005461] p-8 rounded-b-[3.5rem] text-white shadow-xl">
+        <button onclick="history.back()" class="mb-4 opacity-70"><i class="fas fa-arrow-left"></i></button>
+        <h1 class="text-2xl font-black tracking-tighter uppercase">Keuangan <span class="text-[#00B7B5]">RT.</span></h1>
+        <p class="text-[10px] opacity-60 font-bold uppercase tracking-widest mt-1">Laporan Kas Terupdate</p>
+    </div>
+
+    <main class="p-6 space-y-4">
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <p class="text-[10px] font-black text-slate-400 uppercase mb-2">Total Kas Utama</p>
+            <h2 id="kas-utama" class="text-2xl font-black text-[#005461]">Rp 0</h2>
+        </div>
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <p class="text-[10px] font-black text-slate-400 uppercase mb-2">Dana Sosial</p>
+            <h2 id="kas-sosial" class="text-2xl font-black text-[#00B7B5]">Rp 0</h2>
+        </div>
+        <div class="p-4 text-center">
+            <p class="text-[9px] text-slate-400 italic leading-relaxed">"Transparansi dana untuk pembangunan lingkungan yang lebih baik."</p>
+        </div>
+    </main>
+</body>
+</html>
