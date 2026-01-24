@@ -9,9 +9,10 @@
     <style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap'); body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
 <body class="bg-[#F8FAFB] pb-32">
-    <header class="p-8 pb-16 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-red-500">
+    
+    <header class="p-8 pb-16 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-[#00B7B5]">
         <button onclick="history.back()" class="mb-4 opacity-70 text-[10px] font-black uppercase tracking-widest"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
-        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">Lapor <span class="text-red-500">Warga.</span></h1>
+        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">Lapor <span class="text-[#00B7B5]">Warga.</span></h1>
     </header>
 
     <section class="relative z-30 -mt-8 px-8">
@@ -24,23 +25,52 @@
     </section>
 
     <main class="p-6 mt-6 space-y-4">
-        <div onclick="kirim('KEAMANAN')" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 flex items-center gap-4 active:scale-95 transition-all">
-            <div class="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center"><i class="fas fa-shield-alt"></i></div>
-            <div><h3 class="text-xs font-black text-[#005461] uppercase">Keamanan</h3><p class="text-[9px] text-slate-400 tracking-tight">Lapor pencurian atau hal mencurigakan.</p></div>
+        <div onclick="kirim('KEAMANAN')" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 flex items-center gap-4 active:scale-95 transition-all shadow-sm">
+            <div class="w-12 h-12 bg-slate-50 text-[#005461] rounded-2xl flex items-center justify-center"><i class="fas fa-shield-alt"></i></div>
+            <div>
+                <h3 class="text-xs font-black text-[#005461] uppercase tracking-tighter">Keamanan</h3>
+                <p class="text-[9px] text-slate-400 leading-tight">Lapor pencurian, tamu mencurigakan, atau konflik.</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-slate-300 text-[10px]"></i>
         </div>
-        <div onclick="kirim('FASILITAS')" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 flex items-center gap-4 active:scale-95 transition-all">
-            <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center"><i class="fas fa-tools"></i></div>
-            <div><h3 class="text-xs font-black text-[#005461] uppercase">Fasilitas Umum</h3><p class="text-[9px] text-slate-400 tracking-tight">Lampu jalan mati, jalan rusak, selokan.</p></div>
+
+        <div onclick="kirim('FASILITAS UMUM')" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 flex items-center gap-4 active:scale-95 transition-all shadow-sm">
+            <div class="w-12 h-12 bg-slate-50 text-[#005461] rounded-2xl flex items-center justify-center"><i class="fas fa-tools"></i></div>
+            <div>
+                <h3 class="text-xs font-black text-[#005461] uppercase tracking-tighter">Fasilitas Umum</h3>
+                <p class="text-[9px] text-slate-400 leading-tight">Lampu jalan mati, jalan rusak, atau selokan mampet.</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-slate-300 text-[10px]"></i>
+        </div>
+
+        <div onclick="kirim('KEBERSIHAN')" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 flex items-center gap-4 active:scale-95 transition-all shadow-sm">
+            <div class="w-12 h-12 bg-slate-50 text-[#005461] rounded-2xl flex items-center justify-center"><i class="fas fa-trash-alt"></i></div>
+            <div>
+                <h3 class="text-xs font-black text-[#005461] uppercase tracking-tighter">Kebersihan</h3>
+                <p class="text-[9px] text-slate-400 leading-tight">Sampah belum diambil atau area kotor.</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-slate-300 text-[10px]"></i>
         </div>
     </main>
 
-    <script>function kirim(h){ window.location.href=`https://wa.me/628123456789?text=Halo%20Admin,%20saya%20lapor%20hal%20*${h}*`; }</script>
-
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home text-lg"></i></button>
-            <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white"><i class="fas fa-user-circle text-lg text-[#00B7B5]"></i><span class="text-[10px] font-black uppercase tracking-widest">Akun</span></button>
+            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full active:scale-90 transition-all">
+                <i class="fas fa-home text-lg"></i>
+            </button>
+            <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white active:scale-95 transition-all">
+                <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest">Akun</span>
+            </button>
         </nav>
     </div>
+
+    <script>
+        function kirim(hal) {
+            const msg = `Halo Admin Sekwan, saya ingin lapor mengenai: *${hal}*`;
+            window.location.href = `https://wa.me/628123456789?text=${encodeURIComponent(msg)}`;
+        }
+    </script>
+
 </body>
 </html>
