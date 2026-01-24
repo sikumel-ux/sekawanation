@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekwan Digital - RT 01</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+        .admin-only { display: none; } /* Tersembunyi default */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative overflow-hidden">
+        <div class="relative z-10">
+            <h1 class="text-3xl font-black italic tracking-tighter text-[#00B7B5]">SEKWAN<span class="text-white">.DIGITAL</span></h1>
+            
+            <div id="card-keuangan" class="admin-only mt-6 p-6 bg-[#00B7B5] rounded-[2.5rem] text-[#005461] shadow-lg">
+                <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Total Kas RT</p>
+                <h2 id="total-kas" class="text-2xl font-black">Rp 0</h2>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-6 -mt-6">
+        <div class="flex gap-2 overflow-x-auto pb-4 no-scrollbar">
+            <button onclick="openTab('umum')" class="px-6 py-2 bg-[#005461] text-white rounded-full text-[10px] font-black uppercase shadow-md">Umum</button>
+            <button id="tab-btn-admin" onclick="openTab('admin')" class="admin-only px-6 py-2 bg-white text-[#005461] rounded-full text-[10px] font-black uppercase shadow-md">Input Data</button>
+        </div>
+
+        <section id="tab-umum" class="tab-content active space-y-4">
+            <div id="list-warta"></div>
+            <div id="list-agenda"></div>
+            <div id="list-lapak"></div>
+        </section>
+
+        <section id="tab-admin" class="tab-content admin-only space-y-6">
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Input Keuangan</h3>
+                <input type="number" id="fin-nominal" placeholder="Nominal" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl mb-2 text-sm font-bold border-none">
+                <button onclick="saveFinance()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px]">Simpan Saldo</button>
+            </div>
+            </section>
+    </main>
+
+    <nav class="fixed bottom-6 left-6 right-6 bg-[#005461]/90 backdrop-blur-lg rounded-[2.5rem] p-4 shadow-2xl z-50 border border-white/10">
+        <div class="flex justify-around items-center">
+            <a href="index.html" class="text-[#00B7B5] flex flex-col items-center"><i class="fas fa-home text-xl"></i></a>
+            <a href="ronda.html" class="text-white/50 flex flex-col items-center"><i class="fas fa-shield-halved text-xl"></i></a>
+            <div id="auth-section">
+                <button onclick="showLoginPrompt()" class="text-white/50 flex flex-col items-center"><i class="fas fa-user-lock text-xl"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // CONFIG FIREBASE LO...
+        const firebaseConfig = { ... };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- SISTEM LOGIN/LOGOUT ---
+        window.showLoginPrompt = () => {
+            const pass = prompt("Masukkan Password Pengurus:");
+            if(pass === "sekwan123") {
+                localStorage.setItem("role", "admin");
+                location.reload();
+            } else {
+                alert("Salah, Bro!");
+            }
+        };
+
+        window.handleLogout = () => {
+            localStorage.removeItem("role");
+            location.reload();
+        };
+
+        // --- PROTEKSI TAMPILAN ---
+        const role = localStorage.getItem("role");
+        if(role === "admin") {
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+            document.getElementById('auth-section').innerHTML = `
+                <button onclick="handleLogout()" class="text-red-400 flex flex-col items-center">
+                    <i class="fas fa-power-off text-xl"></i>
+                </button>
+            `;
+        }
+
+        // --- TAB LOGIC ---
+        window.openTab = (name) => {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+        };
+
+        // --- AMBIL DATA UMUM (Warta) ---
+        onValue(ref(db, 'content/info'), (snap) => {
+            const list = document.getElementById('list-warta');
+            list.innerHTML = "";
+            snap.forEach(c => {
+                list.innerHTML += `
+                    <div class="bg-white p-6 rounded-[2.5rem] mb-4 shadow-sm border border-slate-100">
+                        <h4 class="font-black text-[#005461] uppercase text-xs mb-2">${c.val().judul}</h4>
+                        <p class="text-xs text-slate-500">${c.val().keterangan}</p>
+                    </div>
+                `;
+            });
+        });
+
+        // --- AMBIL DATA KEUANGAN (Hanya Admin) ---
+        if(role === "admin") {
+            onValue(ref(db, 'history'), (snap) => {
+                let total = 0;
+                snap.forEach(tipe => { tipe.forEach(item => { total += parseInt(item.val().nominal); }); });
+                document.getElementById('total-kas').innerText = 'Rp ' + total.toLocaleString('id-ID');
+            });
+        }
+    </script>
+</body>
+</html>
