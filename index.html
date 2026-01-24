@@ -45,7 +45,7 @@
         // --- 2. CUACA BANTUL ---
         async function getWeatherData() {
             try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36¤t_weather=true');
                 const data = await res.json();
                 const temp = Math.round(data.current_weather.temperature);
                 document.getElementById('temp').innerText = temp + '°C';
@@ -255,26 +255,15 @@
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
-        <nav class="fixed bottom-6 left-6 right-6 bg-[#005461]/90 backdrop-blur-lg rounded-[2.5rem] p-4 shadow-2xl z-50 border border-white/10 text-white/50">
-    <div class="flex justify-around items-center">
-        <a href="index.html" class="flex flex-col items-center hover:text-[#00B7B5] transition-all">
-            <i class="fas fa-home text-xl"></i>
-            <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Home</span>
-        </a>
-        <a href="ronda.html" class="flex flex-col items-center hover:text-[#00B7B5] transition-all">
-            <i class="fas fa-shield-halved text-xl"></i>
-            <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Ronda</span>
-        </a>
-        <div id="nav-auth">
-            <a href="admin.html" class="flex flex-col items-center hover:text-[#00B7B5] transition-all">
-                <i class="fas fa-sign-in-alt text-xl"></i>
-                <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Login</span>
-            </a>
-        </div>
-    </div>
-</nav>
-
-
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full">
+                <i class="fas fa-home text-lg"></i>
+            </button>
+            <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
+                <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest">Akun</span>
+            </button>
+        </nav>
     </div>
 
     <script>
