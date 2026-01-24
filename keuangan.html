@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keuangan RT - Sekwan</title>
+    <title>Kas Sekwan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script type="module">
@@ -21,38 +21,39 @@
             }
         });
     </script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap'); body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-[#F8FAFB] pb-40">
-
-    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-20 border-b-4 border-[#00B7B5]">
+<body class="bg-[#F8FAFB] pb-32">
+    <header class="p-8 pb-16 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-[#00B7B5]">
         <button onclick="history.back()" class="mb-4 opacity-70 text-[10px] font-black uppercase tracking-widest"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
-        <h1 class="text-2xl font-black tracking-tighter uppercase">KAS <span class="text-[#00B7B5]">WARGA.</span></h1>
+        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">Kas <span class="text-[#00B7B5]">Warga.</span></h1>
     </header>
 
-    <main class="p-6 space-y-4">
+    <section class="relative z-30 -mt-8 px-8">
+        <div class="bg-white p-3 rounded-[2rem] shadow-xl border border-slate-50 flex justify-between items-center gap-2">
+            <a href="keuangan.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-[#005461]"><i class="fas fa-wallet text-white text-sm"></i></a>
+            <a href="lapor.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-bullhorn text-[#005461] text-sm"></i></a>
+            <a href="pengurus.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-users-cog text-[#005461] text-sm"></i></a>
+            <a href="lapak.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-store text-[#005461] text-sm"></i></a>
+        </div>
+    </section>
+
+    <main class="p-6 mt-6 space-y-4">
         <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Total Kas Utama</p>
-            <h2 id="kas-utama" class="text-3xl font-black text-[#005461]">Rp 0</h2>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Kas Utama</p>
+            <h2 id="kas-utama" class="text-2xl font-black text-[#005461]">Rp 0</h2>
         </div>
         <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Dana Sosial</p>
-            <h2 id="kas-sosial" class="text-3xl font-black text-[#00B7B5]">Rp 0</h2>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Dana Sosial</p>
+            <h2 id="kas-sosial" class="text-2xl font-black text-[#00B7B5]">Rp 0</h2>
         </div>
     </main>
 
-    <section class="grid grid-cols-4 gap-2 px-10 mt-10 opacity-40">
-        <a href="keuangan.html" class="flex flex-col items-center"><div class="w-10 h-10 bg-[#005461] rounded-2xl flex items-center justify-center"><i class="fas fa-wallet text-white text-xs"></i></div></a>
-        <a href="lapor.html" class="flex flex-col items-center"><div class="w-10 h-10 bg-slate-200 rounded-2xl flex items-center justify-center"><i class="fas fa-bullhorn text-[#005461] text-xs"></i></div></a>
-        <a href="pengurus.html" class="flex flex-col items-center"><div class="w-10 h-10 bg-slate-200 rounded-2xl flex items-center justify-center"><i class="fas fa-users-cog text-[#005461] text-xs"></i></div></a>
-        <a href="lapak.html" class="flex flex-col items-center"><div class="w-10 h-10 bg-slate-200 rounded-2xl flex items-center justify-center"><i class="fas fa-store text-[#005461] text-xs"></i></div></a>
-    </section>
-
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full active:scale-90 transition-all"><i class="fas fa-home text-lg"></i></button>
+            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home text-lg"></i></button>
             <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white"><i class="fas fa-user-circle text-lg text-[#00B7B5]"></i><span class="text-[10px] font-black uppercase tracking-widest">Akun</span></button>
         </nav>
     </div>
 </body>
-                </html>
-                
+</html>
