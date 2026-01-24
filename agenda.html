@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Sekwan</title>
+    <title>Agenda Warga - Sekwan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script type="module">
@@ -15,32 +15,54 @@
         const db = getDatabase(app);
 
         onValue(ref(db, 'content/agenda'), (snap) => {
-            const list = document.getElementById('agenda-list'); list.innerHTML = "";
-            snap.forEach(child => {
-                const a = child.val();
-                list.innerHTML = `
-                    <div class="flex gap-4 bg-white p-5 rounded-[2.5rem] shadow-sm mb-4 border border-slate-100">
-                        <div class="bg-[#005461] text-white p-4 rounded-[1.8rem] text-center min-w-[65px] h-fit">
-                            <p class="text-xs font-black">${a.tgl.split(' ')[0] || '--'}</p>
-                            <p class="text-[8px] font-bold opacity-70 uppercase">${a.tgl.split(' ')[1] || ''}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-black text-[#005461] leading-tight">${a.judul}</h3>
-                            <div class="flex items-center gap-3 mt-2">
-                                <span class="text-[9px] font-bold text-[#00B7B5] uppercase"><i class="far fa-clock mr-1"></i>${a.jam || '07:00'}</span>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase"><i class="fas fa-map-marker-alt mr-1"></i> Area RT</span>
+            const list = document.getElementById('list-agenda');
+            list.innerHTML = "";
+            if(snap.exists()){
+                snap.forEach(child => {
+                    const a = child.val();
+                    list.innerHTML += `
+                        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm mb-4 flex gap-5 items-center">
+                            <div class="text-center bg-slate-50 p-3 rounded-2xl min-w-[60px]">
+                                <p class="text-[8px] font-black text-[#00B7B5] uppercase italic">Bulan</p>
+                                <p class="text-lg font-black text-[#005461] leading-none">${a.tgl || '00'}</p>
                             </div>
-                        </div>
-                    </div>` + list.innerHTML;
-            });
+                            <div>
+                                <h3 class="text-xs font-black text-[#005461] uppercase leading-tight">${a.judul}</h3>
+                                <p class="text-[9px] text-slate-400 mt-1"><i class="fas fa-clock mr-1 text-[#00B7B5]"></i> ${a.jam || '--:--'} | <i class="fas fa-map-marker-alt mr-1 text-[#00B7B5]"></i> ${a.lokasi || 'Lokasi'}</p>
+                            </div>
+                        </div>`;
+                });
+            } else {
+                list.innerHTML = `<p class="text-center text-[10px] text-slate-400 font-bold py-10 uppercase italic">Belum ada agenda...</p>`;
+            }
         });
     </script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap'); body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-[#F8FAFB] pb-24 text-[#005461]">
-    <div class="bg-[#00B7B5] p-8 rounded-b-[3.5rem] text-white shadow-xl">
-        <button onclick="history.back()" class="mb-4 opacity-80 text-black"><i class="fas fa-arrow-left mr-2"></i></button>
-        <h1 class="text-2xl font-black tracking-tighter text-[#005461]">AGENDA <span class="text-white">RT.</span></h1>
+<body class="bg-[#F8FAFB] pb-32">
+
+    <header class="p-8 pb-16 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-[#00B7B5]">
+        <button onclick="history.back()" class="mb-4 opacity-70 text-[10px] font-black uppercase tracking-widest"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
+        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">AGENDA <span class="text-[#00B7B5]">WARGA.</span></h1>
+    </header>
+
+    <section class="relative z-30 -mt-8 px-8">
+        <div class="bg-white p-3 rounded-[2rem] shadow-xl border border-slate-50 flex justify-between items-center gap-2">
+            <a href="keuangan.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-wallet text-[#005461] text-sm"></i></a>
+            <a href="agenda.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-[#005461]"><i class="fas fa-calendar-check text-white text-sm"></i></a>
+            <a href="lapor.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-bullhorn text-[#005461] text-sm"></i></a>
+            <a href="index.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-home text-[#005461] text-sm"></i></a>
+        </div>
+    </section>
+
+    <main id="list-agenda" class="p-6 mt-4"></main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home text-lg"></i></button>
+            <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white"><i class="fas fa-user-circle text-lg text-[#00B7B5]"></i><span class="text-[10px] font-black uppercase tracking-widest">Akun</span></button>
+        </nav>
     </div>
-    <main id="agenda-list" class="p-6 mt-4"></main>
 </body>
-</html>
+                                                                                                                                                        </html>
+    
