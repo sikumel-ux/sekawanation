@@ -3,44 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warta Sekwan</title>
+    <title>Informasi - Sekwan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
         const firebaseConfig = { databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
         onValue(ref(db, 'content/info'), (snap) => {
-            const list = document.getElementById('list-info'); list.innerHTML = "";
-            snap.forEach(c => {
-                const item = c.val();
-                list.innerHTML = `
-                    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm mb-4">
-                        <span class="text-[8px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-3 py-1 rounded-full uppercase italic">Warta</span>
-                        <h3 class="text-xs font-black text-[#005461] mt-3 leading-tight uppercase">${item.judul}</h3>
-                        <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">${item.keterangan}</p>
-                    </div>` + list.innerHTML;
-            });
+            const list = document.getElementById('list-info');
+            list.innerHTML = "";
+            if(snap.exists()){
+                snap.forEach(child => {
+                    const i = child.val();
+                    list.innerHTML += `
+                        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm mb-4">
+                            <div class="w-10 h-10 bg-[#00B7B5]/10 text-[#00B7B5] rounded-xl flex items-center justify-center mb-3 text-xs italic font-black uppercase">!</div>
+                            <h3 class="text-xs font-black text-[#005461] uppercase leading-tight">${i.judul}</h3>
+                            <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">${i.keterangan}</p>
+                        </div>`;
+                });
+            }
         });
     </script>
     <style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap'); body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
 <body class="bg-[#F8FAFB] pb-32">
+
     <header class="p-8 pb-16 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-[#00B7B5]">
         <button onclick="history.back()" class="mb-4 opacity-70 text-[10px] font-black uppercase tracking-widest"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
-        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">Warta <span class="text-[#00B7B5]">Sekwan.</span></h1>
+        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">INFO <span class="text-[#00B7B5]">RT.</span></h1>
     </header>
 
     <section class="relative z-30 -mt-8 px-8">
-        <div class="bg-white p-3 rounded-[2rem] shadow-xl border border-slate-50 flex justify-between items-center gap-2 text-center text-[#005461] text-[8px] font-bold">
-            <span class="flex-1 opacity-50 uppercase tracking-widest italic">Berita & Informasi Terbaru</span>
+        <div class="bg-white p-3 rounded-[2rem] shadow-xl border border-slate-50 flex justify-between items-center gap-2">
+            <a href="keuangan.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-wallet text-[#005461] text-sm"></i></a>
+            <a href="informasi.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-[#005461]"><i class="fas fa-info-circle text-white text-sm"></i></a>
+            <a href="pengurus.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-users-cog text-[#005461] text-sm"></i></a>
+            <a href="index.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-home text-[#005461] text-sm"></i></a>
         </div>
     </section>
 
-    <main id="list-info" class="p-6 mt-6"></main>
+    <main id="list-info" class="p-6 mt-4"></main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
