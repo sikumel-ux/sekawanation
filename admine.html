@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdminHub - Sekwan Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        input:focus, textarea:focus { border: 2px solid #00B7B5 !important; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl sticky top-0 z-50">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-xl font-black italic tracking-tighter text-[#00B7B5]">ADMIN<span class="text-white">HUB.</span></h1>
+            <button onclick="location.href='index.html'" class="text-[10px] font-bold opacity-70 border border-white/20 px-4 py-2 rounded-full uppercase tracking-widest">Web Utama</button>
+        </div>
+        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+            <button onclick="openTab('warga')" class="tab-btn whitespace-nowrap px-6 py-2 bg-[#00B7B5] text-[#005461] rounded-full font-black text-[10px] uppercase">Warga</button>
+            <button onclick="openTab('keuangan')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Keuangan</button>
+            <button onclick="openTab('konten')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Konten</button>
+        </div>
+    </header>
+
+    <main class="p-6">
+        
+        <section id="tab-warga" class="tab-content active space-y-6">
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-user-plus mr-2"></i>Tambah Warga Baru</h3>
+                <div class="space-y-3">
+                    <input type="text" id="warga-nama" placeholder="Nama Lengkap (Sesuai KTP)" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold uppercase border-2 border-transparent transition-all">
+                    <input type="number" id="warga-nohp" placeholder="Nomor WA (0812...)" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold border-2 border-transparent transition-all">
+                    <button onclick="saveWarga()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg mt-2 transition-transform active:scale-95">SIMPAN WARGA</button>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Daftar Warga Terdaftar</h3>
+                <div id="list-warga" class="space-y-2">
+                    </div>
+            </div>
+        </section>
+
+        <section id="tab-keuangan" class="tab-content space-y-6">
+            <div class="bg-[#00B7B5] p-8 rounded-[3rem] text-[#005461] shadow-xl relative overflow-hidden">
+                <i class="fas fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
+                <p class="text-[10px] font-black uppercase tracking-[0.3em] mb-1">Total Saldo Kas</p>
+                <h2 id="view-kas" class="text-3xl font-black tracking-tighter">Rp 0</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10 space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-[#018790] uppercase ml-2 mb-1 block">Update Kas RT</label>
+                    <input type="number" id="input-kas" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold border-2 border-transparent transition-all">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-[#018790] uppercase ml-2 mb-1 block">Update Dana Sosial</label>
+                    <input type="number" id="input-sosial" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold border-2 border-transparent transition-all">
+                </div>
+                <button onclick="saveKeuangan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg uppercase transition-transform active:scale-95">Update Laporan</button>
+            </div>
+        </section>
+
+        <section id="tab-konten" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-bullhorn mr-2"></i>Running Text</h3>
+                <textarea id="input-ticker" rows="2" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold mb-4 border-2 border-transparent transition-all" placeholder="Pesan berjalan di beranda..."></textarea>
+                <button onclick="saveTicker()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest transition-transform active:scale-95">Simpan Ticker</button>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-quote-left mr-2"></i>Quotes Hari Ini</h3>
+                <textarea id="input-quote" rows="3" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold mb-4 border-2 border-transparent transition-all" placeholder="Tulis kata bijak atau pesan untuk warga..."></textarea>
+                <button onclick="saveQuote()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest transition-transform active:scale-95">Update Quote Warga</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- MANAJEMEN WARGA ---
+        window.saveWarga = () => {
+            const nama = document.getElementById('warga-nama').value.trim();
+            const nohp = document.getElementById('warga-nohp').value.trim();
+            // ID Login: Huruf kecil, tanpa spasi
+            const idUser = nama.toLowerCase().replace(/\s+/g, '');
+
+            if(nama && nohp) {
+                set(ref(db, 'users/' + idUser), {
+                    nama: nama,
+                    nohp: nohp,
+                    role: 'warga'
+                }).then(() => {
+                    alert("✅ Warga " + nama + " berhasil ditambahkan!");
+                    document.getElementById('warga-nama').value = "";
+                    document.getElementById('warga-nohp').value = "";
+                });
+            } else {
+                alert("Mohon isi nama dan nomor HP!");
+            }
+        };
+
+        onValue(ref(db, 'users'), (snap) => {
+            const list = document.getElementById('list-warga');
+            list.innerHTML = "";
+            if(snap.exists()){
+                snap.forEach((child) => {
+                    const data = child.val();
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center p-4 bg-[#F4F4F4] rounded-2xl border border-white shadow-sm">
+                            <div>
+                                <p class="text-xs font-black uppercase text-[#005461] leading-tight">${data.nama}</p>
+                                <p class="text-[10px] font-bold text-[#00B7B5] mt-1">${data.nohp}</p>
+                            </div>
+                            <button onclick="deleteWarga('${child.key}')" class="w-9 h-9 bg-white text-red-400 rounded-xl flex items-center justify-center text-xs shadow-sm hover:text-red-600">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            } else {
+                list.innerHTML = "<p class='text-center text-[10px] text-slate-400 font-bold uppercase py-4'>Belum ada warga terdaftar</p>";
+            }
+        });
+
+        window.deleteWarga = (id) => {
+            if(confirm("Hapus warga ini dari database?")) {
+                remove(ref(db, 'users/' + id));
+            }
+        };
+
+        // --- MANAJEMEN KEUANGAN ---
+        onValue(ref(db, 'keuangan'), (snap) => {
+            const d = snap.val();
+            if(d) {
+                document.getElementById('view-kas').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
+                document.getElementById('input-kas').value = d.kas;
+                document.getElementById('input-sosial').value = d.sosial;
+            }
+        });
+
+        window.saveKeuangan = () => {
+            const kasVal = document.getElementById('input-kas').value;
+            const sosVal = document.getElementById('input-sosial').value;
+            set(ref(db, 'keuangan'), {
+                kas: kasVal,
+                sosial: sosVal
+            }).then(() => alert("💰 Laporan Keuangan Berhasil Diupdate!"));
+        };
+
+        // --- MANAJEMEN KONTEN (TICKER & QUOTES) ---
+        onValue(ref(db, 'settings/ticker'), (snap) => {
+            if(snap.exists()) document.getElementById('input-ticker').value = snap.val();
+        });
+
+        window.saveTicker = () => {
+            const txt = document.getElementById('input-ticker').value;
+            set(ref(db, 'settings/ticker'), txt).then(() => alert("📣 Ticker Berhasil Diperbarui!"));
+        };
+
+        onValue(ref(db, 'settings/quote'), (snap) => {
+            if(snap.exists()) document.getElementById('input-quote').value = snap.val();
+        });
+
+        window.saveQuote = () => {
+            const txt = document.getElementById('input-quote').value;
+            if(txt.trim() !== "") {
+                set(ref(db, 'settings/quote'), txt).then(() => alert("💬 Quote Berhasil Ditayangkan!"));
+            }
+        };
+
+        // --- TAB LOGIC ---
+        window.openTab = (tabName) => {
+            const contents = document.getElementsByClassName('tab-content');
+            const btns = document.getElementsByClassName('tab-btn');
+            
+            for (let c of contents) c.classList.remove('active');
+            for (let b of btns) {
+                b.classList.remove('bg-[#00B7B5]', 'text-[#005461]');
+                b.classList.add('bg-white/10', 'text-white');
+            }
+
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.currentTarget.classList.remove('bg-white/10', 'text-white');
+            event.currentTarget.classList.add('bg-[#00B7B5]', 'text-[#005461]');
+        };
+    </script>
+</body>
+</html>
