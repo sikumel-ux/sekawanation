@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warta Sekwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = { databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        onValue(ref(db, 'content/info'), (snap) => {
+            const list = document.getElementById('info-list'); list.innerHTML = "";
+            if(snap.exists()){
+                const data = Object.values(snap.val()).reverse(); // Terbaru di atas
+                data.forEach(item => {
+                    list.innerHTML += `
+                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 mb-4">
+                            <span class="text-[8px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-3 py-1 rounded-full uppercase">PENGUMUMAN</span>
+                            <h3 class="text-sm font-black text-[#005461] mt-3 leading-tight">${item.judul}</h3>
+                            <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">${item.keterangan}</p>
+                        </div>`;
+                });
+            }
+        });
+    </script>
+</head>
+<body class="bg-[#F8FAFB] pb-24">
+    <div class="bg-[#005461] p-8 rounded-b-[3.5rem] text-white shadow-xl">
+        <button onclick="history.back()" class="mb-4 opacity-70"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
+        <h1 class="text-2xl font-black tracking-tighter">WARTA <span class="text-[#00B7B5]">WARGA.</span></h1>
+        <p class="text-xs opacity-60">Arsip informasi dan pengumuman RT Sekwan.</p>
+    </div>
+    <main id="info-list" class="p-6 mt-4"></main>
+</body>
+</html>
