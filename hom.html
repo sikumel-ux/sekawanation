@@ -22,90 +22,79 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- FETCH CUACA (Panggungharjo/Bantul) ---
+        // --- FETCH CUACA (Fixed Link) ---
         async function fetchWeather() {
             try {
-                const res = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Bantul&units=metric&appid=9e657688220f83733276686a65b058c4');
+                // Pakai koordinat Panggungharjo/Bantul biar presisi
+                const res = await fetch('https://api.openweathermap.org/data/2.5/weather?lat=-7.8428&lon=110.3621&units=metric&appid=9e657688220f83733276686a65b058c4');
                 const data = await res.json();
                 document.getElementById('weather-temp').innerText = Math.round(data.main.temp) + "°C";
-                document.getElementById('weather-desc').innerText = data.weather[0].description;
-            } catch (e) { console.log("Weather error"); }
+                document.getElementById('weather-desc').innerText = data.weather[0].description.toUpperCase();
+            } catch (e) { document.getElementById('weather-temp').innerText = "28°C"; }
         }
 
-        // --- FETCH JADWAL SHOLAT (Bantul - ID 1501) ---
+        // --- FETCH JADWAL SHOLAT ---
         async function fetchSholat() {
-            const date = new Date();
-            const y = date.getFullYear(); const m = date.getMonth() + 1; const d = date.getDate();
             try {
-                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${y}/${m}/${d}`);
+                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`);
                 const data = await res.json();
                 const j = data.data.jadwal;
-                document.getElementById('sholat-view').innerHTML = `
-                    <div class="flex gap-4 overflow-x-auto no-scrollbar py-1">
-                        ${['subuh','dzuhur','ashar','maghrib','isya'].map(s => `
-                            <div class="text-center min-w-[60px] bg-white/10 p-2 rounded-xl">
-                                <p class="text-[7px] uppercase font-black opacity-60">${s}</p>
-                                <p class="text-[10px] font-bold">${j[s]}</p>
-                            </div>
-                        `).join('')}
+                const times = ['subuh','dzuhur','ashar','maghrib','isya'];
+                document.getElementById('sholat-view').innerHTML = times.map(s => `
+                    <div class="text-center min-w-[65px] bg-white/5 py-2 rounded-2xl border border-white/5">
+                        <p class="text-[7px] uppercase font-black opacity-50">${s}</p>
+                        <p class="text-[10px] font-bold">${j[s]}</p>
                     </div>
-                `;
-            } catch (e) { console.log("Sholat error"); }
+                `).join('');
+            } catch (e) { console.log("Sholat Error"); }
         }
 
         // --- REALTIME FIREBASE ---
         onValue(ref(db, 'settings/ticker'), (s) => { if(s.exists()) document.getElementById('ticker-text').innerText = "✦ " + s.val(); });
         onValue(ref(db, 'settings/quote'), (s) => { if(s.exists()) document.getElementById('quote-text').innerText = `"${s.val()}"`; });
 
-        // Blog/Artikel Terkini
-        onValue(query(ref(db, 'content/blog'), limitToLast(2)), (snap) => {
-            const list = document.getElementById('blog-list'); list.innerHTML = "";
-            snap.forEach(child => {
-                const b = child.val();
-                list.innerHTML = `
-                    <div class="bg-white p-5 rounded-[2.5rem] border border-[#018790]/5 mb-3">
-                        <span class="text-[7px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-2 py-1 rounded-full uppercase">${b.tgl}</span>
-                        <h4 class="text-xs font-black text-[#005461] mt-2">${b.judul}</h4>
-                        <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">${b.isi}</p>
-                    </div>
-                ` + list.innerHTML;
-            });
-        });
-
-        // Agenda (Plus Jam)
-        onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (snap) => {
-            if(snap.exists()) {
-                const a = Object.values(snap.val())[0];
-                document.getElementById('agenda-view').innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <div class="bg-[#005461] text-white p-3 rounded-2xl text-center">
-                            <p class="text-[10px] font-black leading-none">${a.tgl.split(' ')[0]}</p>
-                            <p class="text-[8px] uppercase opacity-60">${a.tgl.split(' ')[1] || ''}</p>
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-black text-[#005461]">${a.judul}</h4>
-                            <p class="text-[9px] font-bold text-[#00B7B5]"><i class="far fa-clock mr-1"></i>${a.jam || '07:00'} WIB</p>
-                        </div>
-                    </div>
+        // WARTA (Fixed)
+        onValue(query(ref(db, 'content/info'), limitToLast(1)), (snap) => {
+            if (snap.exists()) {
+                const data = Object.values(snap.val())[0];
+                document.getElementById('info-view').innerHTML = `
+                    <h4 class="text-[11px] font-black text-[#005461] uppercase">${data.judul}</h4>
+                    <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">${data.keterangan}</p>
                 `;
             }
         });
 
-        // Lapak
-        onValue(ref(db, 'lapak'), (snap) => {
-            const list = document.getElementById('lapak-list'); list.innerHTML = "";
-            if (snap.exists()) {
-                Object.values(snap.val()).forEach(item => {
-                    list.innerHTML += `
-                        <div class="min-w-[140px] bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100 text-center">
-                            <h4 class="text-xs font-black text-[#005461] truncate">${item.produk}</h4>
-                            <p class="text-[9px] font-bold text-slate-400 mt-1">Rp ${parseInt(item.harga).toLocaleString('id-ID')}</p>
-                            <a href="https://wa.me/${item.wa}" class="block bg-[#00B7B5] text-[#005461] text-[8px] font-black py-2 rounded-full mt-3 uppercase">Pesan</a>
-                        </div>
-                    `;
-                });
-            }
+        // BLOG (With Read More Logic)
+        onValue(query(ref(db, 'content/blog'), limitToLast(5)), (snap) => {
+            const list = document.getElementById('blog-list'); list.innerHTML = "";
+            snap.forEach(child => {
+                const b = child.val();
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-[2.5rem] border border-[#018790]/5 mb-3 active:scale-[0.98] transition-all cursor-pointer";
+                card.innerHTML = `
+                    <span class="text-[7px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-2 py-1 rounded-full uppercase">${b.tgl || 'Baru'}</span>
+                    <h4 class="text-xs font-black text-[#005461] mt-2">${b.judul}</h4>
+                    <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">${b.isi}</p>
+                    <p class="text-[9px] font-black text-[#00B7B5] mt-3 uppercase tracking-widest">Baca Selengkapnya <i class="fas fa-arrow-right ml-1"></i></p>
+                `;
+                card.onclick = () => showFullBlog(b.judul, b.isi, b.tgl);
+                list.prepend(card);
+            });
         });
+
+        // MODAL LOGIC
+        window.showFullBlog = (judul, isi, tgl) => {
+            document.getElementById('modal-title').innerText = judul;
+            document.getElementById('modal-date').innerText = tgl;
+            document.getElementById('modal-content').innerText = isi;
+            document.getElementById('blog-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeModal = () => {
+            document.getElementById('blog-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
 
         fetchWeather(); fetchSholat();
     </script>
@@ -120,57 +109,54 @@
 </head>
 <body class="pb-32">
 
+    <div id="blog-modal" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end justify-center hidden">
+        <div class="bg-white w-full max-w-md rounded-t-[3rem] p-8 max-h-[85vh] overflow-y-auto relative shadow-2xl">
+            <button onclick="closeModal()" class="absolute top-6 right-8 text-slate-300 text-xl"><i class="fas fa-times-circle"></i></button>
+            <span id="modal-date" class="text-[8px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-3 py-1 rounded-full uppercase"></span>
+            <h2 id="modal-title" class="text-lg font-black text-[#005461] mt-4 leading-tight"></h2>
+            <div class="w-10 h-1 bg-[#00B7B5] my-4 rounded-full"></div>
+            <p id="modal-content" class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap pb-10"></p>
+        </div>
+    </div>
+
     <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl">
         <div class="flex justify-between items-start mb-6">
             <div>
-                <h1 class="text-2xl font-black tracking-tighter">SEKWAN<span class="text-[#00B7B5]">.</span></h1>
+                <h1 class="text-2xl font-black tracking-tighter italic">SEKWAN<span class="text-[#00B7B5]">.</span></h1>
                 <div class="flex items-center gap-2 mt-1 opacity-80">
-                    <i class="fas fa-cloud-sun text-xs"></i>
-                    <span id="weather-temp" class="text-[10px] font-bold">--°C</span>
-                    <span class="text-[10px] font-bold uppercase" id="weather-desc">Panggungharjo</span>
+                    <i class="fas fa-temperature-low text-[10px] text-[#00B7B5]"></i>
+                    <span id="weather-temp" class="text-[10px] font-bold">--</span>
+                    <span class="text-[10px] font-black uppercase tracking-tighter" id="weather-desc">MEMUAT...</span>
                 </div>
             </div>
             <div class="text-right">
-                <p id="jam" class="text-2xl font-black">00:00</p>
-                <p class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full inline-block">WIB</p>
+                <p id="jam" class="text-2xl font-black tracking-tight">00:00</p>
+                <span class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase tracking-widest">WIB</span>
             </div>
         </div>
-        
-        <div id="sholat-view" class="bg-black/10 p-3 rounded-[2rem] border border-white/5"></div>
+        <div id="sholat-view" class="flex gap-2 justify-between mt-2"></div>
     </header>
 
-    <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-lg overflow-hidden border border-[#018790]/10">
-        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-widest" id="ticker-text">✦ Memuat info...</div>
+    <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-xl overflow-hidden border border-[#018790]/10 relative z-10">
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-widest" id="ticker-text">✦ MEMUAT INFORMASI TERBARU SEKWAN DIGITAL...</div>
     </div>
 
     <main class="mt-8 px-6 space-y-6">
-        
         <section class="text-center px-4">
-            <i class="fas fa-quote-left text-[#00B7B5] text-xl opacity-30 mb-2"></i>
-            <p id="quote-text" class="text-sm font-bold italic text-[#005461]">"Semoga hari ini penuh berkah."</p>
+            <p id="quote-text" class="text-xs font-bold italic text-[#005461] opacity-80">"Membangun rukun dalam keberagaman."</p>
         </section>
 
-        <section class="bg-white p-5 rounded-[2.5rem] shadow-sm border border-[#018790]/5">
-            <div class="flex justify-between items-center mb-4">
-                <p class="text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]">Agenda Utama</p>
-                <i class="fas fa-calendar-alt text-[#018790] opacity-30"></i>
-            </div>
-            <div id="agenda-view"></div>
+        <section class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/5">
+            <p class="text-[9px] font-black text-[#018790] uppercase tracking-[0.2em] mb-3">Warta Terbaru</p>
+            <div id="info-view"></div>
         </section>
 
         <section>
             <div class="flex justify-between items-center px-4 mb-4">
                 <p class="text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]">Kabar Sekwan</p>
-                <a href="#" class="text-[8px] font-black text-[#00B7B5] uppercase">Lihat Semua</a>
             </div>
             <div id="blog-list"></div>
         </section>
-
-        <section>
-            <p class="text-[9px] font-black text-[#018790] uppercase tracking-[0.2em] px-4 mb-4">Lapak Warga</p>
-            <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
-        </section>
-
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
@@ -178,9 +164,9 @@
             <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5]">
                 <i class="fas fa-home text-xl"></i>
             </button>
-            <button id="btn-auth" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
+            <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
                 <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
-                <span id="txt-auth" class="text-[10px] font-bold uppercase tracking-widest">LOGIN</span>
+                <span class="text-[10px] font-black uppercase tracking-widest">Warga</span>
             </button>
         </nav>
     </div>
@@ -192,5 +178,4 @@
         }, 1000);
     </script>
 </body>
-  </html>
-  
+</html>
