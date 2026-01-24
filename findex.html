@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sekwan Digital Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- 1. JADWAL SHOLAT BANTUL ---
+        async function getBantulSholat() {
+            const now = new Date();
+            const y = now.getFullYear(); const m = now.getMonth() + 1; const d = now.getDate();
+            try {
+                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${y}/${m}/${d}`);
+                const resJson = await res.json();
+                const j = resJson.data.jadwal;
+                const listSholat = [
+                    {n: 'Subuh', t: j.subuh}, {n: 'Dzuhur', t: j.dzuhur},
+                    {n: 'Ashar', t: j.ashar}, {n: 'Maghrib', t: j.maghrib}, {n: 'Isya', t: j.isya}
+                ];
+                document.getElementById('sholat-view').innerHTML = listSholat.map(s => `
+                    <div class="text-center flex-1 bg-white/10 py-2 rounded-2xl border border-white/5">
+                        <p class="text-[7px] uppercase font-black text-[#00B7B5]">${s.n}</p>
+                        <p class="text-[10px] font-bold text-white">${s.t}</p>
+                    </div>
+                `).join('');
+            } catch (e) { console.log("Sholat Error"); }
+        }
+
+        // --- 2. CUACA BANTUL ---
+        async function getWeatherData() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
+                const data = await res.json();
+                const temp = Math.round(data.current_weather.temperature);
+                document.getElementById('temp').innerText = temp + '°C';
+                const iconEl = document.getElementById('weather-icon');
+                iconEl.innerHTML = temp > 30 ? '<i class="fas fa-sun text-amber-400 text-sm"></i>' : '<i class="fas fa-cloud-sun text-blue-400 text-sm"></i>';
+                document.getElementById('weather-desc').innerText = temp > 30 ? 'Cerah' : 'Berawan';
+            } catch (e) { document.getElementById('weather-desc').innerText = 'Offline'; }
+        }
+
+        // --- 3. FIREBASE SYNC ---
+        function initContent() {
+            onValue(ref(db, 'settings'), (s) => {
+                const d = s.val();
+                if(d) {
+                    document.getElementById('ticker-text').innerText = "✦ " + (d.ticker || "Warta Sekwan Digital");
+                    document.getElementById('quote-text').innerText = `"${d.quote || "Rukun Warga, Maju Bersama."}"`;
+                }
+            });
+
+            onValue(ref(db, 'keuangan'), (s) => {
+                const d = s.val();
+                if(d) {
+                    document.getElementById('val-kas').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
+                    document.getElementById('val-sosial').innerText = 'Rp ' + (parseInt(d.sosial) || 0).toLocaleString('id-ID');
+                }
+            });
+
+            onValue(query(ref(db, 'content/info'), limitToLast(1)), (s) => {
+                if(s.exists()){
+                    const d = Object.values(s.val())[0];
+                    document.getElementById('info-view').innerHTML = `<h4 class="text-xs font-black text-[#005461] uppercase leading-tight">${d.judul}</h4><p class="text-[10px] text-slate-500 mt-1">${d.keterangan}</p>`;
+                }
+            });
+
+            onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (s) => {
+                if(s.exists()){
+                    const a = Object.values(s.val())[0];
+                    document.getElementById('agenda-view').innerHTML = `
+                        <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-[2rem]">
+                            <div class="bg-[#005461] text-white p-3 rounded-2xl text-center min-w-[55px]">
+                                <p class="text-[10px] font-black">${a.tgl || '--'}</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-[#005461]">${a.judul}</h4>
+                                <p class="text-[9px] font-bold text-[#00B7B5] uppercase tracking-tighter">${a.jam || '07:00'} WIB</p>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            onValue(query(ref(db, 'content/blog'), limitToLast(3)), (s) => {
+                const list = document.getElementById('blog-list'); list.innerHTML = "";
+                s.forEach(c => {
+                    const b = c.val();
+                    const el = document.createElement('div');
+                    el.className = "bg-white p-5 rounded-[2.5rem] border border-[#018790]/5 mb-3 active:scale-95 transition-all";
+                    el.innerHTML = `<span class="text-[7px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-2 py-1 rounded-full uppercase">${b.tgl}</span><h4 class="text-xs font-black text-[#005461] mt-2">${b.judul}</h4><p class="text-[10px] text-slate-500 mt-1 line-clamp-2">${b.isi}</p>`;
+                    el.onclick = () => {
+                        document.getElementById('modal-title').innerText = b.judul;
+                        document.getElementById('modal-content').innerText = b.isi;
+                        document.getElementById('blog-modal').classList.remove('hidden');
+                    };
+                    list.prepend(el);
+                });
+            });
+
+            onValue(ref(db, 'lapak'), (s) => {
+                const list = document.getElementById('lapak-list'); list.innerHTML = "";
+                s.forEach(c => {
+                    const i = c.val();
+                    list.innerHTML += `<div class="min-w-[150px] bg-white p-4 rounded-[2.5rem] border border-slate-100 text-center shadow-sm"><h4 class="text-xs font-black text-[#005461] truncate">${i.produk}</h4><p class="text-[10px] font-bold text-[#00B7B5] mt-1">Rp ${parseInt(i.harga).toLocaleString('id-ID')}</p><a href="https://wa.me/${i.wa}" class="block bg-[#005461] text-white text-[8px] font-black py-2 rounded-full mt-3 uppercase tracking-widest">Pesan</a></div>`;
+                });
+            });
+        }
+
+        window.onload = () => { getBantulSholat(); getWeatherData(); initContent(); };
+        window.closeModal = () => document.getElementById('blog-modal').classList.add('hidden');
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
+        @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        .link-more { font-weight: 800; font-size: 8px; color: #00B7B5; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <div id="blog-modal" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end justify-center hidden">
+        <div class="bg-white w-full max-w-md rounded-t-[3rem] p-8 max-h-[85vh] overflow-y-auto relative">
+            <button onclick="closeModal()" class="absolute top-6 right-8 text-slate-300 text-xl"><i class="fas fa-times-circle"></i></button>
+            <h2 id="modal-title" class="text-lg font-black text-[#005461] pr-8 leading-tight"></h2>
+            <div class="w-12 h-1 bg-[#00B7B5] my-4 rounded-full"></div>
+            <p id="modal-content" class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap pb-10"></p>
+        </div>
+    </div>
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative z-20 border-b-4 border-[#00B7B5]">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-2xl font-black italic tracking-tighter uppercase">Sekwan<span class="text-[#00B7B5]">.</span></h1>
+                <div class="flex items-center gap-2 mt-1 opacity-90">
+                    <span id="weather-icon"></span>
+                    <span id="temp" class="text-[10px] font-bold">--</span>
+                    <span id="weather-desc" class="text-[8px] font-black uppercase tracking-widest text-[#00B7B5]">LOADING...</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <p id="jam" class="text-2xl font-black">00:00</p>
+                <span class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase">Bantul</span>
+            </div>
+        </div>
+        <div id="sholat-view" class="flex gap-2 justify-between"></div>
+    </header>
+
+    <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-xl overflow-hidden border border-[#018790]/10 relative z-30">
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">...</div>
+    </div>
+
+    <main class="mt-8 px-6 space-y-7">
+        
+        <section class="grid grid-cols-4 gap-2">
+            <a href="keuangan.html" class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 group-active:scale-90 transition-all">
+                    <i class="fas fa-wallet text-white text-lg"></i>
+                </div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter text-center">Kas RT</span>
+            </a>
+            <a href="lapor.html" class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 group-active:scale-90 transition-all">
+                    <i class="fas fa-bullhorn text-white text-lg"></i>
+                </div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter text-center">Lapor</span>
+            </a>
+            <a href="pengurus.html" class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 group-active:scale-90 transition-all">
+                    <i class="fas fa-users-cog text-white text-lg"></i>
+                </div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter text-center">Pengurus</span>
+            </a>
+            <a href="lapak.html" class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 group-active:scale-90 transition-all">
+                    <i class="fas fa-store text-white text-lg"></i>
+                </div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter text-center">Lapak</span>
+            </a>
+        </section>
+
+        <p id="quote-text" class="text-center text-[11px] font-bold italic text-[#005461] opacity-60 px-4"></p>
+
+        <section onclick="location.href='keuangan.html'" class="grid grid-cols-2 gap-3 active:scale-95 transition-all">
+            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
+                <p class="text-[8px] font-bold opacity-50 uppercase mb-1">Kas Utama</p>
+                <p id="val-kas" class="text-sm font-black text-[#00B7B5]">Rp --</p>
+            </div>
+            <div class="bg-white p-5 rounded-[2.5rem] border border-[#018790]/10 shadow-sm">
+                <p class="text-[8px] font-bold text-[#018790] uppercase mb-1 tracking-widest">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black text-[#005461]">Rp --</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-end px-4 mb-3">
+                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Warta Sekwan</p>
+                <a href="informasi.html" class="link-more">Semua <i class="fas fa-chevron-right ml-1"></i></a>
+            </div>
+            <div id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-[#018790]/5 shadow-sm"></div>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-end px-4 mb-3">
+                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Agenda Terdekat</p>
+                <a href="agenda.html" class="link-more">Detail <i class="fas fa-chevron-right ml-1"></i></a>
+            </div>
+            <div id="agenda-view" class="shadow-sm rounded-[2rem]"></div>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-end px-4 mb-3">
+                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest text-[#00B7B5]">Kabar Warga</p>
+                <a href="blog.html" class="link-more">Arsip <i class="fas fa-chevron-right ml-1"></i></a>
+            </div>
+            <div id="blog-list"></div>
+        </section>
+
+        <section class="pb-10">
+            <div class="flex justify-between items-end px-4 mb-3">
+                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Lapak Sekwan</p>
+                <a href="lapak.html" class="link-more">Semua <i class="fas fa-chevron-right ml-1"></i></a>
+            </div>
+            <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-2"></div>
+        </section>
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full active:scale-90 transition-all">
+                <i class="fas fa-home text-lg"></i>
+            </button>
+            <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white active:scale-95 transition-all">
+                <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest">Akun</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+        }, 1000);
+    </script>
+</body>
+</html>
