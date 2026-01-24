@@ -1,85 +1,92 @@
-<div id="login-container">
-    <div id="login-step-1" class="space-y-4 text-left">
-        <div>
-            <label class="text-[10px] font-black text-[#018790] uppercase ml-4 mb-2 block">Nama Warga</label>
-            <input type="text" id="username" placeholder="Nama sesuai KTP" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none focus:ring-2 focus:ring-[#00B7B5] outline-none text-sm font-bold uppercase">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sekwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-6">
+
+    <div class="w-full max-w-md bg-white p-10 rounded-[3rem] shadow-2xl border border-[#018790]/10 text-center">
+        <div class="mb-8">
+            <div class="w-16 h-16 bg-[#005461] text-[#00B7B5] rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fas fa-key"></i>
+            </div>
+            <h1 class="text-2xl font-black text-[#005461]">WARGA LOGIN</h1>
+            <p class="text-[9px] font-bold text-[#018790] uppercase tracking-widest">Sistem Keamanan OTP</p>
         </div>
-        <div>
-            <label class="text-[10px] font-black text-[#018790] uppercase ml-4 mb-2 block">Nomor HP (WhatsApp)</label>
-            <input type="number" id="password" placeholder="0812xxxx" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none focus:ring-2 focus:ring-[#00B7B5] outline-none text-sm font-bold">
+
+        <div id="step-1" class="space-y-4 text-left">
+            <input type="text" id="username" placeholder="NAMA WARGA (Contoh: Apri)" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none outline-none text-sm font-bold uppercase">
+            <input type="number" id="phone" placeholder="NOMOR WHATSAPP (0812...)" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none outline-none text-sm font-bold">
+            <button id="btn-otp" class="w-full bg-[#005461] text-white font-black py-4 rounded-full shadow-lg">KIRIM KODE OTP</button>
         </div>
-        <button id="btn-request-otp" class="w-full bg-[#005461] text-white font-black py-4 rounded-full shadow-xl">KIRIM OTP KE HP SAYA</button>
+
+        <div id="step-2" class="hidden space-y-4 text-left mt-4">
+            <p class="text-center text-[10px] font-bold text-emerald-600 uppercase">OTP Berhasil dikirim ke WA Anda!</p>
+            <input type="number" id="otp-in" placeholder="6 DIGIT OTP" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none outline-none text-center text-lg font-black tracking-widest">
+            <button id="btn-verify" class="w-full bg-[#00B7B5] text-white font-black py-4 rounded-full shadow-lg">MASUK KE BERANDA</button>
+        </div>
     </div>
 
-    <div id="login-step-2" class="hidden space-y-4 text-left mt-4">
-        <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100 text-center text-[#005461]">
-            <p class="text-[10px] font-bold uppercase">Cek WhatsApp Anda, Kode telah dikirim!</p>
-        </div>
-        <input type="number" id="otp-input" placeholder="6 DIGIT OTP" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none focus:ring-2 focus:ring-[#00B7B5] outline-none text-center text-lg font-black tracking-[0.5em]">
-        <button id="btn-verify-otp" class="w-full bg-[#00B7B5] text-white font-black py-4 rounded-full shadow-xl">VERIFIKASI & MASUK</button>
-    </div>
-</div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
 
-    const firebaseConfig = { /* ... config lo ... */ };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const API_URL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
-    let generatedOTP = "";
-    let savedPhone = "";
-
-    // 1. KIRIM OTP
-    document.getElementById('btn-request-otp').onclick = async () => {
-        const nameIn = document.getElementById('username').value.toLowerCase().trim();
-        const phoneIn = document.getElementById('password').value.trim();
-        const btn = document.getElementById('btn-request-otp');
-
-        btn.innerText = "MENGECEK DATA...";
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const API_URL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
         
-        const snap = await get(ref(db, `users/${nameIn}`));
-        
-        if (snap.exists() && snap.val().nohp === phoneIn) {
-            generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-            savedPhone = phoneIn;
+        let genOTP = "";
 
-            // KIRIM KE API GOOGLE APPS SCRIPT LO
-            btn.innerText = "MENGIRIM OTP...";
+        document.getElementById('btn-otp').onclick = async () => {
+            const name = document.getElementById('username').value.toLowerCase().trim();
+            const phone = document.getElementById('phone').value.trim();
+            const btn = document.getElementById('btn-otp');
+
+            btn.innerText = "MENGECEK...";
+            const snap = await get(ref(db, `users/${name}`));
             
-            fetch(API_URL, {
-                method: "POST",
-                mode: "no-cors", // Penting untuk Apps Script
-                body: JSON.stringify({
-                    action: "sendOTP",
-                    number: savedPhone,
-                    message: `[SEKWAN DIGITAL] Kode OTP Anda adalah: ${generatedOTP}. JANGAN BERIKAN KODE INI KEPADA SIAPAPUN.`
-                })
-            }).then(() => {
-                document.getElementById('login-step-1').classList.add('hidden');
-                document.getElementById('login-step-2').classList.remove('hidden');
-            }).catch(err => {
-                alert("Gagal mengirim pesan. Cek koneksi.");
-                btn.innerText = "KIRIM OTP KE HP SAYA";
-            });
+            if (snap.exists() && snap.val().nohp === phone) {
+                genOTP = Math.floor(100000 + Math.random() * 900000).toString();
+                btn.innerText = "MENGIRIM OTP...";
+                
+                fetch(API_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify({ number: phone, message: `Kode OTP Sekwan Digital Anda: ${genOTP}` })
+                }).then(() => {
+                    document.getElementById('step-1').classList.add('hidden');
+                    document.getElementById('step-2').classList.remove('hidden');
+                });
+            } else {
+                alert("Data Warga Tidak Ditemukan!");
+                btn.innerText = "KIRIM KODE OTP";
+            }
+        };
 
-        } else {
-            alert("Nama atau No HP tidak terdaftar di sistem RT!");
-            btn.innerText = "KIRIM OTP KE HP SAYA";
-        }
-    };
-
-    // 2. VERIFIKASI
-    document.getElementById('btn-verify-otp').onclick = () => {
-        const otpIn = document.getElementById('otp-input').value;
-        if (otpIn === generatedOTP) {
-            localStorage.setItem('isLoggedIn', 'true');
-            location.href = 'index.html';
-        } else {
-            alert("Kode OTP Salah!");
-        }
-    };
-            </script>
-            
+        document.getElementById('btn-verify').onclick = () => {
+            if (document.getElementById('otp-in').value === genOTP) {
+                localStorage.setItem('isLoggedIn', 'true');
+                location.href = 'index.html';
+            } else {
+                alert("OTP Salah!");
+            }
+        };
+    </script>
+</body>
+</html>
