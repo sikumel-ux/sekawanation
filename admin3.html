@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdminHub - Sekwan Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        input:focus, textarea:focus { border-color: #00B7B5 !important; outline: none; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl sticky top-0 z-50">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-xl font-black italic tracking-tighter text-[#00B7B5]">ADMIN<span class="text-white">HUB.</span></h1>
+            <button onclick="location.href='index.html'" class="text-[10px] font-bold opacity-70 border border-white/20 px-4 py-2 rounded-full uppercase tracking-widest">Web Utama</button>
+        </div>
+        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+            <button onclick="openTab('warga')" class="tab-btn whitespace-nowrap px-6 py-2 bg-[#00B7B5] text-[#005461] rounded-full font-black text-[10px] uppercase">Warga</button>
+            <button onclick="openTab('keuangan')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Keuangan</button>
+            <button onclick="openTab('konten')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Konten</button>
+        </div>
+    </header>
+
+    <main class="p-6">
+        <section id="tab-warga" class="tab-content active space-y-6">
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Tambah Warga</h3>
+                <div class="space-y-3">
+                    <input type="text" id="warga-nama" placeholder="Nama Warga" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-2 border-transparent text-sm font-bold uppercase transition-all">
+                    <input type="number" id="warga-nohp" placeholder="Nomor WA (Contoh: 0812..)" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-2 border-transparent text-sm font-bold transition-all">
+                    <button onclick="saveWarga()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg mt-2 uppercase text-xs active:scale-95">Simpan Data</button>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">List Warga</h3>
+                <div id="list-warga" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <section id="tab-keuangan" class="tab-content space-y-6">
+            <div class="bg-[#00B7B5] p-8 rounded-[3rem] text-[#005461] shadow-xl relative overflow-hidden text-center">
+                <p class="text-[10px] font-black uppercase tracking-[0.3em] mb-1">Total Saldo Kas</p>
+                <h2 id="view-kas" class="text-3xl font-black tracking-tighter">Rp 0</h2>
+            </div>
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10 space-y-4">
+                <input type="number" id="input-kas" placeholder="Jumlah Kas RT" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-2 border-transparent text-sm font-bold transition-all">
+                <input type="number" id="input-sosial" placeholder="Jumlah Dana Sosial" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-2 border-transparent text-sm font-bold transition-all">
+                <button onclick="saveKeuangan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg uppercase text-xs active:scale-95">Update Saldo</button>
+            </div>
+        </section>
+
+        <section id="tab-konten" class="tab-content space-y-6">
+            
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-bullhorn mr-2"></i>Ticker & Quote</h3>
+                <input type="text" id="input-ticker" placeholder="Running Text" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 transition-all">
+                <textarea id="input-quote" placeholder="Quote Hari Ini" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-4 h-16 transition-all"></textarea>
+                <button onclick="saveTickerQuote()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest active:scale-95">Update Beranda</button>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-newspaper mr-2"></i>Warta Sekwan</h3>
+                <div class="space-y-3">
+                    <input type="text" id="info-judul" placeholder="Judul Berita Singkat" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
+                    <textarea id="info-ket" placeholder="Keterangan singkat..." class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold h-20 transition-all"></textarea>
+                    <button onclick="saveInfo()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] active:scale-95">Terbitkan Berita</button>
+                </div>
+                <div id="list-info" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-calendar-check mr-2"></i>Agenda RT</h3>
+                <div class="space-y-3">
+                    <input type="text" id="agenda-judul" placeholder="Nama Kegiatan" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="agenda-tgl" placeholder="Tgl (Ex: 25 Jan)" class="px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
+                        <input type="text" id="agenda-jam" placeholder="Jam (Ex: 08:00)" class="px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
+                    </div>
+                    <button onclick="saveAgenda()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] active:scale-95">Tambah Agenda</button>
+                </div>
+                <div id="list-agenda" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-pen-nib mr-2"></i>Blog & Artikel</h3>
+                <div class="space-y-3">
+                    <input type="text" id="blog-judul" placeholder="Judul Artikel" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
+                    <textarea id="blog-isi" placeholder="Tulis isi artikel di sini..." class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold h-32 transition-all"></textarea>
+                    <button onclick="saveBlog()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl uppercase text-[10px] active:scale-95">Posting Artikel</button>
+                </div>
+                <div id="list-blog" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-shopping-bag mr-2"></i>Lapak Warga</h3>
+                <div class="space-y-3">
+                    <input type="text" id="lapak-produk" placeholder="Nama Produk" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
+                    <input type="number" id="lapak-harga" placeholder="Harga" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
+                    <input type="number" id="lapak-wa" placeholder="WA Penjual (628...)" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
+                    <button onclick="saveLapak()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] active:scale-95">Posting Barang</button>
+                </div>
+                <div id="list-lapak" class="mt-4 space-y-2"></div>
+            </div>
+
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- MANAJEMEN WARGA ---
+        window.saveWarga = () => {
+            const nama = document.getElementById('warga-nama').value.trim();
+            const nohp = document.getElementById('warga-nohp').value.trim();
+            const idUser = nama.toLowerCase().replace(/\s+/g, '');
+            if(nama && nohp) {
+                set(ref(db, 'users/' + idUser), { nama, nohp, role: 'warga' })
+                .then(() => { alert("Warga Berhasil Disimpan!"); document.getElementById('warga-nama').value = ''; });
+            }
+        };
+
+        onValue(ref(db, 'users'), (snap) => {
+            const list = document.getElementById('list-warga'); list.innerHTML = "";
+            snap.forEach(child => {
+                list.innerHTML += `<div class="flex justify-between items-center p-4 bg-[#F4F4F4] rounded-2xl border border-white">
+                    <div><p class="text-xs font-black uppercase">${child.val().nama}</p><p class="text-[10px] text-slate-400 font-bold">${child.val().nohp}</p></div>
+                    <button onclick="deleteItem('users/${child.key}')" class="text-red-500 text-xs"><i class="fas fa-trash"></i></button>
+                </div>`;
+            });
+        });
+
+        // --- MANAJEMEN KEUANGAN ---
+        onValue(ref(db, 'keuangan'), (snap) => {
+            const d = snap.val();
+            if(d) {
+                document.getElementById('view-kas').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
+                document.getElementById('input-kas').value = d.kas;
+                document.getElementById('input-sosial').value = d.sosial;
+            }
+        });
+
+        window.saveKeuangan = () => {
+            const kas = document.getElementById('input-kas').value;
+            const sosial = document.getElementById('input-sosial').value;
+            set(ref(db, 'keuangan'), { kas, sosial }).then(() => alert("Saldo Updated!"));
+        };
+
+        // --- 1. TICKER & QUOTE ---
+        onValue(ref(db, 'settings'), (snap) => {
+            const d = snap.val();
+            if(d) {
+                document.getElementById('input-ticker').value = d.ticker || "";
+                document.getElementById('input-quote').value = d.quote || "";
+            }
+        });
+        window.saveTickerQuote = () => {
+            set(ref(db, 'settings/ticker'), document.getElementById('input-ticker').value);
+            set(ref(db, 'settings/quote'), document.getElementById('input-quote').value).then(() => alert("Beranda Updated!"));
+        };
+
+        // --- 2. WARTA / INFO ---
+        window.saveInfo = () => {
+            const judul = document.getElementById('info-judul').value;
+            const keterangan = document.getElementById('info-ket').value;
+            if(judul && keterangan) {
+                push(ref(db, 'content/info'), { judul, keterangan }).then(() => {
+                    alert("Berita Diterbitkan!");
+                    document.getElementById('info-judul').value = ""; document.getElementById('info-ket').value = "";
+                });
+            }
+        };
+        onValue(ref(db, 'content/info'), (snap) => {
+            const list = document.getElementById('list-info'); list.innerHTML = "";
+            snap.forEach(child => {
+                list.innerHTML += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                    <p class="text-[10px] font-bold truncate pr-4">${child.val().judul}</p>
+                    <button onclick="deleteItem('content/info/${child.key}')" class="text-red-400"><i class="fas fa-times-circle"></i></button>
+                </div>`;
+            });
+        });
+
+        // --- 3. AGENDA (PLUS JAM) ---
+        window.saveAgenda = () => {
+            const judul = document.getElementById('agenda-judul').value;
+            const tgl = document.getElementById('agenda-tgl').value;
+            const jam = document.getElementById('agenda-jam').value;
+            if(judul && tgl) {
+                push(ref(db, 'content/agenda'), { judul, tgl, jam }).then(() => {
+                    alert("Agenda Ditambahkan!");
+                    document.getElementById('agenda-judul').value = "";
+                });
+            }
+        };
+        onValue(ref(db, 'content/agenda'), (snap) => {
+            const list = document.getElementById('list-agenda'); list.innerHTML = "";
+            snap.forEach(child => {
+                list.innerHTML += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                    <p class="text-[10px] font-bold">${child.val().tgl} (${child.val().jam || '-'}) - ${child.val().judul}</p>
+                    <button onclick="deleteItem('content/agenda/${child.key}')" class="text-red-400"><i class="fas fa-times-circle"></i></button>
+                </div>`;
+            });
+        });
+
+        // --- 4. BLOG / ARTIKEL ---
+        window.saveBlog = () => {
+            const judul = document.getElementById('blog-judul').value;
+            const isi = document.getElementById('blog-isi').value;
+            if(judul && isi) {
+                push(ref(db, 'content/blog'), { judul, isi, tgl: new Date().toLocaleDateString('id-ID') }).then(() => {
+                    alert("Artikel Diposting!");
+                    document.getElementById('blog-judul').value = ""; document.getElementById('blog-isi').value = "";
+                });
+            }
+        };
+        onValue(ref(db, 'content/blog'), (snap) => {
+            const list = document.getElementById('list-blog'); list.innerHTML = "";
+            snap.forEach(child => {
+                list.innerHTML += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                    <p class="text-[10px] font-bold truncate pr-4">${child.val().judul}</p>
+                    <button onclick="deleteItem('content/blog/${child.key}')" class="text-red-400"><i class="fas fa-times-circle"></i></button>
+                </div>`;
+            });
+        });
+
+        // --- 5. LAPAK ---
+        window.saveLapak = () => {
+            const produk = document.getElementById('lapak-produk').value;
+            const harga = document.getElementById('lapak-harga').value;
+            const wa = document.getElementById('lapak-wa').value;
+            if(produk && harga && wa) {
+                push(ref(db, 'lapak'), { produk, harga, wa }).then(() => {
+                    alert("Barang Diposting!");
+                    document.getElementById('lapak-produk').value = "";
+                });
+            }
+        };
+        onValue(ref(db, 'lapak'), (snap) => {
+            const list = document.getElementById('list-lapak'); list.innerHTML = "";
+            snap.forEach(child => {
+                list.innerHTML += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                    <p class="text-[10px] font-bold">${child.val().produk} (Rp ${child.val().harga})</p>
+                    <button onclick="deleteItem('lapak/${child.key}')" class="text-red-400"><i class="fas fa-times-circle"></i></button>
+                </div>`;
+            });
+        });
+
+        // --- GLOBAL DELETE ---
+        window.deleteItem = (path) => { if(confirm("Hapus data ini?")) { remove(ref(db, path)); } };
+
+        // --- TAB LOGIC ---
+        window.openTab = (tabName) => {
+            const contents = document.getElementsByClassName('tab-content');
+            const btns = document.getElementsByClassName('tab-btn');
+            for (let c of contents) c.classList.remove('active');
+            for (let b of btns) {
+                b.classList.remove('bg-[#00B7B5]', 'text-[#005461]');
+                b.classList.add('bg-white/10', 'text-white');
+            }
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.currentTarget.classList.remove('bg-white/10', 'text-white');
+            event.currentTarget.classList.add('bg-[#00B7B5]', 'text-[#005461]');
+        };
+    </script>
+</body>
+                  </html>
+                      
