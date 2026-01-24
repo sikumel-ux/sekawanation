@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sekwan Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-6">
+
+    <div class="w-full max-w-md bg-white p-10 rounded-[3rem] shadow-2xl border border-[#018790]/10 text-center">
+        <div class="mb-8">
+            <div class="w-16 h-16 bg-[#005461] text-[#00B7B5] rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1 class="text-2xl font-black text-[#005461]">WARGA LOGIN</h1>
+            <p class="text-[9px] font-bold text-[#018790] uppercase tracking-widest">Firebase Secure Verification</p>
+        </div>
+
+        <div id="step-1" class="space-y-4 text-left">
+            <div>
+                <label class="text-[10px] font-bold ml-4 text-[#018790]">NAMA WARGA</label>
+                <input type="text" id="username" placeholder="Contoh: Apri" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none outline-none text-sm font-bold uppercase">
+            </div>
+            <div>
+                <label class="text-[10px] font-bold ml-4 text-[#018790]">NOMOR HP (+62...)</label>
+                <input type="text" id="phone" placeholder="+628123456789" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none outline-none text-sm font-bold">
+            </div>
+            <div id="recaptcha-container" class="mt-4 flex justify-center"></div>
+            
+            <button id="btn-otp" class="w-full bg-[#005461] text-white font-black py-4 rounded-full shadow-lg transition-transform active:scale-95">KIRIM KODE OTP</button>
+        </div>
+
+        <div id="step-2" class="hidden space-y-4 text-left mt-4">
+            <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 text-center">
+                <p class="text-[10px] font-bold text-emerald-600 uppercase italic">Cek SMS di HP Anda!</p>
+            </div>
+            <input type="number" id="otp-in" placeholder="6 DIGIT OTP" class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none outline-none text-center text-lg font-black tracking-widest">
+            <button id="btn-verify" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-full shadow-lg transition-transform active:scale-95">VERIFIKASI & MASUK</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        auth.languageCode = 'id';
+
+        let confirmationResult = null;
+
+        // Inisialisasi Recaptcha (Supaya Firebase tau lo bukan bot)
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            'size': 'normal', // Bisa diganti 'invisible' kalau gak mau ada kotak ceklis
+            'callback': (response) => {}
+        });
+
+        // FUNGSI KIRIM OTP
+        document.getElementById('btn-otp').onclick = async () => {
+            const nameIn = document.getElementById('username').value.toLowerCase().trim();
+            const phoneIn = document.getElementById('phone').value.trim();
+            const btn = document.getElementById('btn-otp');
+
+            if(!nameIn || !phoneIn) return alert("Isi nama dan nomor HP!");
+
+            btn.innerText = "MENGECEK DATA...";
+            
+            try {
+                // 1. Cek di Realtime Database dulu
+                const snap = await get(ref(db, `users/${nameIn}`));
+                
+                if (snap.exists() && snap.val().nohp === phoneIn) {
+                    btn.innerText = "MENGIRIM SMS...";
+                    
+                    // 2. Kirim OTP via Firebase Auth
+                    const appVerifier = window.recaptchaVerifier;
+                    signInWithPhoneNumber(auth, phoneIn, appVerifier)
+                        .then((result) => {
+                            confirmationResult = result;
+                            document.getElementById('step-1').classList.add('hidden');
+                            document.getElementById('step-2').classList.remove('hidden');
+                        }).catch((error) => {
+                            alert("Gagal kirim SMS: " + error.message);
+                            btn.innerText = "KIRIM KODE OTP";
+                            location.reload(); // Reset recaptcha
+                        });
+                } else {
+                    alert("Nama atau No HP tidak terdaftar di Database RT!");
+                    btn.innerText = "KIRIM KODE OTP";
+                }
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        };
+
+        // FUNGSI VERIFIKASI OTP
+        document.getElementById('btn-verify').onclick = () => {
+            const code = document.getElementById('otp-in').value;
+            const btn = document.getElementById('btn-verify');
+            
+            btn.innerText = "MEMVERIFIKASI...";
+
+            confirmationResult.confirm(code).then((result) => {
+                // Berhasil Login!
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userPhone', result.user.phoneNumber);
+                location.href = 'index.html';
+            }).catch((error) => {
+                alert("Kode OTP Salah atau Kedaluwarsa!");
+                btn.innerText = "MASUK KE BERANDA";
+            });
+        };
+    </script>
+</body>
+</html>
