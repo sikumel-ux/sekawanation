@@ -9,33 +9,44 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
         const firebaseConfig = { databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
         onValue(ref(db, 'content/info'), (snap) => {
-            const list = document.getElementById('info-list'); list.innerHTML = "";
-            if(snap.exists()){
-                const data = Object.values(snap.val()).reverse(); // Terbaru di atas
-                data.forEach(item => {
-                    list.innerHTML += `
-                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 mb-4">
-                            <span class="text-[8px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-3 py-1 rounded-full uppercase">PENGUMUMAN</span>
-                            <h3 class="text-sm font-black text-[#005461] mt-3 leading-tight">${item.judul}</h3>
-                            <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">${item.keterangan}</p>
-                        </div>`;
-                });
-            }
+            const list = document.getElementById('list-info'); list.innerHTML = "";
+            snap.forEach(c => {
+                const item = c.val();
+                list.innerHTML = `
+                    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm mb-4">
+                        <span class="text-[8px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-3 py-1 rounded-full uppercase italic">Warta</span>
+                        <h3 class="text-xs font-black text-[#005461] mt-3 leading-tight uppercase">${item.judul}</h3>
+                        <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">${item.keterangan}</p>
+                    </div>` + list.innerHTML;
+            });
         });
     </script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap'); body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-[#F8FAFB] pb-24">
-    <div class="bg-[#005461] p-8 rounded-b-[3.5rem] text-white shadow-xl">
-        <button onclick="history.back()" class="mb-4 opacity-70"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
-        <h1 class="text-2xl font-black tracking-tighter">WARTA <span class="text-[#00B7B5]">WARGA.</span></h1>
-        <p class="text-xs opacity-60">Arsip informasi dan pengumuman RT Sekwan.</p>
+<body class="bg-[#F8FAFB] pb-32">
+    <header class="p-8 pb-16 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-[#00B7B5]">
+        <button onclick="history.back()" class="mb-4 opacity-70 text-[10px] font-black uppercase tracking-widest"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
+        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-white">Warta <span class="text-[#00B7B5]">Sekwan.</span></h1>
+    </header>
+
+    <section class="relative z-30 -mt-8 px-8">
+        <div class="bg-white p-3 rounded-[2rem] shadow-xl border border-slate-50 flex justify-between items-center gap-2 text-center text-[#005461] text-[8px] font-bold">
+            <span class="flex-1 opacity-50 uppercase tracking-widest italic">Berita & Informasi Terbaru</span>
+        </div>
+    </section>
+
+    <main id="list-info" class="p-6 mt-6"></main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home text-lg"></i></button>
+            <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white"><i class="fas fa-user-circle text-lg text-[#00B7B5]"></i><span class="text-[10px] font-black uppercase tracking-widest">Akun</span></button>
+        </nav>
     </div>
-    <main id="info-list" class="p-6 mt-4"></main>
 </body>
 </html>
