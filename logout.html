@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logging Out...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#005461] flex items-center justify-center min-h-screen">
+    <div class="text-center text-white">
+        <div class="animate-spin text-4xl mb-4"><i class="fas fa-circle-notch"></i></div>
+        <p class="font-bold tracking-widest uppercase">Menghapus Sesi...</p>
+    </div>
+
+    <script>
+        // Proses logout instan
+        localStorage.removeItem('isLoggedIn');
+        
+        // Kasih delay dikit biar keren kayak aplikasi beneran
+        setTimeout(() => {
+            location.href = 'index.html';
+        }, 1500);
+    </script>
+</body>
+</html>
