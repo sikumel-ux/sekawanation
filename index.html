@@ -16,34 +16,28 @@
           authDomain: "websekawan.firebaseapp.com",
           projectId: "websekawan",
           databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
-          storageBucket: "websekawan.firebasestorage.app",
-          messagingSenderId: "407413490869",
           appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- SISTEM SYNC LOGIN-LOGOUT ---
+        // --- SISTEM SYNC LOGIN/LOGOUT ---
         window.syncAuth = () => {
             const sectionKas = document.getElementById('section-kas');
-            const loginBtn = document.getElementById('btn-auth');
-            const loginText = document.getElementById('nav-login-text');
+            const btnAuth = document.getElementById('btn-auth');
+            const txtAuth = document.getElementById('txt-auth');
             const status = localStorage.getItem('isLoggedIn');
 
             if (status === 'true') {
-                // Tampilkan Kas
-                sectionKas.classList.remove('hidden');
                 sectionKas.style.display = 'grid';
-                
-                // Ubah Tombol jadi Logout
-                loginText.innerText = "LOGOUT";
-                loginBtn.onclick = () => {
+                txtAuth.innerText = "LOGOUT";
+                btnAuth.onclick = () => {
                     localStorage.removeItem('isLoggedIn');
                     location.reload();
                 };
-
-                // Ambil Data Firebase
+                
+                // Ambil Data Kas
                 onValue(ref(db, 'keuangan'), (snap) => {
                     const d = snap.val();
                     if(d) {
@@ -52,19 +46,15 @@
                     }
                 });
             } else {
-                // Sembunyikan Kas & Tombol Normal
                 sectionKas.style.display = 'none';
-                sectionKas.classList.add('hidden');
-                loginText.innerText = "LOGIN";
-                loginBtn.onclick = () => { location.href = 'login.html'; };
+                txtAuth.innerText = "LOGIN";
+                btnAuth.onclick = () => { location.href = 'login.html'; };
             }
         };
 
-        // Jalankan terus buat monitoring
         syncAuth();
-        setInterval(syncAuth, 1000);
 
-        // --- FETCH DATA LAIN ---
+        // --- REALTIME DATA ---
         onValue(ref(db, 'settings/ticker'), (snap) => {
             if (snap.exists()) document.getElementById('ticker-text').innerText = "✦ " + snap.val();
         });
@@ -72,26 +62,16 @@
         const hariArr = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
         onValue(ref(db, 'ronda/' + hariArr[new Date().getDay()]), (snap) => {
             const d = snap.val();
-            document.getElementById('ronda-info').innerText = d ? d.petugas : "Jadwal Kosong";
+            document.getElementById('ronda-info').innerText = d ? d.petugas : "Libur";
             document.getElementById('ronda-tag').innerText = d ? d.kelompok : "-";
-        });
-
-        onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (snap) => {
-            if (snap.exists()) {
-                const data = Object.values(snap.val())[0];
-                document.getElementById('agenda-view').innerHTML = `
-                    <h3 class="text-xl font-black uppercase italic text-[#00B7B5]">${data.judul}</h3>
-                    <p class="text-[10px] opacity-80 mt-1">${data.tanggal} — ${data.keterangan}</p>
-                `;
-            }
         });
 
         onValue(query(ref(db, 'content/info'), limitToLast(1)), (snap) => {
             if (snap.exists()) {
                 const data = Object.values(snap.val())[0];
                 document.getElementById('info-view').innerHTML = `
-                    <h4 class="text-sm font-black text-[#005461] uppercase leading-tight">${data.judul}</h4>
-                    <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">${data.keterangan}</p>
+                    <h4 class="text-sm font-black text-[#005461] uppercase">${data.judul}</h4>
+                    <p class="text-[10px] text-slate-500 mt-2">${data.keterangan}</p>
                 `;
             }
         });
@@ -102,11 +82,10 @@
             if (snap.exists()) {
                 Object.values(snap.val()).forEach(item => {
                     list.innerHTML += `
-                        <div class="min-w-[160px] bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100">
-                            <p class="text-[8px] font-bold text-[#018790] uppercase mb-1">${item.pemilik}</p>
-                            <h4 class="text-xs font-black text-[#005461] leading-tight h-8 overflow-hidden">${item.produk}</h4>
-                            <p class="text-[10px] font-bold text-slate-400 mt-2">Rp ${item.harga}</p>
-                            <a href="https://wa.me/${item.wa}" class="inline-block w-full text-center bg-[#00B7B5] text-white text-[9px] font-bold py-2 rounded-full mt-3">PESAN</a>
+                        <div class="min-w-[150px] bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100">
+                            <h4 class="text-xs font-black text-[#005461]">${item.produk}</h4>
+                            <p class="text-[10px] font-bold text-slate-400 mt-1">Rp ${item.harga}</p>
+                            <a href="https://wa.me/${item.wa}" class="block w-full text-center bg-[#00B7B5] text-white text-[9px] font-bold py-2 rounded-full mt-3 uppercase">Pesan</a>
                         </div>
                     `;
                 });
@@ -122,71 +101,47 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="pb-36">
+<body class="pb-32">
 
-    <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-[#018790]/10">
+    <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-[#018790]/10">
         <div>
-            <h1 class="text-2xl font-black italic tracking-tighter text-[#005461]">SEKWAN<span class="text-[#00B7B5]">.</span></h1>
-            <p class="text-[8px] font-bold text-[#018790] uppercase tracking-widest mt-1 uppercase">Digital Neighborhood</p>
+            <h1 class="text-2xl font-black italic text-[#005461]">SEKWAN<span class="text-[#00B7B5]">.</span></h1>
+            <p class="text-[8px] font-bold text-[#018790] uppercase tracking-widest">Digital Hub</p>
         </div>
         <div class="text-right">
-            <p id="jam" class="text-xl font-black text-[#005461] tracking-tighter">00:00</p>
+            <p id="jam" class="text-xl font-black text-[#005461]">00:00</p>
             <p class="text-[8px] font-bold text-[#00B7B5] uppercase italic">WIB</p>
         </div>
     </header>
 
-    <div class="mx-5 mt-2 bg-[#005461]/5 rounded-full py-2 overflow-hidden border border-white">
-        <div class="ticker-move">
-            <span id="ticker-text" class="text-[10px] font-bold text-[#018790] uppercase italic">✦ Memuat informasi terbaru warga...</span>
-        </div>
+    <div class="mx-5 mt-2 bg-[#005461]/5 rounded-full py-2 overflow-hidden">
+        <div class="ticker-move text-[10px] font-bold text-[#018790] uppercase italic" id="ticker-text">✦ Memuat info...</div>
     </div>
 
     <main class="mt-4 px-6 space-y-5">
         
-        <section id="section-kas" class="hidden grid grid-cols-2 gap-3">
-            <div class="bg-[#005461] p-5 rounded-[2rem] text-white shadow-xl shadow-[#005461]/20 border border-white/10">
-                <p class="text-[8px] font-bold opacity-70 uppercase tracking-widest mb-1">Kas RT</p>
-                <p id="val-kas" class="text-sm font-black tracking-tight text-[#00B7B5]">Rp 0</p>
+        <section id="section-kas" style="display:none;" class="grid grid-cols-2 gap-3">
+            <div class="bg-[#005461] p-5 rounded-[2rem] text-white shadow-xl">
+                <p class="text-[8px] font-bold opacity-70 uppercase mb-1">Kas RT</p>
+                <p id="val-kas" class="text-sm font-black text-[#00B7B5]">Rp --</p>
             </div>
             <div class="bg-white p-5 rounded-[2rem] border border-[#018790]/10 shadow-sm">
-                <p class="text-[8px] font-bold text-[#018790] uppercase tracking-widest mb-1">Dana Sosial</p>
-                <p id="val-sosial" class="text-sm font-black text-[#005461]">Rp 0</p>
+                <p class="text-[8px] font-bold text-[#018790] uppercase mb-1">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black text-[#005461]">Rp --</p>
             </div>
         </section>
-
-        <div class="grid grid-cols-12 gap-3">
-            <div class="col-span-4 bg-white p-5 rounded-[2rem] shadow-sm flex flex-col items-center justify-center">
-                <i class="fas fa-cloud-sun text-[#00B7B5] text-xl mb-1"></i>
-                <h4 id="temp" class="text-lg font-black text-[#005461]">--°</h4>
-            </div>
-            <div class="col-span-8 bg-[#018790] p-5 rounded-[2rem] shadow-lg flex items-center justify-between text-white border border-white/10">
-                <div>
-                    <p class="text-[7px] font-bold opacity-70 uppercase leading-none">Sholat Berikutnya</p>
-                    <p id="sholat-nama" class="text-xs font-black uppercase italic text-[#00B7B5]">--</p>
-                </div>
-                <p id="sholat-waktu" class="text-xl font-black tracking-tighter">--:--</p>
-            </div>
-        </div>
 
         <section class="bg-white p-6 rounded-[2.5rem] shadow-sm border-l-8 border-[#018790]">
-            <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest mb-3">Warta Sekwan</p>
-            <div id="info-view">
-                <p class="text-xs italic text-slate-300">Memuat kabar...</p>
-            </div>
-        </section>
-
-        <section id="agenda-view" class="bg-[#005461] text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden border border-white/5">
-            <p class="text-xs italic opacity-40 font-bold uppercase">Memuat Agenda...</p>
+            <p class="text-[9px] font-black text-[#018790] uppercase mb-3">Warta Sekwan</p>
+            <div id="info-view"></div>
         </section>
 
         <section class="bg-white p-5 rounded-[2rem] shadow-sm flex items-center justify-between border border-[#018790]/10">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-[#00B7B5]/10 text-[#00B7B5] rounded-xl flex items-center justify-center">
-                    <i class="fas fa-moon text-xs"></i>
-                </div>
+                <div class="w-10 h-10 bg-[#00B7B5]/10 text-[#00B7B5] rounded-xl flex items-center justify-center"><i class="fas fa-moon"></i></div>
                 <div>
                     <p class="text-[8px] font-bold text-[#018790] uppercase">Keamanan</p>
-                    <p id="ronda-info" class="text-xs font-black text-[#005461] uppercase italic">--</p>
+                    <p id="ronda-info" class="text-xs font-black text-[#005461] italic uppercase">--</p>
                 </div>
             </div>
             <span id="ronda-tag" class="text-[8px] font-black bg-[#F4F4F4] text-[#018790] px-3 py-1 rounded-full uppercase italic">--</span>
@@ -196,17 +151,16 @@
             <p class="text-[9px] font-bold text-[#018790] uppercase tracking-widest ml-4 mb-3">🛍️ Lapak Warga</p>
             <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
-
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center border border-white/10 shadow-2xl shadow-[#005461]/40">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl">
             <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5]">
                 <i class="fas fa-th-large text-xl"></i>
             </button>
-            <button id="btn-auth" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white border border-white/5">
-                <i class="fas fa-user-circle text-lg"></i>
-                <span id="nav-login-text" class="text-[10px] font-bold uppercase tracking-wider">LOGIN</span>
+            <button id="btn-auth" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
+                <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
+                <span id="txt-auth" class="text-[10px] font-bold uppercase">LOGIN</span>
             </button>
         </nav>
     </div>
@@ -216,23 +170,6 @@
             const d = new Date();
             document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
         }, 1000);
-
-        async function fetchWidgets() {
-            try {
-                const s = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Yogyakarta&country=Indonesia&method=11');
-                const sd = await s.json();
-                const t = sd.data.timings;
-                const schedule = [{n:'Subuh', t:t.Fajr}, {n:'Dzuhur', t:t.Dhuhr}, {n:'Ashar', t:t.Asr}, {n:'Maghrib', t:t.Maghrib}, {n:'Isya', t:t.Isha}];
-                const now = new Date().getHours().toString().padStart(2,'0')+":"+new Date().getMinutes().toString().padStart(2,'0');
-                let next = schedule.find(x => x.t > now) || schedule[0];
-                document.getElementById('sholat-nama').innerText = next.n;
-                document.getElementById('sholat-waktu').innerText = next.t;
-                const w = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.79&longitude=110.37&current_weather=true');
-                const wd = await w.json();
-                document.getElementById('temp').innerText = Math.round(wd.current_weather.temperature) + '°';
-            } catch (e) { console.log(e); }
-        }
-        fetchWidgets();
     </script>
 </body>
 </html>
