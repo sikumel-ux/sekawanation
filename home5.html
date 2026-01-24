@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RT Digital Sekwan</title>
+    <title>Sekwan Digital Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
@@ -22,39 +22,49 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- 1. API EXTERNAL (CUACA & SHOLAT BANTUL) ---
-        async function loadExternalData() {
+        // --- 1. FIXED JADWAL SHOLAT (SESUAI LOGIKA LO) ---
+        async function getBantulSholat() {
+            const now = new Date();
+            const y = now.getFullYear(); const m = now.getMonth() + 1; const d = now.getDate();
             try {
-                const wRes = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Bantul,ID&units=metric&appid=9e657688220f83733276686a65b058c4');
-                const wData = await wRes.json();
-                document.getElementById('weather-temp').innerText = Math.round(wData.main.temp) + "°C";
-                document.getElementById('weather-desc').innerText = wData.weather[0].description.toUpperCase();
-
-                const sRes = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`);
-                const sData = await sRes.json();
-                const j = sData.data.jadwal;
-                const list = ['subuh','dzuhur','ashar','maghrib','isya'];
-                document.getElementById('sholat-view').innerHTML = list.map(s => `
-                    <div class="text-center flex-1 bg-white/5 py-2 rounded-2xl border border-white/5">
-                        <p class="text-[7px] uppercase font-black text-[#00B7B5]">${s}</p>
-                        <p class="text-[10px] font-bold text-white">${j[s]}</p>
+                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${y}/${m}/${d}`);
+                const resJson = await res.json();
+                const j = resJson.data.jadwal;
+                const listSholat = [
+                    {n: 'Subuh', t: j.subuh}, {n: 'Dzuhur', t: j.dzuhur},
+                    {n: 'Ashar', t: j.ashar}, {n: 'Maghrib', t: j.maghrib}, {n: 'Isya', t: j.isya}
+                ];
+                document.getElementById('sholat-view').innerHTML = listSholat.map(s => `
+                    <div class="text-center flex-1 bg-white/10 py-2 rounded-2xl border border-white/5">
+                        <p class="text-[7px] uppercase font-black text-[#00B7B5]">${s.n}</p>
+                        <p class="text-[10px] font-bold text-white">${s.t}</p>
                     </div>
                 `).join('');
-            } catch (e) { console.log("API Delay..."); }
+            } catch (e) { console.log("Sholat Error"); }
         }
 
-        // --- 2. FIREBASE SYNC ---
-        function startFirebase() {
+        // --- 2. FIXED CUACA BANTUL ---
+        async function getBantulWeather() {
+            try {
+                const res = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Bantul,ID&units=metric&appid=9e657688220f83733276686a65b058c4');
+                const data = await res.json();
+                document.getElementById('weather-temp').innerText = Math.round(data.main.temp) + "°C";
+                document.getElementById('weather-desc').innerText = data.weather[0].description.toUpperCase();
+            } catch (e) { console.log("Weather Error"); }
+        }
+
+        // --- 3. FIREBASE REALTIME SYNC (NO CORRUPTION) ---
+        function initContent() {
             // Ticker & Quote
             onValue(ref(db, 'settings'), (s) => {
                 const d = s.val();
                 if(d) {
-                    document.getElementById('ticker-text').innerText = "✦ " + (d.ticker || "WARTA RT DIGITAL SEKWAN");
-                    document.getElementById('quote-text').innerText = `"${d.quote || "Tetap rukun dan kompak selalu."}"`;
+                    document.getElementById('ticker-text').innerText = "✦ " + (d.ticker || "Warta Sekwan Digital");
+                    document.getElementById('quote-text').innerText = `"${d.quote || "Rukun Warga, Maju Bersama."}"`;
                 }
             });
 
-            // Keuangan (Jika Login)
+            // Keuangan (Login Only)
             if (localStorage.getItem('isLoggedIn') === 'true') {
                 document.getElementById('section-kas').classList.remove('hidden');
                 onValue(ref(db, 'keuangan'), (s) => {
@@ -66,14 +76,18 @@
                 });
             }
 
-            // Warta & Agenda
+            // Warta
             onValue(query(ref(db, 'content/info'), limitToLast(1)), (s) => {
                 if(s.exists()){
                     const d = Object.values(s.val())[0];
-                    document.getElementById('info-view').innerHTML = `<h4 class="text-xs font-black text-[#005461] uppercase leading-tight">${d.judul}</h4><p class="text-[10px] text-slate-500 mt-1">${d.keterangan}</p>`;
+                    document.getElementById('info-view').innerHTML = `
+                        <h4 class="text-xs font-black text-[#005461] uppercase">${d.judul}</h4>
+                        <p class="text-[10px] text-slate-500 mt-1">${d.keterangan}</p>
+                    `;
                 }
             });
 
+            // Agenda (Include Jam)
             onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (s) => {
                 if(s.exists()){
                     const a = Object.values(s.val())[0];
@@ -84,22 +98,22 @@
                             </div>
                             <div>
                                 <h4 class="text-xs font-black text-[#005461]">${a.judul}</h4>
-                                <p class="text-[9px] font-bold text-[#00B7B5] uppercase italic">${a.jam || '07:00'} WIB</p>
+                                <p class="text-[9px] font-bold text-[#00B7B5] uppercase"><i class="far fa-clock mr-1"></i>${a.jam || '07:00'}</p>
                             </div>
                         </div>
                     `;
                 }
             });
 
-            // Blog (Read More)
+            // Blog
             onValue(query(ref(db, 'content/blog'), limitToLast(3)), (s) => {
                 const list = document.getElementById('blog-list'); list.innerHTML = "";
                 s.forEach(c => {
                     const b = c.val();
                     const el = document.createElement('div');
-                    el.className = "bg-white p-5 rounded-[2.5rem] border border-[#018790]/5 mb-3 active:scale-95 transition-all";
+                    el.className = "bg-white p-5 rounded-[2.5rem] border border-[#018790]/5 mb-3 active:scale-95";
                     el.innerHTML = `<span class="text-[7px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-2 py-1 rounded-full uppercase">${b.tgl}</span><h4 class="text-xs font-black text-[#005461] mt-2">${b.judul}</h4><p class="text-[10px] text-slate-500 mt-1 line-clamp-2">${b.isi}</p>`;
-                    el.onclick = () => { 
+                    el.onclick = () => {
                         document.getElementById('modal-title').innerText = b.judul;
                         document.getElementById('modal-content').innerText = b.isi;
                         document.getElementById('blog-modal').classList.remove('hidden');
@@ -113,12 +127,12 @@
                 const list = document.getElementById('lapak-list'); list.innerHTML = "";
                 s.forEach(c => {
                     const i = c.val();
-                    list.innerHTML += `<div class="min-w-[150px] bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 text-center"><h4 class="text-xs font-black text-[#005461] truncate">${i.produk}</h4><p class="text-[10px] font-bold text-[#00B7B5] mt-1">Rp ${parseInt(i.harga).toLocaleString('id-ID')}</p><a href="https://wa.me/${i.wa}" class="block bg-[#005461] text-white text-[8px] font-black py-2 rounded-full mt-3 uppercase tracking-widest">Beli</a></div>`;
+                    list.innerHTML += `<div class="min-w-[150px] bg-white p-4 rounded-[2.5rem] border border-slate-100 text-center"><h4 class="text-xs font-black text-[#005461] truncate">${i.produk}</h4><p class="text-[10px] font-bold text-[#00B7B5] mt-1">Rp ${parseInt(i.harga).toLocaleString('id-ID')}</p><a href="https://wa.me/${i.wa}" class="block bg-[#005461] text-white text-[8px] font-black py-2 rounded-full mt-3 uppercase">Pesan</a></div>`;
                 });
             });
         }
 
-        window.onload = () => { loadExternalData(); startFirebase(); };
+        window.onload = () => { getBantulSholat(); getBantulWeather(); initContent(); };
         window.closeModal = () => document.getElementById('blog-modal').classList.add('hidden');
     </script>
 
@@ -128,7 +142,7 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
-        .link-more { font-[900] text-[8px] uppercase text-[#00B7B5] tracking-widest flex items-center gap-1; }
+        .link-more { font-weight: 800; font-size: 8px; color: #00B7B5; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body class="pb-32">
@@ -136,7 +150,7 @@
     <div id="blog-modal" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end justify-center hidden">
         <div class="bg-white w-full max-w-md rounded-t-[3rem] p-8 max-h-[85vh] overflow-y-auto relative">
             <button onclick="closeModal()" class="absolute top-6 right-8 text-slate-300 text-xl"><i class="fas fa-times-circle"></i></button>
-            <h2 id="modal-title" class="text-lg font-black text-[#005461] leading-tight pr-6"></h2>
+            <h2 id="modal-title" class="text-lg font-black text-[#005461] pr-8 leading-tight"></h2>
             <div class="w-12 h-1 bg-[#00B7B5] my-4 rounded-full"></div>
             <p id="modal-content" class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap pb-10"></p>
         </div>
@@ -147,73 +161,75 @@
             <div>
                 <h1 class="text-2xl font-black italic tracking-tighter">SEKWAN<span class="text-[#00B7B5]">.</span></h1>
                 <div class="flex items-center gap-2 mt-1 opacity-90">
-                    <i class="fas fa-cloud text-[10px] text-[#00B7B5]"></i>
-                    <span id="weather-temp" class="text-[10px] font-bold">--°C</span>
-                    <span id="weather-desc" class="text-[8px] font-black uppercase tracking-tighter">BANTUL</span>
+                    <i class="fas fa-temperature-low text-[10px] text-[#00B7B5]"></i>
+                    <span id="weather-temp" class="text-[10px] font-bold">--</span>
+                    <span id="weather-desc" class="text-[8px] font-black uppercase tracking-widest">LOADING...</span>
                 </div>
             </div>
             <div class="text-right">
-                <p id="jam" class="text-2xl font-black tracking-tighter">00:00</p>
-                <span class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase">WIB</span>
+                <p id="jam" class="text-2xl font-black">00:00</p>
+                <span class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase">Bantul WIB</span>
             </div>
         </div>
         <div id="sholat-view" class="flex gap-2 justify-between"></div>
     </header>
 
     <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-xl overflow-hidden border border-[#018790]/10 relative z-30">
-        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">...</div>
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">MEMUAT...</div>
     </div>
 
     <main class="mt-8 px-6 space-y-7">
-        <p id="quote-text" class="text-center text-[11px] font-bold italic text-[#005461] opacity-60 px-4"></p>
+        <p id="quote-text" class="text-center text-[11px] font-bold italic text-[#005461] opacity-60"></p>
 
         <section id="section-kas" class="grid grid-cols-2 gap-3 hidden" onclick="location.href='keuangan.html'">
             <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white">
                 <p class="text-[8px] font-bold opacity-50 uppercase mb-1">Kas RT</p>
-                <p id="val-kas" class="text-sm font-black text-[#00B7B5]">Rp 0</p>
+                <p id="val-kas" class="text-sm font-black text-[#00B7B5]">Rp --</p>
             </div>
             <div class="bg-white p-5 rounded-[2.5rem] border border-[#018790]/10 shadow-sm">
                 <p class="text-[8px] font-bold text-[#018790] uppercase mb-1">Sosial</p>
-                <p id="val-sosial" class="text-sm font-black text-[#005461]">Rp 0</p>
+                <p id="val-sosial" class="text-sm font-black text-[#005461]">Rp --</p>
             </div>
         </section>
 
         <section>
-            <div class="flex justify-between items-center px-4 mb-3">
+            <div class="flex justify-between items-end px-4 mb-3">
                 <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Warta Sekwan</p>
-                <a href="informasi.html" class="link-more">SEMUA <i class="fas fa-chevron-right"></i></a>
+                <a href="informasi.html" class="link-more">Semua <i class="fas fa-chevron-right ml-1"></i></a>
             </div>
             <div id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-[#018790]/5"></div>
         </section>
 
         <section>
-            <div class="flex justify-between items-center px-4 mb-3">
+            <div class="flex justify-between items-end px-4 mb-3">
                 <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Agenda Terdekat</p>
-                <a href="agenda.html" class="link-more">DETAIL <i class="fas fa-chevron-right"></i></a>
+                <a href="agenda.html" class="link-more">Detail <i class="fas fa-chevron-right ml-1"></i></a>
             </div>
             <div id="agenda-view"></div>
         </section>
 
         <section>
-            <div class="flex justify-between items-center px-4 mb-3">
+            <div class="flex justify-between items-end px-4 mb-3">
                 <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Kabar & Artikel</p>
-                <a href="blog.html" class="link-more">ARSIP <i class="fas fa-chevron-right"></i></a>
+                <a href="blog.html" class="link-more">Arsip <i class="fas fa-chevron-right ml-1"></i></a>
             </div>
             <div id="blog-list"></div>
         </section>
 
         <section class="pb-10">
-            <div class="flex justify-between items-center px-4 mb-3">
+            <div class="flex justify-between items-end px-4 mb-3">
                 <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Lapak Warga</p>
-                <a href="lapak.html" class="link-more">SEMUA <i class="fas fa-chevron-right"></i></a>
+                <a href="lapak.html" class="link-more">Semua <i class="fas fa-chevron-right ml-1"></i></a>
             </div>
-            <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar"></div>
+            <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home text-lg"></i></button>
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full">
+                <i class="fas fa-home text-lg"></i>
+            </button>
             <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
                 <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
                 <span class="text-[10px] font-black uppercase tracking-widest">AKUN</span>
@@ -228,4 +244,5 @@
         }, 1000);
     </script>
 </body>
-</html>
+                    </html>
+    
