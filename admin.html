@@ -3,203 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdminHub - RT Sekwan</title>
+    <title>AdminHub - Sekwan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; }
-        .admin-card { background: white; border-radius: 2rem; padding: 1.5rem; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .input-style { width: 100%; padding: 0.85rem 1rem; background: #f1f5f9; border-radius: 1rem; border: 2px solid transparent; font-weight: 700; font-size: 0.875rem; outline: none; transition: all 0.2s; }
-        .input-style:focus { border-color: #6366f1; background: white; }
-        .btn-primary { background: #1e293b; color: white; padding: 0.85rem; border-radius: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; width: 100%; cursor: pointer; transition: all 0.2s; }
-        .btn-primary:active { transform: scale(0.96); }
-        h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; color: #64748b; letter-spacing: 0.1em; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="pb-24">
 
-    <div class="max-w-2xl mx-auto px-6 pt-10 space-y-8">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-black italic tracking-tighter uppercase">Admin<span class="text-indigo-600">Hub.</span></h1>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Control Everything</p>
-            </div>
-            <button onclick="location.href='index.html'" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-200">
-                <i class="fas fa-home text-slate-400"></i>
-            </button>
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-xl font-black italic tracking-tighter text-[#00B7B5]">ADMIN<span class="text-white">HUB.</span></h1>
+            <button onclick="location.href='index.html'" class="text-xs font-bold opacity-70 border border-white/20 px-4 py-2 rounded-full uppercase">Keluar</button>
         </div>
+        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+            <button onclick="openTab('warga')" class="tab-btn whitespace-nowrap px-6 py-2 bg-[#00B7B5] text-[#005461] rounded-full font-black text-[10px] uppercase">Warga</button>
+            <button onclick="openTab('keuangan')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Keuangan</button>
+            <button onclick="openTab('konten')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Konten</button>
+        </div>
+    </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="admin-card">
-                <h3><i class="fas fa-wallet text-indigo-500"></i> Saldo Kas</h3>
+    <main class="p-6">
+        
+        <section id="tab-warga" class="tab-content active space-y-6">
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-user-plus mr-2"></i>Tambah Warga Baru</h3>
                 <div class="space-y-3">
-                    <input type="number" id="kas" placeholder="Kas RT (Rp)" class="input-style">
-                    <input type="number" id="sosial" placeholder="Dana Sosial (Rp)" class="input-style">
-                    <button onclick="handleSaldo()" class="btn-primary">Update Saldo</button>
+                    <input type="text" id="warga-nama" placeholder="Nama Warga (ID Login)" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold uppercase">
+                    <input type="number" id="warga-nohp" placeholder="Nomor WhatsApp" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold">
+                    <button onclick="saveWarga()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg mt-2">SIMPAN WARGA</button>
                 </div>
             </div>
-            <div class="admin-card">
-                <h3><i class="fas fa-bullhorn text-indigo-500"></i> Running Text</h3>
-                <div class="space-y-3">
-                    <textarea id="ticker_teks" placeholder="Isi pengumuman..." class="input-style h-[88px]"></textarea>
-                    <button onclick="handleTicker()" class="btn-primary">Simpan Teks</button>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Daftar Warga Terdaftar</h3>
+                <div id="list-warga" class="space-y-2">
+                    </div>
+            </div>
+        </section>
+
+        <section id="tab-keuangan" class="tab-content space-y-6">
+            <div class="bg-[#00B7B5] p-8 rounded-[3rem] text-[#005461] shadow-xl relative overflow-hidden">
+                <i class="fas fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
+                <p class="text-[10px] font-black uppercase tracking-[0.3em] mb-1">Total Saldo Kas</p>
+                <h2 id="view-kas" class="text-3xl font-black tracking-tighter">Rp 0</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10 space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-[#018790] uppercase ml-2 mb-1 block">Update Kas RT</label>
+                    <input type="number" id="input-kas" placeholder="Jumlah Rp" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold">
                 </div>
-            </div>
-        </div>
-
-        <div class="admin-card border-l-8 border-indigo-600">
-            <h3><i class="fas fa-moon text-indigo-600"></i> Jadwal Ronda</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <select id="ronda_hari" class="input-style">
-                    <option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option>
-                    <option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option>
-                </select>
-                <input type="text" id="ronda_kelompok" placeholder="Kelompok" class="input-style">
-            </div>
-            <input type="text" id="ronda_nama" placeholder="Daftar Nama Petugas" class="input-style mt-4">
-            <button onclick="handleRonda()" class="btn-primary mt-4 bg-indigo-600">Update Ronda</button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="admin-card">
-                <h3><i class="fas fa-calendar-alt text-blue-500"></i> Tambah Agenda</h3>
-                <div class="space-y-3">
-                    <input type="text" id="agenda_judul" placeholder="Judul Agenda" class="input-style">
-                    <input type="date" id="agenda_tgl" class="input-style">
-                    <input type="text" id="agenda_ket" placeholder="Keterangan" class="input-style">
-                    <button onclick="handleAgenda()" class="btn-primary bg-blue-600">Publish Agenda</button>
+                <div>
+                    <label class="text-[10px] font-black text-[#018790] uppercase ml-2 mb-1 block">Update Dana Sosial</label>
+                    <input type="number" id="input-sosial" placeholder="Jumlah Rp" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold">
                 </div>
+                <button onclick="saveKeuangan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg uppercase">Update Laporan</button>
             </div>
-            <div class="admin-card">
-                <h3><i class="fas fa-info-circle text-orange-500"></i> Informasi Umum</h3>
-                <div class="space-y-3">
-                    <input type="text" id="info_judul" placeholder="Judul Info" class="input-style">
-                    <textarea id="info_ket" placeholder="Detail informasi..." class="input-style h-20"></textarea>
-                    <button onclick="handleInfo()" class="btn-primary bg-orange-500">Publish Info</button>
-                </div>
-            </div>
-        </div>
+        </section>
 
-        <div class="admin-card border-l-8 border-pink-500">
-            <h3><i class="fas fa-store text-pink-500"></i> Lapak Warga (UMKM)</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <input type="text" id="lapak_nama" placeholder="Pemilik" class="input-style">
-                <input type="text" id="lapak_produk" placeholder="Nama Produk" class="input-style">
-                <input type="text" id="lapak_harga" placeholder="Harga" class="input-style">
-                <input type="tel" id="lapak_wa" placeholder="WA (628...)" class="input-style">
+        <section id="tab-konten" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4"><i class="fas fa-bullhorn mr-2"></i>Edit Ticker (Running Text)</h3>
+                <textarea id="input-ticker" rows="3" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl outline-none text-sm font-bold mb-4" placeholder="Masukkan pesan berjalan..."></textarea>
+                <button onclick="saveTicker()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl uppercase">Simpan Pesan</button>
             </div>
-            <button onclick="handleLapak()" class="btn-primary mt-4 bg-pink-500">Tambah ke Lapak</button>
-        </div>
+        </section>
 
-        <div class="admin-card bg-slate-900 text-white">
-            <h3 class="text-white opacity-80"><i class="fas fa-user-plus"></i> Registrasi Akun Warga</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="warga_nama" placeholder="Nama Lengkap" class="input-style !bg-slate-800 !text-white !border-none">
-                <input type="tel" id="warga_hp" placeholder="No HP (Untuk Login)" class="input-style !bg-slate-800 !text-white !border-none">
-            </div>
-            <p class="text-[9px] mt-2 opacity-50 italic">* No HP akan digunakan sebagai ID Login di halaman warga.</p>
-            <button onclick="handleWarga()" class="btn-primary mt-4 bg-white !text-slate-900">Simpan Akun</button>
-        </div>
-
-    </div>
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
           authDomain: "websekawan.firebaseapp.com",
           projectId: "websekawan",
           databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
-          storageBucket: "websekawan.firebasestorage.app",
-          messagingSenderId: "407413490869",
           appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- HANDLERS ---
-        window.handleSaldo = async () => {
-            try {
-                await set(ref(db, 'keuangan'), { 
-                    kas: document.getElementById('kas').value, 
-                    sosial: document.getElementById('sosial').value 
-                });
-                alert("✅ Saldo Berhasil Diupdate!");
-            } catch (e) { alert("Gagal: " + e.message); }
-        };
+        // --- MANAJEMEN WARGA ---
+        window.saveWarga = () => {
+            const nama = document.getElementById('warga-nama').value.trim();
+            const nohp = document.getElementById('warga-nohp').value.trim();
+            const idUser = nama.toLowerCase(); // KUNCI LOGIN
 
-        window.handleTicker = async () => {
-            try {
-                await set(ref(db, 'settings/ticker'), document.getElementById('ticker_teks').value);
-                alert("✅ Running Text Disimpan!");
-            } catch (e) { alert("Gagal: " + e.message); }
-        };
-
-        window.handleRonda = async () => {
-            try {
-                const hari = document.getElementById('ronda_hari').value;
-                await set(ref(db, 'ronda/' + hari.toLowerCase()), {
-                    hari: hari,
-                    petugas: document.getElementById('ronda_nama').value,
-                    kelompok: document.getElementById('ronda_kelompok').value
-                });
-                alert("✅ Jadwal Ronda Updated!");
-            } catch (e) { alert("Gagal: " + e.message); }
-        };
-
-        window.handleAgenda = async () => {
-            try {
-                await push(ref(db, 'content/agenda'), {
-                    judul: document.getElementById('agenda_judul').value,
-                    tanggal: document.getElementById('agenda_tgl').value,
-                    keterangan: document.getElementById('agenda_ket').value,
-                    timestamp: Date.now()
-                });
-                alert("✅ Agenda Published!");
-            } catch (e) { alert("Gagal: " + e.message); }
-        };
-
-        window.handleInfo = async () => {
-            try {
-                await push(ref(db, 'content/info'), {
-                    judul: document.getElementById('info_judul').value,
-                    keterangan: document.getElementById('info_ket').value,
-                    timestamp: Date.now()
-                });
-                alert("✅ Informasi Published!");
-            } catch (e) { alert("Gagal: " + e.message); }
-        };
-
-        window.handleLapak = async () => {
-            try {
-                await push(ref(db, 'lapak'), {
-                    pemilik: document.getElementById('lapak_nama').value,
-                    produk: document.getElementById('lapak_produk').value,
-                    harga: document.getElementById('lapak_harga').value,
-                    wa: document.getElementById('lapak_wa').value
-                });
-                alert("✅ Produk Berhasil Ditambah ke Lapak!");
-            } catch (e) { alert("Gagal: " + e.message); }
-        };
-
-        window.handleWarga = async () => {
-            try {
-                const nama = document.getElementById('warga_nama').value;
-                const hp = document.getElementById('warga_hp').value;
-                // Kita simpan dengan kunci nomor HP agar mudah dicek saat login
-                await set(ref(db, 'users/' + hp), {
+            if(nama && nohp) {
+                set(ref(db, 'users/' + idUser), {
                     nama: nama,
-                    nohp: hp,
+                    nohp: nohp,
                     role: 'warga'
+                }).then(() => {
+                    alert("Warga " + nama + " berhasil ditambahkan!");
+                    document.getElementById('warga-nama').value = "";
+                    document.getElementById('warga-nohp').value = "";
                 });
-                alert("✅ Akun Warga Berhasil Dibuat!");
-            } catch (e) { alert("Gagal: " + e.message); }
+            }
+        };
+
+        onValue(ref(db, 'users'), (snap) => {
+            const list = document.getElementById('list-warga');
+            list.innerHTML = "";
+            if(snap.exists()){
+                snap.forEach((child) => {
+                    const data = child.val();
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center p-4 bg-[#F4F4F4] rounded-2xl border border-white">
+                            <div>
+                                <p class="text-xs font-black uppercase text-[#005461]">${data.nama}</p>
+                                <p class="text-[10px] font-bold text-slate-400">${data.nohp}</p>
+                            </div>
+                            <button onclick="deleteWarga('${child.key}')" class="w-8 h-8 bg-red-100 text-red-500 rounded-lg flex items-center justify-center text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+        });
+
+        window.deleteWarga = (id) => {
+            if(confirm("Hapus warga ini?")) {
+                remove(ref(db, 'users/' + id));
+            }
+        };
+
+        // --- MANAJEMEN KEUANGAN ---
+        onValue(ref(db, 'keuangan'), (snap) => {
+            const d = snap.val();
+            if(d) {
+                document.getElementById('view-kas').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
+                document.getElementById('input-kas').value = d.kas;
+                document.getElementById('input-sosial').value = d.sosial;
+            }
+        });
+
+        window.saveKeuangan = () => {
+            const kasVal = document.getElementById('input-kas').value;
+            const sosVal = document.getElementById('input-sosial').value;
+            set(ref(db, 'keuangan'), {
+                kas: kasVal,
+                sosial: sosVal
+            }).then(() => alert("Laporan Keuangan Diperbarui!"));
+        };
+
+        // --- MANAJEMEN KONTEN ---
+        onValue(ref(db, 'settings/ticker'), (snap) => {
+            if(snap.exists()) document.getElementById('input-ticker').value = snap.val();
+        });
+
+        window.saveTicker = () => {
+            const txt = document.getElementById('input-ticker').value;
+            set(ref(db, 'settings/ticker'), txt).then(() => alert("Ticker Berhasil Diubah!"));
+        };
+
+        // --- TAB LOGIC ---
+        window.openTab = (tabName) => {
+            const contents = document.getElementsByClassName('tab-content');
+            const btns = document.getElementsByClassName('tab-btn');
+            
+            for (let c of contents) c.classList.remove('active');
+            for (let b of btns) {
+                b.classList.remove('bg-[#00B7B5]', 'text-[#005461]');
+                b.classList.add('bg-white/10', 'text-white');
+            }
+
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.currentTarget.classList.remove('bg-white/10', 'text-white');
+            event.currentTarget.classList.add('bg-[#00B7B5]', 'text-[#005461]');
         };
     </script>
 </body>
-    </html>
-    
+</html>
