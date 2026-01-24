@@ -2,113 +2,80 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sekawan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RT Digital Sekwan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; height: 100vh; }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .bg-animate {
-            background: linear-gradient(-45deg, #1e40af, #3b82f6, #1d4ed8, #2563eb);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-        }
-        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F4F4F4; color: #005461; }
     </style>
 </head>
-<body class="bg-animate flex items-center justify-center p-6 text-gray-800">
+<body class="flex items-center justify-center min-h-screen p-6">
 
-    <div class="w-full max-w-sm glass-effect rounded-[2.5rem] p-8 shadow-2xl">
+    <div class="w-full max-w-md bg-white p-10 rounded-[3rem] shadow-2xl border border-[#018790]/10">
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-2xl shadow-lg mb-4 transform -rotate-6">
-                <i class="fas fa-city text-2xl"></i>
+            <div class="w-20 h-20 bg-[#005461] text-[#00B7B5] rounded-3xl flex items-center justify-center text-3xl mx-auto shadow-lg mb-4">
+                <i class="fas fa-fingerprint"></i>
             </div>
-            <h1 class="text-xl font-extrabold tracking-tight italic">RT DIGITAL SEKAWAN</h1>
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Portal Warga Digital</p>
+            <h1 class="text-2xl font-black tracking-tighter text-[#005461]">WARGA LOGIN</h1>
+            <p class="text-[10px] font-bold text-[#018790] uppercase tracking-[0.3em]">RT Digital Sekwan</p>
         </div>
 
         <div class="space-y-4">
-            <div class="relative">
-                <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-blue-500"></i>
-                <input type="email" id="email" placeholder="Email Terdaftar" class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm font-semibold">
+            <div>
+                <label class="text-[10px] font-black text-[#018790] uppercase ml-4 mb-2 block">Username</label>
+                <input type="text" id="username" placeholder="Masukkan username" 
+                    class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none focus:ring-2 focus:ring-[#00B7B5] outline-none text-sm font-bold">
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-[#018790] uppercase ml-4 mb-2 block">Password</label>
+                <input type="password" id="password" placeholder="••••••••" 
+                    class="w-full px-6 py-4 bg-[#F4F4F4] rounded-full border-none focus:ring-2 focus:ring-[#00B7B5] outline-none text-sm font-bold">
+            </div>
+            
+            <div id="error-msg" class="hidden text-center text-red-500 text-[10px] font-bold uppercase tracking-wider">
+                Username atau Password Salah!
             </div>
 
-            <div class="relative">
-                <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-blue-500"></i>
-                <input type="password" id="password" placeholder="Password" class="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm font-semibold">
-                <button onclick="togglePass()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-                    <i id="passIcon" class="fas fa-eye"></i>
-                </button>
-            </div>
-
-            <button id="btnLogin" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition-all text-sm flex justify-center items-center">
-                <span>MASUK SEKARANG</span>
+            <button onclick="prosesLogin()" 
+                class="w-full bg-[#005461] hover:bg-[#018790] text-white font-black py-4 rounded-full shadow-xl shadow-[#005461]/20 transition-all active:scale-95 mt-4">
+                MASUK SEKARANG
             </button>
         </div>
 
-        <div id="errMsg" class="mt-4 text-[10px] text-red-500 font-bold text-center hidden uppercase"></div>
-
-        <p class="text-center mt-10 text-[9px] text-gray-400 font-bold uppercase tracking-widest">
-            &copy; 2026 Pengurus RT Sekwan
-        </p>
+        <div class="text-center mt-8">
+            <button onclick="location.href='index.html'" class="text-[10px] font-black text-[#018790] uppercase tracking-widest opacity-50 hover:opacity-100">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali ke Beranda
+            </button>
+        </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    <script>
+        function prosesLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const error = document.getElementById('error-msg');
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
-            authDomain: "websekawan.firebaseapp.com",
-            projectId: "websekawan",
-            storageBucket: "websekawan.firebasestorage.app",
-            messagingSenderId: "407413490869",
-            appId: "1:407413490869:web:093f8a187261c68ea36afc"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        // Satpam: Kalo udah login, langsung lempar ke dashboard
-        onAuthStateChanged(auth, (user) => {
-            if (user) window.location.href = "dashboard.html";
-        });
-
-        // Fungsi Login Email & Pass
-        document.getElementById('btnLogin').onclick = async () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const msg = document.getElementById('errMsg');
-            const btn = document.getElementById('btnLogin');
-
-            if(!email || !password) return alert("Email dan Password wajib diisi!");
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> LOADING...';
-
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                msg.innerText = "Email atau Password Salah!";
-                msg.classList.remove('hidden');
-                btn.disabled = false;
-                btn.innerHTML = 'MASUK SEKARANG';
-            }
-        };
-
-        // Toggle Pass
-        window.togglePass = () => {
-            const pass = document.getElementById('password');
-            const icon = document.getElementById('passIcon');
-            if(pass.type === "password") {
-                pass.type = "text";
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            // --- LOGIKA LOGIN (Silakan sesuaikan username/pass lo) ---
+            if (user === "admin" && pass === "sekwan123") {
+                // 1. Simpan Status ke LocalStorage (INILAH KUNCINYA!)
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                // 2. Kasih alert sukses biar mantap
+                console.log("Login Berhasil!");
+                
+                // 3. Langsung lempar ke index.html
+                location.href = 'index.html';
             } else {
-                pass.type = "password";
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                error.classList.remove('hidden');
+                setTimeout(() => { error.classList.add('hidden'); }, 3000);
             }
+        }
+
+        // Fitur Enter untuk Login
+        document.onkeydown = function(e) {
+            if (e.key === "Enter") prosesLogin();
         };
     </script>
 </body>
