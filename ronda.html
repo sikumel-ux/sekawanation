@@ -13,12 +13,25 @@
 </head>
 <body class="pb-32">
     <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative overflow-hidden">
-        <p class="text-[10px] font-black tracking-[0.3em] opacity-60 uppercase mb-2 text-[#00B7B5]">Keamanan Lingkungan</p>
-        <h1 class="text-3xl font-black tracking-tighter italic uppercase">Jadwal<br>Ronda.</h1>
+        <div class="relative z-10">
+            <p class="text-[10px] font-black tracking-[0.3em] opacity-60 uppercase mb-2 text-[#00B7B5]">Keamanan Lingkungan</p>
+            <h1 class="text-3xl font-black tracking-tighter italic uppercase leading-none">Jadwal<br>Ronda.</h1>
+        </div>
         <i class="fas fa-shield-halved absolute -right-4 -bottom-4 text-9xl text-white/5 rotate-12"></i>
     </header>
 
     <main class="p-6 -mt-6">
+        <a href="https://pos.sekawan.com" class="block bg-orange-500 text-white p-6 rounded-[2.5rem] shadow-lg shadow-orange-500/30 mb-8 relative overflow-hidden active:scale-95 transition-all">
+            <div class="relative z-10 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-black uppercase tracking-tighter">Ambil Jimpitan</h2>
+                    <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Klik untuk input data jimpitan</p>
+                </div>
+                <i class="fas fa-coins text-3xl opacity-80"></i>
+            </div>
+            <i class="fas fa-sack-dollar absolute -right-2 -top-2 text-6xl text-white/10 -rotate-12"></i>
+        </a>
+
         <div id="container-ronda" class="space-y-4">
             <p class="text-center text-xs font-bold opacity-50 py-10">MEMUAT JADWAL...</p>
         </div>
@@ -26,10 +39,20 @@
 
     <nav class="fixed bottom-6 left-6 right-6 bg-[#005461]/90 backdrop-blur-lg rounded-[2.5rem] p-4 shadow-2xl z-50 border border-white/10 text-white/50">
         <div class="flex justify-around items-center">
-            <a href="index.html" class="flex flex-col items-center"><i class="fas fa-home text-xl"></i></a>
-            <a href="ronda.html" class="text-[#00B7B5] flex flex-col items-center"><i class="fas fa-shield-halved text-xl"></i></a>
-            <a href="layanan.html" class="flex flex-col items-center"><i class="fas fa-file-invoice text-xl"></i></a>
-            <a href="admin.html" class="flex flex-col items-center"><i class="fas fa-user-shield text-xl"></i></a>
+            <a href="index.html" class="flex flex-col items-center hover:text-[#00B7B5] transition-all">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Home</span>
+            </a>
+            <a href="ronda.html" class="text-[#00B7B5] flex flex-col items-center">
+                <i class="fas fa-shield-halved text-xl"></i>
+                <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Ronda</span>
+            </a>
+            <div id="nav-auth">
+                <a href="admin.html" class="flex flex-col items-center hover:text-[#00B7B5] transition-all">
+                    <i class="fas fa-sign-in-alt text-xl"></i>
+                    <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Login</span>
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -48,11 +71,27 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- CEK STATUS LOGIN DI NAVBAR ---
+        const session = localStorage.getItem('isAdmin');
+        if (session === 'true') {
+            document.getElementById('nav-auth').innerHTML = `
+                <button onclick="handleLogout()" class="flex flex-col items-center text-red-400">
+                    <i class="fas fa-power-off text-xl"></i>
+                    <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Logout</span>
+                </button>
+            `;
+        }
+        window.handleLogout = () => {
+            localStorage.removeItem('isAdmin');
+            window.location.href = 'index.html';
+        };
+
+        // --- AMBIL DATA JADWAL ---
         onValue(ref(db, 'content/ronda'), (snap) => {
             const container = document.getElementById('container-ronda');
             container.innerHTML = "";
             if(!snap.exists()) {
-                container.innerHTML = "<p class='text-center text-xs font-bold opacity-40 py-10'>BELUM ADA JADWAL.</p>";
+                container.innerHTML = "<p class='text-center text-xs font-bold opacity-40 py-10 uppercase tracking-widest'>Belum ada jadwal ronda</p>";
                 return;
             }
             snap.forEach(child => {
@@ -61,7 +100,7 @@
                 <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="text-xs font-black text-[#018790] uppercase tracking-widest">${d.hari}</h3>
-                        <span class="bg-[#00B7B5]/10 text-[#018790] text-[9px] px-3 py-1 rounded-full font-black">REGU JAGA</span>
+                        <span class="bg-[#00B7B5]/10 text-[#018790] text-[9px] px-3 py-1 rounded-full font-black uppercase">Regu Jaga</span>
                     </div>
                     <p class="text-lg font-black leading-tight text-slate-800 uppercase">${d.petugas}</p>
                 </div>`;
