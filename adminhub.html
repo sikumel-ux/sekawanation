@@ -23,9 +23,9 @@
             <button onclick="location.href='index.html'" class="text-[10px] font-bold opacity-70 border border-white/20 px-4 py-2 rounded-full uppercase tracking-widest">Web Utama</button>
         </div>
         <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-            <button onclick="openTab('warga')" class="tab-btn whitespace-nowrap px-6 py-2 bg-[#00B7B5] text-[#005461] rounded-full font-black text-[10px] uppercase">Warga</button>
-            <button onclick="openTab('keuangan')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Keuangan</button>
-            <button onclick="openTab('konten')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Konten</button>
+            <button id="btn-warga" onclick="openTab('warga')" class="tab-btn whitespace-nowrap px-6 py-2 bg-[#00B7B5] text-[#005461] rounded-full font-black text-[10px] uppercase">Warga</button>
+            <button id="btn-keuangan" onclick="openTab('keuangan')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Keuangan</button>
+            <button id="btn-konten" onclick="openTab('konten')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Konten</button>
         </div>
     </header>
 
@@ -39,83 +39,42 @@
                     <button onclick="saveWarga()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg mt-2 uppercase text-xs active:scale-95">Simpan Data</button>
                 </div>
             </div>
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">List Warga</h3>
-                <div id="list-warga" class="space-y-2"></div>
-            </div>
+            <div id="list-warga" class="space-y-2"></div>
         </section>
 
         <section id="tab-keuangan" class="tab-content space-y-6">
-            <div class="bg-[#00B7B5] p-8 rounded-[3rem] text-[#005461] shadow-xl relative overflow-hidden text-center">
-                <p class="text-[10px] font-black uppercase tracking-[0.3em] mb-1">Total Kas Terkumpul</p>
+            <div class="bg-[#00B7B5] p-8 rounded-[3rem] text-[#005461] shadow-xl text-center">
+                <p class="text-[10px] font-black uppercase tracking-[0.3em] mb-1">Total Saldo (Auto-Sum)</p>
                 <h2 id="view-total-gabungan" class="text-3xl font-black tracking-tighter">Rp 0</h2>
             </div>
-
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Input Kas / Sosial</h3>
-                <div class="space-y-3">
-                    <select id="fin-tipe" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-2 border-transparent text-sm font-bold">
-                        <option value="kas">KAS UTAMA</option>
-                        <option value="sosial">DANA SOSIAL</option>
-                    </select>
-                    <select id="fin-bulan" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-2 border-transparent text-sm font-bold">
-                        <option value="Januari">Januari</option><option value="Februari">Februari</option><option value="Maret">Maret</option>
-                        <option value="April">April</option><option value="Mei">Mei</option><option value="Juni">Juni</option>
-                        <option value="Juli">Juli</option><option value="Agustus">Agustus</option><option value="September">September</option>
-                        <option value="Oktober">Oktober</option><option value="November">November</option><option value="Desember">Desember</option>
-                    </select>
-                    <input type="number" id="fin-nominal" placeholder="Nominal (Contoh: 500000)" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-2 border-transparent text-sm font-bold transition-all">
-                    <button onclick="saveHistoryKeuangan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg uppercase text-xs active:scale-95">Update Laporan</button>
-                </div>
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10 space-y-3">
+                <select id="fin-tipe" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-none text-sm font-bold uppercase">
+                    <option value="kas">Kas Utama</option>
+                    <option value="sosial">Dana Sosial</option>
+                </select>
+                <select id="fin-bulan" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-none text-sm font-bold uppercase">
+                    <option value="Januari">Januari</option><option value="Februari">Februari</option><option value="Maret">Maret</option>
+                    <option value="April">April</option><option value="Mei">Mei</option><option value="Juni">Juni</option>
+                    <option value="Juli">Juli</option><option value="Agustus">Agustus</option><option value="September">September</option>
+                    <option value="Oktober">Oktober</option><option value="November">November</option><option value="Desember">Desember</option>
+                </select>
+                <input type="number" id="fin-nominal" placeholder="Nominal" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl border-none text-sm font-bold">
+                <button onclick="saveHistoryKeuangan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-xs">Simpan Transaksi</button>
             </div>
-
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">History Input</h3>
-                <div id="list-history-fin" class="space-y-2"></div>
-            </div>
+            <div id="list-history-fin" class="space-y-2"></div>
         </section>
 
         <section id="tab-konten" class="tab-content space-y-6">
             <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-bullhorn mr-2"></i>Ticker & Quote</h3>
-                <input type="text" id="input-ticker" placeholder="Running Text" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 transition-all">
-                <textarea id="input-quote" placeholder="Quote Hari Ini" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-4 h-16 transition-all"></textarea>
-                <button onclick="saveTickerQuote()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest active:scale-95">Update Beranda</button>
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Ticker & Quote</h3>
+                <input type="text" id="input-ticker" placeholder="Running Text" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2">
+                <textarea id="input-quote" placeholder="Quote" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold h-16 mb-4"></textarea>
+                <button onclick="saveTickerQuote()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl uppercase text-[10px]">Update Beranda</button>
             </div>
-            <div id="container-konten-lainnya" class="space-y-6">
-                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                    <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-newspaper mr-2"></i>Warta Sekwan</h3>
-                    <input type="text" id="info-judul" placeholder="Judul Berita Singkat" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 transition-all">
-                    <textarea id="info-ket" placeholder="Keterangan singkat..." class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold h-20 transition-all"></textarea>
-                    <button onclick="saveInfo()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] active:scale-95">Terbitkan Berita</button>
-                    <div id="list-info" class="mt-4 space-y-2"></div>
-                </div>
-                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                    <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-calendar-check mr-2"></i>Agenda RT</h3>
-                    <input type="text" id="agenda-judul" placeholder="Nama Kegiatan" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 transition-all">
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <input type="text" id="agenda-tgl" placeholder="Tgl (Ex: 25 Jan)" class="px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
-                        <input type="text" id="agenda-jam" placeholder="Jam (Ex: 08:00)" class="px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold transition-all">
-                    </div>
-                    <button onclick="saveAgenda()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] active:scale-95">Tambah Agenda</button>
-                    <div id="list-agenda" class="mt-4 space-y-2"></div>
-                </div>
-                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                    <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-pen-nib mr-2"></i>Blog & Artikel</h3>
-                    <input type="text" id="blog-judul" placeholder="Judul Artikel" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 transition-all">
-                    <textarea id="blog-isi" placeholder="Tulis isi artikel di sini..." class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold h-32 transition-all"></textarea>
-                    <button onclick="saveBlog()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl uppercase text-[10px] active:scale-95">Posting Artikel</button>
-                    <div id="list-blog" class="mt-4 space-y-2"></div>
-                </div>
-                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                    <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest"><i class="fas fa-shopping-bag mr-2"></i>Lapak Warga</h3>
-                    <input type="text" id="lapak-produk" placeholder="Nama Produk" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 transition-all">
-                    <input type="number" id="lapak-harga" placeholder="Harga" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 transition-all">
-                    <input type="number" id="lapak-wa" placeholder="WA Penjual (628...)" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-4 transition-all">
-                    <button onclick="saveLapak()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] active:scale-95">Posting Barang</button>
-                    <div id="list-lapak" class="mt-4 space-y-2"></div>
-                </div>
-            </div>
+            <div id="list-info" class="space-y-2"></div>
+            <div id="list-agenda" class="space-y-2"></div>
+            <div id="list-blog" class="space-y-2"></div>
+            <div id="list-lapak" class="space-y-2"></div>
         </section>
     </main>
 
@@ -134,165 +93,84 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- MANAJEMEN WARGA ---
+        // --- 1. TAB LOGIC ---
+        window.openTab = (tabName) => {
+            const contents = document.getElementsByClassName('tab-content');
+            const btns = document.getElementsByClassName('tab-btn');
+            for (let c of contents) c.classList.remove('active');
+            for (let b of btns) {
+                b.classList.remove('bg-[#00B7B5]', 'text-[#005461]');
+                b.classList.add('bg-white/10', 'text-white');
+            }
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.currentTarget.classList.remove('bg-white/10', 'text-white');
+            event.currentTarget.classList.add('bg-[#00B7B5]', 'text-[#005461]');
+        };
+
+        // --- 2. WARGA ---
         window.saveWarga = () => {
-            const nama = document.getElementById('warga-nama').value.trim();
-            const nohp = document.getElementById('warga-nohp').value.trim();
-            const idUser = nama.toLowerCase().replace(/\s+/g, '');
+            const nama = document.getElementById('warga-nama').value;
+            const nohp = document.getElementById('warga-nohp').value;
             if(nama && nohp) {
-                set(ref(db, 'users/' + idUser), { nama, nohp, role: 'warga' })
-                .then(() => { alert("Warga Berhasil Disimpan!"); document.getElementById('warga-nama').value = ''; });
+                push(ref(db, 'users'), { nama, nohp }).then(() => {
+                    alert("Berhasil!"); document.getElementById('warga-nama').value = "";
+                });
             }
         };
 
         onValue(ref(db, 'users'), (snap) => {
             const list = document.getElementById('list-warga'); list.innerHTML = "";
-            snap.forEach(child => {
-                list.innerHTML += `<div class="flex justify-between items-center p-4 bg-[#F4F4F4] rounded-2xl border border-white">
-                    <div><p class="text-xs font-black uppercase text-black">${child.val().nama}</p><p class="text-[10px] text-slate-400 font-bold">${child.val().nohp}</p></div>
-                    <button onclick="deleteItem('users/${child.key}')" class="text-red-500 text-xs"><i class="fas fa-trash"></i></button>
+            snap.forEach(c => {
+                list.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between shadow-sm border border-slate-100 mb-2 text-black">
+                    <p class="text-xs font-black uppercase">${c.val().nama}</p>
+                    <button onclick="deleteItem('users/${c.key}')" class="text-red-500"><i class="fas fa-trash"></i></button>
                 </div>`;
             });
         });
 
-        // --- MANAJEMEN KEUANGAN (SISTEM HISTORY) ---
+        // --- 3. KEUANGAN ---
         window.saveHistoryKeuangan = () => {
-            const tipe = document.getElementById('fin-tipe').value; // kas atau sosial
+            const tipe = document.getElementById('fin-tipe').value;
             const bulan = document.getElementById('fin-bulan').value;
             const nominal = document.getElementById('fin-nominal').value;
-
-            if(!nominal) return alert("Isi nominalnya, Bro!");
-
-            push(ref(db, `history/${tipe}`), {
-                bulan: bulan,
-                nominal: parseInt(nominal),
-                tgl_input: new Date().toISOString()
-            }).then(() => {
-                alert("Laporan Terupdate!");
-                document.getElementById('fin-nominal').value = "";
-            });
+            if(nominal) {
+                push(ref(db, `history/${tipe}`), { bulan, nominal: parseInt(nominal) })
+                .then(() => { alert("Update Berhasil!"); document.getElementById('fin-nominal').value = ""; });
+            }
         };
 
-        // View Total & List History di Admin
         onValue(ref(db, 'history'), (snap) => {
-            let totalSemua = 0;
+            let total = 0;
             const list = document.getElementById('list-history-fin'); list.innerHTML = "";
-            
-            if(snap.exists()) {
-                snap.forEach(tipeChild => { // 'kas' atau 'sosial'
-                    tipeChild.forEach(data => {
-                        const item = data.val();
-                        totalSemua += parseInt(item.nominal);
-                        list.innerHTML += `
-                            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border-l-4 ${tipeChild.key === 'kas' ? 'border-[#005461]' : 'border-[#00B7B5]'}">
-                                <div>
-                                    <p class="text-[8px] font-black uppercase opacity-50">${tipeChild.key}</p>
-                                    <p class="text-[10px] font-black text-black">${item.bulan} - Rp ${parseInt(item.nominal).toLocaleString('id-ID')}</p>
-                                </div>
-                                <button onclick="deleteItem('history/${tipeChild.key}/${data.key}')" class="text-red-400 text-xs"><i class="fas fa-trash"></i></button>
-                            </div>`;
-                    });
+            snap.forEach(tipe => {
+                tipe.forEach(item => {
+                    total += parseInt(item.val().nominal);
+                    list.innerHTML += `<div class="bg-white p-3 rounded-xl border-l-4 ${tipe.key === 'kas' ? 'border-[#005461]' : 'border-[#00B7B5]'} flex justify-between items-center mb-2 text-black">
+                        <p class="text-[10px] font-black uppercase">${tipe.key} - ${item.val().bulan}: ${item.val().nominal}</p>
+                        <button onclick="deleteItem('history/${tipe.key}/${item.key}')" class="text-red-400"><i class="fas fa-times"></i></button>
+                    </div>`;
                 });
-            }
-            document.getElementById('view-total-gabungan').innerText = 'Rp ' + totalSemua.toLocaleString('id-ID');
+            });
+            document.getElementById('view-total-gabungan').innerText = 'Rp ' + total.toLocaleString('id-ID');
         });
 
-        // --- KONTEN (TICKER, INFO, AGENDA, BLOG, LAPAK) ---
-        onValue(ref(db, 'settings'), (snap) => {
-            const d = snap.val();
-            if(d) {
-                document.getElementById('input-ticker').value = d.ticker || "";
-                document.getElementById('input-quote').value = d.quote || "";
-            }
-        });
+        // --- 4. KONTEN ---
         window.saveTickerQuote = () => {
             set(ref(db, 'settings/ticker'), document.getElementById('input-ticker').value);
             set(ref(db, 'settings/quote'), document.getElementById('input-quote').value).then(() => alert("Beranda Updated!"));
         };
 
-        window.saveInfo = () => {
-            const judul = document.getElementById('info-judul').value;
-            const keterangan = document.getElementById('info-ket').value;
-            if(judul && keterangan) {
-                push(ref(db, 'content/info'), { judul, keterangan }).then(() => {
-                    alert("Berita Diterbitkan!");
-                    document.getElementById('info-judul').value = ""; document.getElementById('info-ket').value = "";
-                });
+        onValue(ref(db, 'settings'), (snap) => {
+            if(snap.exists()) {
+                document.getElementById('input-ticker').value = snap.val().ticker || "";
+                document.getElementById('input-quote').value = snap.val().quote || "";
             }
-        };
-        onValue(ref(db, 'content/info'), (snap) => {
-            const list = document.getElementById('list-info'); list.innerHTML = "";
-            snap.forEach(child => {
-                list.innerHTML += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
-                    <p class="text-[10px] font-bold truncate pr-4 text-black uppercase">${child.val().judul}</p>
-                    <button onclick="deleteItem('content/info/${child.key}')" class="text-red-400"><i class="fas fa-times-circle"></i></button>
-                </div>`;
-            });
-        });
-
-        window.saveAgenda = () => {
-            const judul = document.getElementById('agenda-judul').value;
-            const tgl = document.getElementById('agenda-tgl').value;
-            const jam = document.getElementById('agenda-jam').value;
-            if(judul && tgl) {
-                push(ref(db, 'content/agenda'), { judul, tgl, jam }).then(() => {
-                    alert("Agenda Ditambahkan!");
-                    document.getElementById('agenda-judul').value = "";
-                });
-            }
-        };
-        onValue(ref(db, 'content/agenda'), (snap) => {
-            const list = document.getElementById('list-agenda'); list.innerHTML = "";
-            snap.forEach(child => {
-                list.innerHTML += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
-                    <p class="text-[10px] font-bold text-black uppercase">${child.val().tgl} - ${child.val().judul}</p>
-                    <button onclick="deleteItem('content/agenda/${child.key}')" class="text-red-400"><i class="fas fa-times-circle"></i></button>
-                </div>`;
-            });
-        });
-
-        window.saveBlog = () => {
-            const judul = document.getElementById('blog-judul').value;
-            const isi = document.getElementById('blog-isi').value;
-            if(judul && isi) {
-                push(ref(db, 'content/blog'), { judul, isi, tgl: new Date().toLocaleDateString('id-ID') }).then(() => {
-                    alert("Artikel Diposting!");
-                    document.getElementById('blog-judul').value = ""; document.getElementById('blog-isi').value = "";
-                });
-            }
-        };
-        onValue(ref(db, 'content/blog'), (snap) => {
-            const list = document.getElementById('list-blog'); list.innerHTML = "";
-            snap.forEach(child => {
-                list.innerHTML += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
-                    <p class="text-[10px] font-bold truncate pr-4 text-black uppercase">${child.val().judul}</p>
-                    <button onclick="deleteItem('content/blog/${child.key}')" class="text-red-400"><i class="fas fa-times-circle"></i></button>
-                </div>`;
-            });
-        });
-
-        window.saveLapak = () => {
-            const produk = document.getElementById('lapak-produk').value;
-            const harga = document.getElementById('lapak-harga').value;
-            const wa = document.getElementById('lapak-wa').value;
-            if(produk && harga && wa) {
-                push(ref(db, 'lapak'), { produk, harga, wa }).then(() => {
-                    alert("Barang Diposting!");
-                    document.getElementById('lapak-produk').value = "";
-                });
-            }
-        };
-        onValue(ref(db, 'lapak'), (snap) => {
-            const list = document.getElementById('list-lapak'); list.innerHTML = "";
-            snap.forEach(child => {
-                list.innerHTML += `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
-                    <p class="text-[10px] font-bold text-black uppercase">${child.val().produk} (Rp ${child.val().harga})</p>
-                    <button onclick="deleteItem('lapak/${child.key}')" class="text-red-400"><i class="fas fa-times-circle"></i></button>
-                </div>`;
-            });
         });
 
         // --- GLOBAL DELETE ---
-        window.deleteItem = (path) => { if(confirm("Hapus data ini?")) { remove(ref(db, path)); } };
+        window.deleteItem = (path) => { if(confirm("Hapus?")) remove(ref(db, path)); };
 
-        //
+    </script>
+</body>
+                                                                                                                                     </html>
+                    
