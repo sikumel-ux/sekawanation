@@ -24,17 +24,26 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- SISTEM KAS ANTI-GAGAL ---
-        window.updateKasUI = () => {
+        // --- SISTEM SYNC LOGIN-LOGOUT ---
+        window.syncAuth = () => {
             const sectionKas = document.getElementById('section-kas');
+            const loginBtn = document.getElementById('btn-auth');
             const loginText = document.getElementById('nav-login-text');
             const status = localStorage.getItem('isLoggedIn');
 
             if (status === 'true') {
+                // Tampilkan Kas
                 sectionKas.classList.remove('hidden');
                 sectionKas.style.display = 'grid';
-                if(loginText) loginText.innerText = "Profil";
                 
+                // Ubah Tombol jadi Logout
+                loginText.innerText = "LOGOUT";
+                loginBtn.onclick = () => {
+                    localStorage.removeItem('isLoggedIn');
+                    location.reload();
+                };
+
+                // Ambil Data Firebase
                 onValue(ref(db, 'keuangan'), (snap) => {
                     const d = snap.val();
                     if(d) {
@@ -42,15 +51,20 @@
                         document.getElementById('val-sosial').innerText = 'Rp ' + (parseInt(d.sosial) || 0).toLocaleString('id-ID');
                     }
                 });
+            } else {
+                // Sembunyikan Kas & Tombol Normal
+                sectionKas.style.display = 'none';
+                sectionKas.classList.add('hidden');
+                loginText.innerText = "LOGIN";
+                loginBtn.onclick = () => { location.href = 'login.html'; };
             }
         };
 
-        // Trigger berkala biar pasti muncul
-        updateKasUI();
-        setTimeout(updateKasUI, 1000);
-        setTimeout(updateKasUI, 3000);
+        // Jalankan terus buat monitoring
+        syncAuth();
+        setInterval(syncAuth, 1000);
 
-        // --- FETCH DATA FIREBASE LAINNYA ---
+        // --- FETCH DATA LAIN ---
         onValue(ref(db, 'settings/ticker'), (snap) => {
             if (snap.exists()) document.getElementById('ticker-text').innerText = "✦ " + snap.val();
         });
@@ -92,7 +106,7 @@
                             <p class="text-[8px] font-bold text-[#018790] uppercase mb-1">${item.pemilik}</p>
                             <h4 class="text-xs font-black text-[#005461] leading-tight h-8 overflow-hidden">${item.produk}</h4>
                             <p class="text-[10px] font-bold text-slate-400 mt-2">Rp ${item.harga}</p>
-                            <a href="https://wa.me/${item.wa}" class="inline-block w-full text-center bg-[#00B7B5] text-white text-[9px] font-bold py-2 rounded-full mt-3 shadow-lg shadow-[#00B7B5]/20">PESAN</a>
+                            <a href="https://wa.me/${item.wa}" class="inline-block w-full text-center bg-[#00B7B5] text-white text-[9px] font-bold py-2 rounded-full mt-3">PESAN</a>
                         </div>
                     `;
                 });
@@ -102,18 +116,18 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; overflow-x: hidden; }
         .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-36">
 
     <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-[#018790]/10">
         <div>
             <h1 class="text-2xl font-black italic tracking-tighter text-[#005461]">SEKWAN<span class="text-[#00B7B5]">.</span></h1>
-            <p class="text-[8px] font-bold text-[#018790] uppercase tracking-widest mt-1">Smart Neighborhood</p>
+            <p class="text-[8px] font-bold text-[#018790] uppercase tracking-widest mt-1 uppercase">Digital Neighborhood</p>
         </div>
         <div class="text-right">
             <p id="jam" class="text-xl font-black text-[#005461] tracking-tighter">00:00</p>
@@ -123,16 +137,16 @@
 
     <div class="mx-5 mt-2 bg-[#005461]/5 rounded-full py-2 overflow-hidden border border-white">
         <div class="ticker-move">
-            <span id="ticker-text" class="text-[10px] font-bold text-[#018790] uppercase italic">✦ Memuat informasi terkini dari warga Sekwan...</span>
+            <span id="ticker-text" class="text-[10px] font-bold text-[#018790] uppercase italic">✦ Memuat informasi terbaru warga...</span>
         </div>
     </div>
 
     <main class="mt-4 px-6 space-y-5">
         
         <section id="section-kas" class="hidden grid grid-cols-2 gap-3">
-            <div class="bg-[#005461] p-5 rounded-[2rem] text-white shadow-xl shadow-[#005461]/20">
+            <div class="bg-[#005461] p-5 rounded-[2rem] text-white shadow-xl shadow-[#005461]/20 border border-white/10">
                 <p class="text-[8px] font-bold opacity-70 uppercase tracking-widest mb-1">Kas RT</p>
-                <p id="val-kas" class="text-sm font-black tracking-tight">Rp 0</p>
+                <p id="val-kas" class="text-sm font-black tracking-tight text-[#00B7B5]">Rp 0</p>
             </div>
             <div class="bg-white p-5 rounded-[2rem] border border-[#018790]/10 shadow-sm">
                 <p class="text-[8px] font-bold text-[#018790] uppercase tracking-widest mb-1">Dana Sosial</p>
@@ -145,9 +159,9 @@
                 <i class="fas fa-cloud-sun text-[#00B7B5] text-xl mb-1"></i>
                 <h4 id="temp" class="text-lg font-black text-[#005461]">--°</h4>
             </div>
-            <div class="col-span-8 bg-[#018790] p-5 rounded-[2rem] shadow-lg flex items-center justify-between text-white">
+            <div class="col-span-8 bg-[#018790] p-5 rounded-[2rem] shadow-lg flex items-center justify-between text-white border border-white/10">
                 <div>
-                    <p class="text-[7px] font-bold opacity-70 uppercase">Sholat Berikutnya</p>
+                    <p class="text-[7px] font-bold opacity-70 uppercase leading-none">Sholat Berikutnya</p>
                     <p id="sholat-nama" class="text-xs font-black uppercase italic text-[#00B7B5]">--</p>
                 </div>
                 <p id="sholat-waktu" class="text-xl font-black tracking-tighter">--:--</p>
@@ -155,17 +169,14 @@
         </div>
 
         <section class="bg-white p-6 rounded-[2.5rem] shadow-sm border-l-8 border-[#018790]">
-            <div class="flex items-center gap-2 mb-3">
-                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Warta Sekwan</p>
-            </div>
+            <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest mb-3">Warta Sekwan</p>
             <div id="info-view">
                 <p class="text-xs italic text-slate-300">Memuat kabar...</p>
             </div>
         </section>
 
-        <section id="agenda-view" class="bg-[#005461] text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden">
-            <i class="fas fa-calendar-check absolute -bottom-5 -right-5 text-8xl opacity-10"></i>
-            <p class="text-xs italic opacity-40 font-bold uppercase">Belum ada agenda terdekat.</p>
+        <section id="agenda-view" class="bg-[#005461] text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden border border-white/5">
+            <p class="text-xs italic opacity-40 font-bold uppercase">Memuat Agenda...</p>
         </section>
 
         <section class="bg-white p-5 rounded-[2rem] shadow-sm flex items-center justify-between border border-[#018790]/10">
@@ -174,11 +185,11 @@
                     <i class="fas fa-moon text-xs"></i>
                 </div>
                 <div>
-                    <p class="text-[8px] font-bold text-[#018790] uppercase leading-none">Keamanan Malam</p>
+                    <p class="text-[8px] font-bold text-[#018790] uppercase">Keamanan</p>
                     <p id="ronda-info" class="text-xs font-black text-[#005461] uppercase italic">--</p>
                 </div>
             </div>
-            <span id="ronda-tag" class="text-[8px] font-black bg-[#F4F4F4] text-[#018790] px-3 py-1 rounded-full uppercase">--</span>
+            <span id="ronda-tag" class="text-[8px] font-black bg-[#F4F4F4] text-[#018790] px-3 py-1 rounded-full uppercase italic">--</span>
         </section>
 
         <section>
@@ -193,9 +204,9 @@
             <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5]">
                 <i class="fas fa-th-large text-xl"></i>
             </button>
-            <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white border border-white/5">
+            <button id="btn-auth" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white border border-white/5">
                 <i class="fas fa-user-circle text-lg"></i>
-                <span id="nav-login-text" class="text-[10px] font-bold uppercase tracking-wider">Login</span>
+                <span id="nav-login-text" class="text-[10px] font-bold uppercase tracking-wider">LOGIN</span>
             </button>
         </nav>
     </div>
@@ -224,5 +235,4 @@
         fetchWidgets();
     </script>
 </body>
-    </html>
-    
+</html>
