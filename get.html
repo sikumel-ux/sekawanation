@@ -1,0 +1,80 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+    authDomain: "websekawan.firebaseapp.com",
+    projectId: "websekawan",
+    databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    appId: "1:407413490869:web:093f8a187261c68ea36afc"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// Biar login nempel terus
+setPersistence(auth, browserLocalPersistence);
+
+// FUNGSI CEK WHITELIST (Membongkar ID unik -Ojpj...)
+async function checkAllowed(userEmail) {
+    try {
+        const snapshot = await get(ref(db, 'users'));
+        if (snapshot.exists()) {
+            const allUsers = snapshot.val();
+            // Ambil hanya nilai emailnya saja dari tiap ID unik
+            const emailList = Object.values(allUsers).map(u => u.email.toLowerCase().trim());
+            
+            console.log("Email masuk:", userEmail);
+            console.log("Daftar di DB:", emailList);
+            
+            return emailList.includes(userEmail.toLowerCase().trim());
+        }
+        return false;
+    } catch (e) {
+        console.error("Gagal cek database:", e);
+        return false;
+    }
+}
+
+onAuthStateChanged(auth, async (user) => {
+    const label = document.getElementById('label-auth');
+    const view = document.getElementById('keuangan-view');
+
+    if (user) {
+        const isWhitelisted = await checkAllowed(user.email);
+        if (isWhitelisted) {
+            label.innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
+            view.classList.remove('restricted-blur');
+            // Ambil data keuangan
+            onValue(ref(db, 'keuangan'), (s) => {
+                if(s.exists()){
+                    document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
+                    document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
+                }
+            });
+        } else {
+            alert("Email " + user.email + " Tidak Terdaftar!");
+            await signOut(auth);
+            location.reload();
+        }
+    } else {
+        label.innerText = "Warga Login";
+        view.classList.add('restricted-blur');
+    }
+});
+
+window.handleAuthAction = async () => {
+    if (auth.currentUser) {
+        if(confirm("Logout?")) await signOut(auth);
+    } else {
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (e) {
+            console.error("Login Error:", e);
+            alert("Gagal Login: " + e.message);
+        }
+    }
+};
