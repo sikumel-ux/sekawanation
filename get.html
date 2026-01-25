@@ -2,110 +2,73 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sekawan Digital Hub</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .ticker-move { display: inline-block; animation: move 25s linear infinite; white-space: nowrap; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
+        .restricted-blur { filter: blur(8px); opacity: 0.3; pointer-events: none; }
+        .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
-        .restricted-blur { filter: blur(6px); opacity: 0.4; pointer-events: none; }
-        .transition-all { transition: all 0.3s ease; }
     </style>
 </head>
 <body class="pb-32">
 
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-2xl relative z-20 border-b-4 border-[#00B7B5]">
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <h1 class="text-2xl font-black tracking-tighter uppercase italic">Sekawan<span class="text-[#00B7B5]">.</span></h1>
-                <div class="flex items-center gap-2 mt-1 opacity-90 text-[10px] font-bold">
-                    <span id="weather-icon"><i class="fas fa-cloud-sun"></i></span> 
-                    <span id="temp">--°C</span> | <span id="weather-desc">Memuat...</span>
-                </div>
-            </div>
-            <div class="text-right">
-                <p id="jam" class="text-2xl font-black">00:00</p>
-                <span class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase">Bantul, DIY</span>
-            </div>
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl border-b-4 border-[#00B7B5]">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-black italic">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+            <p id="jam" class="text-2xl font-black text-[#00B7B5]">00:00</p>
         </div>
-        <div id="sholat-view" class="flex gap-1.5 justify-between">
-            <div class="text-center flex-1 bg-white/10 py-2 rounded-xl border border-white/5">
-                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Subuh</p>
-                <p class="text-[9px] font-bold" id="sholat-subuh">--:--</p>
+        <div id="sholat-view" class="grid grid-cols-5 gap-1 text-[9px] text-center font-bold">
             </div>
-            <div class="text-center flex-1 bg-white/10 py-2 rounded-xl border border-white/5">
-                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Dzuhur</p>
-                <p class="text-[9px] font-bold" id="sholat-dzuhur">--:--</p>
-            </div>
-            <div class="text-center flex-1 bg-white/10 py-2 rounded-xl border border-white/5">
-                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Ashar</p>
-                <p class="text-[9px] font-bold" id="sholat-ashar">--:--</p>
-            </div>
-            <div class="text-center flex-1 bg-white/10 py-2 rounded-xl border border-white/5">
-                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Maghrib</p>
-                <p class="text-[9px] font-bold" id="sholat-maghrib">--:--</p>
-            </div>
-            <div class="text-center flex-1 bg-white/10 py-2 rounded-xl border border-white/5">
-                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Isya</p>
-                <p class="text-[9px] font-bold" id="sholat-isya">--:--</p>
-            </div>
-        </div>
     </header>
 
-    <div class="mx-6 -mt-4 bg-white rounded-full py-2.5 shadow-xl overflow-hidden border border-[#018790]/10 relative z-30 text-center">
-        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">✦ SELAMAT DATANG DI SEKAWAN DIGITAL HUB ✦ INFORMASI WARGA TERKINI...</div>
+    <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-lg overflow-hidden border border-slate-100">
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase" id="ticker-text">✦ MEMUAT INFORMASI SEKAWAN DIGITAL...</div>
     </div>
 
     <main class="mt-8 px-6 space-y-8">
-        <section class="grid grid-cols-4 gap-4 text-center">
-            <button onclick="restrictedLink('keuangan.html')" class="flex flex-col items-center group">
-                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-lg flex items-center justify-center mb-2 active:scale-90 transition-all group-hover:bg-[#00B7B5]"><i class="fas fa-wallet text-white text-lg"></i></div>
-                <span class="text-[9px] font-black text-slate-500 uppercase">Kas RT</span>
-            </button>
-            <button onclick="restrictedLink('lapor.html')" class="flex flex-col items-center group">
-                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-lg flex items-center justify-center mb-2 active:scale-90 transition-all group-hover:bg-[#00B7B5]"><i class="fas fa-bullhorn text-white text-lg"></i></div>
-                <span class="text-[9px] font-black text-slate-500 uppercase">Lapor</span>
-            </button>
-            <a href="ronda.html" class="flex flex-col items-center group">
-                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-lg flex items-center justify-center mb-2 active:scale-90 transition-all group-hover:bg-[#00B7B5]"><i class="fas fa-shield-halved text-white text-lg"></i></div>
-                <span class="text-[9px] font-black text-slate-500 uppercase">Ronda</span>
-            </a>
-            <a href="lapak.html" class="flex flex-col items-center group">
-                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-lg flex items-center justify-center mb-2 active:scale-90 transition-all group-hover:bg-[#00B7B5]"><i class="fas fa-store text-white text-lg"></i></div>
-                <span class="text-[9px] font-black text-slate-500 uppercase">Lapak</span>
-            </a>
-        </section>
-
         <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
-            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl border-b-4 border-[#00B7B5]">
-                <p class="text-[8px] font-bold opacity-60 uppercase mb-1 tracking-widest">Kas Utama</p>
-                <p id="val-kas" class="text-sm font-black italic">Rp --</p>
+            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
+                <p class="text-[8px] opacity-60 uppercase font-black">Kas Utama</p>
+                <p id="val-kas" class="text-sm font-black italic">Rp 0</p>
             </div>
-            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl border-b-4 border-[#00B7B5]">
-                <p class="text-[8px] font-bold opacity-60 uppercase mb-1 tracking-widest">Dana Sosial</p>
-                <p id="val-sosial" class="text-sm font-black italic">Rp --</p>
+            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
+                <p class="text-[8px] opacity-60 uppercase font-black">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black italic">Rp 0</p>
             </div>
         </section>
 
-        <div class="flex justify-between items-center px-1">
-            <h3 class="text-[10px] font-black text-[#005461] uppercase tracking-widest">Warta Sekawan</h3>
-        </div>
+        <section class="grid grid-cols-4 gap-4 text-center">
+            <button onclick="restrictedLink('lapor.html')" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1"><i class="fas fa-bullhorn text-white"></i></div>
+                <span class="text-[8px] font-black text-slate-400">LAPOR</span>
+            </button>
+            <a href="ronda.html" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1"><i class="fas fa-shield-halved text-white"></i></div>
+                <span class="text-[8px] font-black text-slate-400">RONDA</span>
+            </a>
+            <a href="lapak.html" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1"><i class="fas fa-store text-white"></i></div>
+                <span class="text-[8px] font-black text-slate-400">LAPAK</span>
+            </a>
+            <a href="kontak.html" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1"><i class="fas fa-phone text-white"></i></div>
+                <span class="text-[8px] font-black text-slate-400">KONTAK</span>
+            </a>
+        </section>
+
         <section id="blog-list" class="space-y-4"></section>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full active:scale-90"><i class="fas fa-home text-lg"></i></button>
-            
-            <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white active:scale-95 transition-all">
-                <i id="auth-icon" class="fab fa-google text-lg text-[#00B7B5]"></i>
-                <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Warga Login</span>
+        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
+            <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
+                <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
+                <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
             </button>
         </nav>
     </div>
@@ -130,77 +93,50 @@
 
         setPersistence(auth, browserLocalPersistence);
 
-        // FUNGSI CEK WHITELIST (Membongkar ID unik -Ojpj...)
-        async function checkWhitelist(emailLogin) {
-            console.log("Mengecek akses untuk:", emailLogin);
-            try {
-                const snapshot = await get(ref(db, 'users'));
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    // Bongkar object Firebase ({ '-Ojpj...': {email: '...' } }) menjadi Array Email
-                    const allowedEmails = Object.values(data).map(user => 
-                        user.email ? user.email.toLowerCase().trim() : ""
-                    );
-                    
-                    console.log("Daftar Whitelist:", allowedEmails);
-                    return allowedEmails.includes(emailLogin.toLowerCase().trim());
-                }
-                return false;
-            } catch (e) {
-                console.error("Error whitelist:", e);
-                return false;
+        // --- CORE WHITELIST CHECK ---
+        async function verifyWarga(email) {
+            console.log("Mengecek database untuk:", email);
+            const snapshot = await get(ref(db, 'users'));
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                // Bongkar objek -Ojpj...
+                const emails = Object.values(data).map(u => u.email.toLowerCase().trim());
+                console.log("Daftar Whitelist:", emails);
+                return emails.includes(email.toLowerCase().trim());
             }
+            return false;
         }
 
-        // DETEKSI STATUS LOGIN
         onAuthStateChanged(auth, async (user) => {
             const label = document.getElementById('label-auth');
-            const icon = document.getElementById('auth-icon');
             const view = document.getElementById('keuangan-view');
-
             if (user) {
-                const isAllowed = await checkWhitelist(user.email);
-                if (isAllowed) {
-                    label.innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
-                    icon.className = "fas fa-power-off text-lg text-[#00B7B5]";
+                const allowed = await verifyWarga(user.email);
+                if (allowed) {
+                    label.innerText = user.displayName.split(' ')[0];
                     view.classList.remove('restricted-blur');
-                    loadPrivateData();
+                    loadData();
                 } else {
-                    alert("AKSES DITOLAK!\nEmail " + user.email + " tidak terdaftar sebagai warga.");
+                    alert("Akses Ditolak! Email Anda tidak ada dalam daftar warga.");
                     await signOut(auth);
                 }
             } else {
                 label.innerText = "Warga Login";
-                icon.className = "fab fa-google text-lg text-[#00B7B5]";
                 view.classList.add('restricted-blur');
-                document.getElementById('val-kas').innerText = "Terkunci";
-                document.getElementById('val-sosial').innerText = "Terkunci";
             }
         });
 
         window.handleAuthAction = async () => {
-            if (auth.currentUser) {
-                if(confirm("Keluar dari sistem warga?")) await signOut(auth);
-            } else {
-                try {
-                    await signInWithPopup(auth, provider);
-                } catch (e) {
-                    console.error("Login Error:", e);
-                    alert("Gagal Login!");
-                }
-            }
+            if (auth.currentUser) { if(confirm("Keluar?")) await signOut(auth); }
+            else { try { await signInWithPopup(auth, provider); } catch(e) { alert("Login Error"); } }
         };
 
         window.restrictedLink = (url) => {
-            if (auth.currentUser) {
-                location.href = url;
-            } else {
-                alert("Menu ini khusus warga! Silakan login Gmail terlebih dahulu.");
-            }
+            if (auth.currentUser) location.href = url;
+            else alert("Khusus warga! Silakan login.");
         };
 
-        // LOAD DATA PRIVATE
-        function loadPrivateData() {
+        function loadData() {
             onValue(ref(db, 'keuangan'), (s) => {
                 if(s.exists()){
                     document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
@@ -209,58 +145,19 @@
             });
         }
 
-        // LOAD DATA UMUM (TICKER & BERITA)
-        onValue(ref(db, 'settings/ticker'), (s) => {
-            if(s.exists()) document.getElementById('ticker-text').innerText = "✦ " + s.val().toUpperCase() + " ✦";
-        });
-
+        // --- META DATA (TICKER & BLOG) ---
+        onValue(ref(db, 'settings/ticker'), (s) => { if(s.exists()) document.getElementById('ticker-text').innerText = "✦ " + s.val().toUpperCase(); });
         onValue(ref(db, 'content/blog'), (s) => {
-            const list = document.getElementById('blog-list');
-            list.innerHTML = "";
-            if(!s.exists()) {
-                list.innerHTML = "<p class='text-[10px] text-center text-slate-400'>Belum ada warta terbaru.</p>";
-                return;
-            }
+            const list = document.getElementById('blog-list'); list.innerHTML = "";
             s.forEach(c => {
-                const item = c.val();
-                list.innerHTML += `
-                    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm active:scale-95 transition-all">
-                        <span class="text-[8px] font-black bg-[#00B7B5]/10 text-[#005461] px-3 py-1 rounded-full uppercase tracking-widest">${item.tgl || 'Info'}</span>
-                        <h4 class="text-sm font-black uppercase text-[#005461] mt-3 leading-tight">${item.judul}</h4>
-                        <p class="text-[11px] text-slate-500 mt-2 line-clamp-3 font-medium">${item.isi}</p>
-                    </div>`;
+                list.innerHTML += `<div class="bg-white p-5 rounded-[2rem] shadow-sm">
+                    <h4 class="text-[10px] font-black uppercase text-[#005461]">${c.val().judul}</h4>
+                    <p class="text-[10px] text-slate-500 mt-1">${c.val().isi}</p>
+                </div>`;
             });
         });
 
-        // JAM & META DATA
-        setInterval(() => {
-            const d = new Date();
-            document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0')+":"+d.getMinutes().toString().padStart(2,'0');
-        }, 1000);
-
-        async function loadMeta() {
-            try {
-                // Sholat (API Bantul)
-                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`);
-                const data = await res.json();
-                if(data.status) {
-                    const j = data.data.jadwal;
-                    document.getElementById('sholat-subuh').innerText = j.subuh;
-                    document.getElementById('sholat-dzuhur').innerText = j.dzuhur;
-                    document.getElementById('sholat-ashar').innerText = j.ashar;
-                    document.getElementById('sholat-maghrib').innerText = j.maghrib;
-                    document.getElementById('sholat-isya').innerText = j.isya;
-                }
-                
-                // Cuaca (Bantul)
-                const wRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
-                const wData = await wRes.json();
-                document.getElementById('temp').innerText = Math.round(wData.current_weather.temperature) + '°C';
-                document.getElementById('weather-desc').innerText = wData.current_weather.weathercode < 3 ? 'Cerah' : 'Berawan';
-            } catch(e) { console.error("Gagal load meta data"); }
-        }
-        loadMeta();
+        setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
     </script>
 </body>
-            </html>
-    
+</html>
