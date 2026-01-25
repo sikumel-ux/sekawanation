@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sekawan Digital Hub</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .ticker-move { display: inline-block; animation: move 25s linear infinite; white-space: nowrap; }
+        @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        .restricted-blur { filter: blur(4px); opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-2xl relative z-20 border-b-4 border-[#00B7B5]">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+                <div class="flex items-center gap-2 mt-1 opacity-90 text-[10px]">
+                    <span id="weather-icon"></span> <span id="temp">--</span> | <span id="weather-desc">Loading</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <p id="jam" class="text-2xl font-black">00:00</p>
+                <span class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase">Bantul</span>
+            </div>
+        </div>
+        <div id="sholat-view" class="flex gap-2 justify-between"></div>
+    </header>
+
+    <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-xl overflow-hidden border border-[#018790]/10 relative z-30 text-center">
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">✦ MEMUAT INFORMASI SEKAWAN DIGITAL...</div>
+    </div>
+
+    <main class="mt-8 px-6 space-y-7">
+        <section class="grid grid-cols-4 gap-2 text-center">
+            <button onclick="restrictedLink('keuangan.html')" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-wallet text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Kas RT</span>
+            </button>
+            <button onclick="restrictedLink('lapor.html')" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-bullhorn text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Lapor</span>
+            </button>
+            <a href="ronda.html" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-shield-halved text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Ronda</span>
+            </a>
+            <a href="lapak.html" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-store text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Lapak</span>
+            </a>
+        </section>
+
+        <section id="keuangan-view" class="grid grid-cols-2 gap-3 restricted-blur">
+            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
+                <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Kas Utama</p>
+                <p id="val-kas" class="text-sm font-black italic">Rp 0</p>
+            </div>
+            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
+                <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black italic">Rp 0</p>
+            </div>
+        </section>
+
+        <section id="blog-list" class="space-y-4"></section>
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home text-lg"></i></button>
+            <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white active:scale-95 transition-all">
+                <i id="auth-icon" class="fab fa-google text-lg text-[#00B7B5]"></i>
+                <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Warga Login</span>
+            </button>
+        </nav>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // --- AUTH LOGIC ---
+        async function isWhiteListed(email) {
+            const snapshot = await get(ref(db, 'users'));
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                return Object.values(data).some(u => u.email === email);
+            }
+            return false;
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            const label = document.getElementById('label-auth');
+            const icon = document.getElementById('auth-icon');
+            const keuanganView = document.getElementById('keuangan-view');
+
+            if (user) {
+                const allowed = await isWhiteListed(user.email);
+                if (allowed) {
+                    label.innerText = user.displayName.split(' ')[0];
+                    icon.className = "fas fa-power-off text-lg text-[#00B7B5]";
+                    keuanganView.classList.remove('restricted-blur');
+                    loadPrivateData();
+                } else {
+                    alert("Akses Ditolak! Email ("+user.email+") tidak terdaftar sebagai warga.");
+                    await signOut(auth);
+                }
+            } else {
+                label.innerText = "Warga Login";
+                icon.className = "fab fa-google text-lg text-[#00B7B5]";
+                keuanganView.classList.add('restricted-blur');
+                resetPrivateData();
+            }
+        });
+
+        window.handleAuthAction = async () => {
+            if (auth.currentUser) {
+                if(confirm("Logout?")) await signOut(auth);
+            } else {
+                try { await signInWithPopup(auth, provider); } catch (e) { console.error(e); }
+            }
+        };
+
+        window.restrictedLink = (url) => {
+            if (auth.currentUser) {
+                location.href = url;
+            } else {
+                alert("Hanya untuk warga terdaftar! Silakan Login Gmail.");
+            }
+        };
+
+        // --- LOAD DATA ---
+        function loadPrivateData() {
+            onValue(ref(db, 'keuangan'), (s) => {
+                if(s.exists()){
+                    document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
+                    document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
+                }
+            });
+        }
+
+        function resetPrivateData() {
+            document.getElementById('val-kas').innerText = 'Terkunci';
+            document.getElementById('val-sosial').innerText = 'Terkunci';
+        }
+
+        // --- CONTENT UMUM ---
+        onValue(ref(db, 'settings/ticker'), (s) => {
+            if(s.exists()) document.getElementById('ticker-text').innerText = "✦ " + s.val().toUpperCase();
+        });
+
+        onValue(ref(db, 'content/blog'), (s) => {
+            const list = document.getElementById('blog-list'); list.innerHTML = "";
+            s.forEach(c => {
+                const d = c.val();
+                list.innerHTML += `
+                    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm active:scale-95 transition-all">
+                        <span class="text-[8px] font-black bg-[#00B7B5]/10 text-[#005461] px-3 py-1 rounded-full uppercase tracking-widest">${d.tgl}</span>
+                        <h4 class="text-sm font-black uppercase text-[#005461] mt-3 leading-tight">${d.judul}</h4>
+                        <p class="text-[11px] text-slate-500 mt-2 line-clamp-2 font-medium">${d.isi}</p>
+                    </div>`;
+            });
+        });
+
+        // --- META (Jam, Cuaca, Sholat) ---
+        async function loadMeta() {
+            try {
+                // Sholat (API Bantul)
+                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`);
+                const j = (await res.json()).data.jadwal;
+                const sl = [{n:'Sbh',t:j.subuh},{n:'Dzr',t:j.dzuhur},{n:'Asr',t:j.ashar},{n:'Mgr',t:j.maghrib},{n:'Isy',t:j.isya}];
+                document.getElementById('sholat-view').innerHTML = sl.map(s => `<div class="text-center flex-1 bg-white/10 py-1 rounded-xl"><p class="text-[6px] uppercase font-black text-[#00B7B5]">${s.n}</p><p class="text-[9px] font-bold text-white">${s.t}</p></div>`).join('');
+                
+                // Cuaca (API Open Meteo)
+                const w = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
+                const wd = await w.json();
+                document.getElementById('temp').innerText = Math.round(wd.current_weather.temperature) + '°C';
+                document.getElementById('weather-desc').innerText = wd.current_weather.temperature > 30 ? 'Cerah' : 'Berawan';
+                document.getElementById('weather-icon').innerHTML = '<i class="fas fa-cloud-sun"></i> ';
+            } catch(e) {}
+        }
+
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0')+":"+d.getMinutes().toString().padStart(2,'0');
+        }, 1000);
+
+        loadMeta();
+    </script>
+</body>
+  </html>
+  
