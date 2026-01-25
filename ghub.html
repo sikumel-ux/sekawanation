@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdminHub - Sekwan Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        input:focus, textarea:focus, select:focus { border-color: #00B7B5 !important; outline: none; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl sticky top-0 z-50">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-xl font-black italic tracking-tighter text-[#00B7B5]">ADMIN<span class="text-white">HUB.</span></h1>
+            <button onclick="location.href='index.html'" class="text-[10px] font-bold opacity-70 border border-white/20 px-4 py-2 rounded-full uppercase tracking-widest">Web Utama</button>
+        </div>
+        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+            <button onclick="openTab('warga')" class="tab-btn whitespace-nowrap px-6 py-2 bg-[#00B7B5] text-[#005461] rounded-full font-black text-[10px] uppercase">Akses Warga</button>
+            <button onclick="openTab('keuangan')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Keuangan</button>
+            <button onclick="openTab('konten')" class="tab-btn whitespace-nowrap px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Konten</button>
+        </div>
+    </header>
+
+    <main class="p-6">
+        <section id="tab-warga" class="tab-content active space-y-6">
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Whitelist Gmail Warga</h3>
+                <div class="flex gap-2">
+                    <input type="email" id="warga-email" placeholder="alamat-warga@gmail.com" class="flex-1 px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
+                    <button onclick="saveWarga()" class="bg-[#005461] text-white w-12 h-12 rounded-2xl flex items-center justify-center active:scale-90 transition-all"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div id="list-warga" class="space-y-2"></div>
+        </section>
+
+        <section id="tab-keuangan" class="tab-content space-y-6">
+            <div class="bg-[#00B7B5] p-8 rounded-[3rem] text-[#005461] shadow-xl text-center">
+                <p class="text-[10px] font-black uppercase tracking-[0.3em] mb-1 text-[#005461]/60">Total Kas RT</p>
+                <h2 id="view-total-gabungan" class="text-3xl font-black tracking-tighter italic">Rp 0</h2>
+            </div>
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10 space-y-3">
+                <select id="fin-tipe" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold uppercase border-none">
+                    <option value="kas">Kas Utama</option><option value="sosial">Dana Sosial</option>
+                </select>
+                <input type="number" id="fin-nominal" placeholder="Nominal" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
+                <button onclick="saveHistoryKeuangan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg uppercase text-xs active:scale-95 transition-all">Input Transaksi</button>
+            </div>
+            <div id="list-history-fin" class="space-y-2"></div>
+        </section>
+
+        <section id="tab-konten" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4">Warta Berjalan</h3>
+                <input type="text" id="input-ticker" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-3" placeholder="Contoh: Kerja bakti hari Minggu jam 7">
+                <button onclick="saveTicker()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-3 rounded-2xl uppercase text-[10px]">Update Ticker</button>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4">Buat Artikel / Info</h3>
+                <input type="text" id="blog-judul" placeholder="Judul" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2">
+                <textarea id="blog-isi" placeholder="Isi Berita..." class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold h-24 mb-4"></textarea>
+                <button onclick="saveBlog()" class="w-full bg-[#005461] text-white font-black py-3 rounded-2xl uppercase text-[10px]">Posting Artikel</button>
+                <div id="list-blog" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4">Lapak Warga</h3>
+                <input type="text" id="lapak-produk" placeholder="Nama Produk" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2">
+                <input type="number" id="lapak-harga" placeholder="Harga" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2">
+                <input type="number" id="lapak-wa" placeholder="No WA (62...)" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-4">
+                <button onclick="saveLapak()" class="w-full bg-[#005461] text-white font-black py-3 rounded-2xl uppercase text-[10px]">Tambah Lapak</button>
+                <div id="list-lapak" class="mt-4 space-y-2"></div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- TAB LOGIC ---
+        window.openTab = (tabName) => {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.replace('bg-[#00B7B5]', 'bg-white/10');
+                b.classList.replace('text-[#005461]', 'text-white');
+            });
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.currentTarget.classList.replace('bg-white/10', 'bg-[#00B7B5]');
+            event.currentTarget.classList.replace('text-white', 'text-[#005461]');
+        };
+
+        // --- WARGA ---
+        window.saveWarga = () => {
+            const email = document.getElementById('warga-email').value.toLowerCase().trim();
+            if(email && email.includes('@')) {
+                push(ref(db, 'users'), { email }).then(() => { document.getElementById('warga-email').value = ""; });
+            }
+        };
+        onValue(ref(db, 'users'), (s) => {
+            const list = document.getElementById('list-warga'); list.innerHTML = "";
+            s.forEach(c => {
+                list.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-slate-100 mb-2">
+                    <span class="text-[11px] font-black">${c.val().email}</span>
+                    <button onclick="deleteItem('users/${c.key}')" class="text-red-400"><i class="fas fa-trash-alt"></i></button>
+                </div>`;
+            });
+        });
+
+        // --- KEUANGAN ---
+        window.saveHistoryKeuangan = () => {
+            const tipe = document.getElementById('fin-tipe').value;
+            const nominal = document.getElementById('fin-nominal').value;
+            if(nominal) {
+                push(ref(db, `history/${tipe}`), { tgl: new Date().toLocaleDateString('id-ID'), nominal: parseInt(nominal) })
+                .then(() => { document.getElementById('fin-nominal').value = ""; alert("Berhasil!"); });
+            }
+        };
+        onValue(ref(db, 'history'), (snap) => {
+            let total = 0, tKas = 0, tSos = 0;
+            const list = document.getElementById('list-history-fin'); list.innerHTML = "";
+            snap.forEach(tipe => {
+                tipe.forEach(item => {
+                    const n = parseInt(item.val().nominal);
+                    total += n;
+                    if(tipe.key === 'kas') tKas += n;
+                    if(tipe.key === 'sosial') tSos += n;
+                    list.innerHTML += `<div class="bg-white p-3 rounded-xl border-l-4 ${tipe.key === 'kas' ? 'border-[#005461]' : 'border-[#00B7B5]'} flex justify-between items-center mb-1 text-[9px] font-bold">
+                        <span>${tipe.key.toUpperCase()} - ${item.val().tgl}: Rp ${n.toLocaleString('id-ID')}</span>
+                        <button onclick="deleteItem('history/${tipe.key}/${item.key}')" class="text-red-400"><i class="fas fa-times"></i></button>
+                    </div>`;
+                });
+            });
+            document.getElementById('view-total-gabungan').innerText = 'Rp ' + total.toLocaleString('id-ID');
+            set(ref(db, 'keuangan/kas'), tKas); set(ref(db, 'keuangan/sosial'), tSos);
+        });
+
+        // --- KONTEN (TICKER, BLOG, LAPAK) ---
+        window.saveTicker = () => {
+            set(ref(db, 'settings/ticker'), document.getElementById('input-ticker').value).then(() => alert("Ticker Update!"));
+        };
+
+        window.saveBlog = () => {
+            const judul = document.getElementById('blog-judul').value;
+            const isi = document.getElementById('blog-isi').value;
+            if(judul && isi) {
+                push(ref(db, 'content/blog'), { judul, isi, tgl: new Date().toLocaleDateString('id-ID') }).then(() => {
+                    alert("Terbit!"); document.getElementById('blog-judul').value = ""; document.getElementById('blog-isi').value = "";
+                });
+            }
+        };
+
+        window.saveLapak = () => {
+            const produk = document.getElementById('lapak-produk').value;
+            const harga = document.getElementById('lapak-harga').value;
+            const wa = document.getElementById('lapak-wa').value;
+            if(produk) {
+                push(ref(db, 'lapak'), { produk, harga, wa }).then(() => { alert("Lapak Update!"); });
+            }
+        };
+
+        // --- RENDER CONTENT LISTS ---
+        onValue(ref(db, 'content/blog'), (s) => {
+            const list = document.getElementById('list-blog'); list.innerHTML = "";
+            s.forEach(c => {
+                list.innerHTML += `<div class="bg-slate-50 p-2 flex justify-between rounded-lg mb-1 text-[9px] font-bold">
+                    <span>${c.val().judul}</span>
+                    <button onclick="deleteItem('content/blog/${c.key}')" class="text-red-400"><i class="fas fa-times"></i></button>
+                </div>`;
+            });
+        });
+
+        onValue(ref(db, 'lapak'), (s) => {
+            const list = document.getElementById('list-lapak'); list.innerHTML = "";
+            s.forEach(c => {
+                list.innerHTML += `<div class="bg-slate-50 p-2 flex justify-between rounded-lg mb-1 text-[9px] font-bold">
+                    <span>${c.val().produk}</span>
+                    <button onclick="deleteItem('lapak/${c.key}')" class="text-red-400"><i class="fas fa-times"></i></button>
+                </div>`;
+            });
+        });
+
+        window.deleteItem = (path) => { if(confirm("Hapus?")) remove(ref(db, path)); };
+    </script>
+</body>
+          </html>
+                  
