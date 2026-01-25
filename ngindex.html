@@ -8,8 +8,6 @@
     <meta name="theme-color" content="#005461">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968322.png">
-    
     <link rel="manifest" href='data:application/json,{"name":"Sekawan","short_name":"Sekawan","start_url":"/index.html","display":"standalone","background_color":"#005461","theme_color":"#005461","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/5968/5968322.png","sizes":"512x512","type":"image/png"}]}'>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,7 +15,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.app/firebase-database.js";
+        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -31,74 +29,7 @@
         const db = getDatabase(app);
         const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-        // PWA Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript,self.addEventListener("fetch", (e) => e.respondWith(fetch(e.request)));');
-        }
-
-        // --- FETCH DATA FUNCTIONS ---
-        async function getBantulSholat() {
-            const now = new Date();
-            try {
-                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`);
-                const resJson = await res.json();
-                const j = resJson.data.jadwal;
-                const listSholat = [
-                    {n: 'Subuh', t: j.subuh}, {n: 'Dzuhur', t: j.dzuhur},
-                    {n: 'Ashar', t: j.ashar}, {n: 'Maghrib', t: j.maghrib}, {n: 'Isya', t: j.isya}
-                ];
-                document.getElementById('sholat-view').innerHTML = listSholat.map(s => `
-                    <div class="text-center flex-1 bg-white/10 py-2 rounded-2xl border border-white/5">
-                        <p class="text-[7px] uppercase font-black text-[#00B7B5]">${s.n}</p>
-                        <p class="text-[10px] font-bold text-white">${s.t}</p>
-                    </div>
-                `).join('');
-            } catch (e) { console.log("Sholat Error"); }
-        }
-
-        async function getWeatherData() {
-            try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
-                const data = await res.json();
-                const temp = Math.round(data.current_weather.temperature);
-                document.getElementById('temp').innerText = temp + '°C';
-                const iconEl = document.getElementById('weather-icon');
-                iconEl.innerHTML = temp > 30 ? '<i class="fas fa-sun text-amber-400 text-sm"></i>' : '<i class="fas fa-cloud-sun text-blue-400 text-sm"></i>';
-                document.getElementById('weather-desc').innerText = temp > 30 ? 'Cerah' : 'Berawan';
-            } catch (e) { document.getElementById('weather-desc').innerText = 'Offline'; }
-        }
-
-        function initContent() {
-            onValue(ref(db, 'settings'), (s) => {
-                const d = s.val();
-                if(d) {
-                    document.getElementById('ticker-text').innerText = "✦ " + (d.ticker || "Warta Sekawan Digital");
-                    document.getElementById('quote-text').innerText = `"${d.quote || "Rukun Warga, Maju Bersama."}"`;
-                }
-            });
-
-            onValue(ref(db, 'keuangan'), (s) => {
-                const d = s.val();
-                const vKas = document.getElementById('val-kas');
-                const vSos = document.getElementById('val-sosial');
-                if(d && isAdmin) {
-                    vKas.innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
-                    vSos.innerText = 'Rp ' + (parseInt(d.sosial) || 0).toLocaleString('id-ID');
-                } else {
-                    vKas.innerText = 'Login untuk melihat';
-                    vSos.innerText = 'Login untuk melihat';
-                }
-            });
-
-            // ... (Fungsi onValue Info, Agenda, Blog, Lapak tetap sama seperti kode sebelumnya)
-        }
-
-        window.closeSplash = () => {
-            const loader = document.getElementById('splash-screen');
-            loader.classList.add('opacity-0', 'pointer-events-none');
-            setTimeout(() => loader.remove(), 500);
-        };
-
+        // Fungsi Global agar bisa dipanggil onclick
         window.handleAuthAction = () => {
             if (isAdmin) {
                 if(confirm("Logout dari sistem?")) {
@@ -115,14 +46,16 @@
             else { alert("Akses Terbatas. Silakan login."); location.href = 'admin.html'; }
         };
 
-        window.onload = () => { 
-            getBantulSholat(); getWeatherData(); initContent(); 
-            if(isAdmin) {
-                document.getElementById('btn-auth').innerHTML = `<i class="fas fa-power-off text-lg text-[#00B7B5]"></i><span class="text-[10px] font-black uppercase tracking-widest text-white">Logout</span>`;
-            }
+        // Load Data
+        window.onload = () => {
+            onValue(ref(db, 'settings'), (s) => {
+                const d = s.val();
+                if(d) {
+                    document.getElementById('ticker-text').innerText = "✦ " + (d.ticker || "Warta Sekawan Digital");
+                }
+            });
+            // ... (Firebase onValue lainnya bisa lo tambahin di sini)
         };
-
-        window.closeModal = () => document.getElementById('blog-modal').classList.add('hidden');
     </script>
 
     <style>
@@ -131,12 +64,11 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
-        #splash-screen { transition: all 0.5s ease-out; }
     </style>
 </head>
 <body class="pb-32">
 
-    <div id="splash-screen" class="fixed inset-0 z-[200] flex items-center justify-center p-6">
+    <div id="splash-screen" class="fixed inset-0 z-[200] flex items-center justify-center p-6 transition-opacity duration-500">
         <div class="absolute inset-0 bg-[#005461]/60 backdrop-blur-md"></div>
         <div class="relative bg-white w-full max-w-xs rounded-[3rem] p-8 text-center shadow-2xl border border-white/20">
             <div class="flex justify-center mb-6">
@@ -144,7 +76,7 @@
                     <h1 class="text-2xl font-black text-[#00B7B5]">S<span class="text-white">.</span></h1>
                 </div>
             </div>
-            <h2 class="text-[#005461] text-lg font-black uppercase tracking-tighter leading-none">Halo Warga!</h2>
+            <h2 class="text-[#005461] text-lg font-black uppercase tracking-tighter">Halo Warga!</h2>
             <div class="w-8 h-1 bg-[#00B7B5] mx-auto my-3 rounded-full"></div>
             <p class="text-slate-500 text-[11px] font-bold leading-relaxed px-2 mb-8">
                 Silakan hubungi admin untuk mendapatkan akses login sistem Sekawan.
@@ -166,9 +98,8 @@
             <div>
                 <h1 class="text-2xl font-black tracking-tighter uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
                 <div class="flex items-center gap-2 mt-1 opacity-90">
-                    <span id="weather-icon"></span>
-                    <span id="temp" class="text-[10px] font-bold">--</span>
-                    <span id="weather-desc" class="text-[8px] font-black uppercase tracking-widest text-[#00B7B5]">LOADING...</span>
+                    <i class="fas fa-cloud-sun text-blue-400 text-sm"></i>
+                    <span id="temp" class="text-[10px] font-bold">28°C</span>
                 </div>
             </div>
             <div class="text-right">
@@ -176,37 +107,25 @@
                 <span class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase">Bantul</span>
             </div>
         </div>
-        <div id="sholat-view" class="flex gap-2 justify-between"></div>
     </header>
 
     <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-xl overflow-hidden border border-[#018790]/10 relative z-30 text-center">
-        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">...</div>
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">✦ Memuat Warta Sekawan...</div>
     </div>
 
-    <main class="mt-8 px-6 space-y-7">
-        <p id="quote-text" class="text-center text-[11px] font-bold italic text-[#005461] opacity-60 px-4"></p>
-        <section onclick="restrictedLink('keuangan.html')" class="grid grid-cols-2 gap-3 active:scale-95 transition-all">
-            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
-                <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Kas Utama</p>
-                <p id="val-kas" class="text-sm font-black">Memuat...</p>
-            </div>
-            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
-                <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Dana Sosial</p>
-                <p id="val-sosial" class="text-sm font-black">Memuat...</p>
-            </div>
-        </section>
-        <div id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-slate-100"></div>
-        <div id="agenda-view"></div>
-        <div id="blog-list"></div>
-        <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar"></div>
+    <main class="mt-10 px-6">
+        <div class="text-center p-10 bg-white rounded-[3rem] shadow-sm border border-slate-100">
+            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Dashboard Utama</p>
+            <h3 class="text-[#005461] font-black mt-2 italic">"Rukun Warga, Maju Bersama."</h3>
+        </div>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full active:scale-90">
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full">
                 <i class="fas fa-home text-lg"></i>
             </button>
-            <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white active:scale-95">
+            <button onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white active:scale-95">
                 <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
                 <span class="text-[10px] font-black uppercase tracking-widest">Login</span>
             </button>
@@ -214,7 +133,19 @@
     </div>
 
     <script>
-        function runClock() {
+        // Fungsi Tutup Pop-up (Pasti Jalan karena di luar module)
+        function closeSplash() {
+            const splash = document.getElementById('splash-screen');
+            if(splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 500);
+            }
+        }
+
+        // Fungsi Jam Digital
+        function updateJam() {
             const d = new Date();
             const jamEl = document.getElementById('jam');
             if (jamEl) {
@@ -222,9 +153,9 @@
                                   d.getMinutes().toString().padStart(2, '0');
             }
         }
-        runClock(); // Jalankan instan
-        setInterval(runClock, 1000); // Terus update
+        
+        setInterval(updateJam, 1000);
+        updateJam(); // Jalankan langsung
     </script>
 </body>
-    </html>
-                                                                                      
+</html>
