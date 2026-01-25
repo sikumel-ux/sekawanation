@@ -3,56 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdminHub - Sekwan</title>
+    <title>AdminHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-    </style>
 </head>
-<body class="pb-24">
-
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl sticky top-0 z-50">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-xl font-black italic text-[#00B7B5]">ADMIN<span class="text-white">HUB.</span></h1>
-            <button onclick="location.href='index.html'" class="text-[10px] font-bold border border-white/20 px-4 py-2 rounded-full uppercase">Ke Beranda</button>
-        </div>
-        <div class="flex gap-4 overflow-x-auto no-scrollbar">
-            <button onclick="openTab('warga')" class="tab-btn px-6 py-2 bg-[#00B7B5] text-[#005461] rounded-full font-black text-[10px] uppercase">Akses Warga</button>
-            <button onclick="openTab('keuangan')" class="tab-btn px-6 py-2 bg-white/10 text-white rounded-full font-black text-[10px] uppercase">Keuangan</button>
-        </div>
-    </header>
-
-    <main class="p-6">
-        <section id="tab-warga" class="tab-content active space-y-6">
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm">
-                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Daftarkan Gmail Warga</h3>
-                <div class="flex gap-2">
-                    <input type="email" id="warga-email" placeholder="alamat-warga@gmail.com" class="flex-1 px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none outline-none">
-                    <button onclick="saveWarga()" class="bg-[#005461] text-white w-12 h-12 rounded-2xl flex items-center justify-center"><i class="fas fa-plus"></i></button>
-                </div>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-md mx-auto space-y-6">
+        <h1 class="font-black text-2xl text-[#005461]">ADMIN HUB</h1>
+        
+        <div class="bg-white p-6 rounded-3xl shadow-sm">
+            <h3 class="text-xs font-bold uppercase mb-4">Tambah Email Warga</h3>
+            <div class="flex gap-2">
+                <input type="email" id="email-warga" placeholder="warga@gmail.com" class="flex-1 p-3 bg-gray-100 rounded-xl text-sm border-none">
+                <button onclick="addWarga()" class="bg-[#005461] text-white px-4 rounded-xl">TAMBAH</button>
             </div>
-            <div id="list-warga" class="space-y-2"></div>
-        </section>
+        </div>
 
-        <section id="tab-keuangan" class="tab-content space-y-6">
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm space-y-3">
-                <select id="fin-tipe" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold uppercase border-none">
-                    <option value="kas">Kas Utama</option><option value="sosial">Dana Sosial</option>
-                </select>
-                <input type="number" id="fin-nominal" placeholder="Nominal" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
-                <button onclick="saveFin()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-xs">Simpan</button>
-            </div>
-            <div id="list-fin" class="space-y-2"></div>
-        </section>
-    </main>
+        <div id="list-warga" class="space-y-2"></div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -65,54 +36,27 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        window.openTab = (tab) => {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('tab-'+tab).classList.add('active');
-        };
-
-        window.saveWarga = () => {
-            const email = document.getElementById('warga-email').value.toLowerCase().trim();
-            if(email.includes('@')) {
-                push(ref(db, 'users'), { email }).then(() => { document.getElementById('warga-email').value = ""; });
+        window.addWarga = () => {
+            const email = document.getElementById('email-warga').value.toLowerCase().trim();
+            if(email) {
+                push(ref(db, 'users'), { email }).then(() => {
+                    document.getElementById('email-warga').value = "";
+                    alert("Warga Ditambahkan!");
+                });
             }
         };
 
         onValue(ref(db, 'users'), (s) => {
             const list = document.getElementById('list-warga'); list.innerHTML = "";
             s.forEach(c => {
-                list.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center mb-2 shadow-sm">
-                    <span class="text-[11px] font-bold">${c.val().email}</span>
-                    <button onclick="del('users/${c.key}')" class="text-red-400"><i class="fas fa-trash"></i></button>
+                list.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center text-sm font-bold">
+                    <span>${c.val().email}</span>
+                    <button onclick="del('${c.key}')" class="text-red-500">Hapus</button>
                 </div>`;
             });
         });
 
-        window.saveFin = () => {
-            const tipe = document.getElementById('fin-tipe').value;
-            const nom = document.getElementById('fin-nominal').value;
-            if(nom) {
-                push(ref(db, 'history/'+tipe), { tgl: new Date().toLocaleDateString(), nominal: parseInt(nom) });
-                document.getElementById('fin-nominal').value = "";
-            }
-        };
-
-        onValue(ref(db, 'history'), (s) => {
-            let tkas = 0, tsos = 0;
-            const list = document.getElementById('list-fin'); list.innerHTML = "";
-            s.forEach(tipe => {
-                tipe.forEach(item => {
-                    const n = item.val().nominal;
-                    if(tipe.key === 'kas') tkas += n; else tsos += n;
-                    list.innerHTML += `<div class="bg-white p-3 rounded-xl flex justify-between mb-1 text-[10px] font-bold">
-                        <span>${tipe.key.toUpperCase()}: Rp ${n.toLocaleString()}</span>
-                        <button onclick="del('history/${tipe.key}/${item.key}')" class="text-red-400"><i class="fas fa-times"></i></button>
-                    </div>`;
-                });
-            });
-            set(ref(db, 'keuangan'), { kas: tkas, sosial: tsos });
-        });
-
-        window.del = (p) => { if(confirm("Hapus?")) remove(ref(db, p)); };
+        window.del = (id) => { if(confirm("Hapus?")) remove(ref(db, 'users/' + id)); };
     </script>
 </body>
 </html>
