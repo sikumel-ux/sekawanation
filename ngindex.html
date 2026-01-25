@@ -32,7 +32,7 @@
 
         const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-        // --- PWA SERVICE WORKER ---
+        // PWA Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('data:text/javascript,self.addEventListener("fetch", (e) => e.respondWith(fetch(e.request)));');
         }
@@ -174,20 +174,20 @@
             }
         };
 
+        window.closeSplash = () => {
+            const loader = document.getElementById('splash-screen');
+            loader.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => loader.remove(), 500);
+        };
+
         window.onload = () => { 
             getBantulSholat(); getWeatherData(); initContent(); 
             const btnAuth = document.getElementById('btn-auth');
             if(isAdmin) {
                 btnAuth.innerHTML = `<i class="fas fa-power-off text-lg text-[#00B7B5]"></i><span class="text-[10px] font-black uppercase tracking-widest text-white">Logout</span>`;
             }
-            
-            // Hapus Splash Screen setelah 2 detik
-            setTimeout(() => {
-                const loader = document.getElementById('splash-screen');
-                loader.classList.add('opacity-0');
-                setTimeout(() => loader.remove(), 500);
-            }, 2500);
         };
+
         window.closeModal = () => document.getElementById('blog-modal').classList.add('hidden');
     </script>
 
@@ -198,22 +198,38 @@
         .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
         .link-more { font-weight: 800; font-size: 8px; color: #00B7B5; text-transform: uppercase; letter-spacing: 1px; }
-        #splash-screen { transition: opacity 0.5s ease-out; }
+        #splash-screen { transition: all 0.5s ease-out; }
     </style>
 </head>
 <body class="pb-32">
 
     <div id="splash-screen" class="fixed inset-0 z-[200] bg-[#005461] flex flex-col items-center justify-center p-10 text-center">
-        <div class="w-20 h-20 bg-white/10 rounded-[2.5rem] flex items-center justify-center mb-6 animate-pulse">
+        <button onclick="closeSplash()" class="absolute top-8 right-8 text-white/30 hover:text-white transition-all">
+            <i class="fas fa-times-circle text-2xl"></i>
+        </button>
+
+        <div class="w-20 h-20 bg-white/10 rounded-[2.5rem] flex items-center justify-center mb-6 shadow-2xl border border-white/5">
             <h1 class="text-3xl font-black text-[#00B7B5]">S<span class="text-white">.</span></h1>
         </div>
-        <p class="text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-12">Sekawan Digital Hub</p>
         
-        <div class="mt-auto mb-10 space-y-4">
-            <p class="text-white/80 text-[11px] font-bold leading-relaxed px-6">Hubungi admin untuk mendapatkan akses login</p>
-            <a href="https://wa.me/6281234567890" class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 text-white border border-white/20 active:scale-90 transition-all">
-                <i class="fab fa-whatsapp text-xl"></i>
-            </a>
+        <p class="text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Sekawan Digital Hub</p>
+        <div class="w-10 h-1 bg-[#00B7B5] rounded-full mb-12"></div>
+        
+        <div class="space-y-6">
+            <p class="text-white text-sm font-bold leading-relaxed px-6">
+                Selamat Datang di Portal Warga.<br>
+                <span class="text-white/50 font-medium text-[11px]">Hubungi admin untuk mendapatkan akses login.</span>
+            </p>
+            
+            <div class="flex flex-col items-center gap-4">
+                <a href="https://wa.me/6281234567890" class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/10 text-white border border-white/20 active:scale-90 transition-all shadow-lg">
+                    <i class="fab fa-whatsapp text-2xl"></i>
+                </a>
+
+                <button onclick="closeSplash()" class="mt-8 px-10 py-3 bg-[#00B7B5] text-[#005461] text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl active:scale-95 transition-all">
+                    Mulai Jelajah
+                </button>
+            </div>
         </div>
     </div>
 
@@ -333,12 +349,3 @@
             </button>
         </nav>
     </div>
-
-    <script>
-        setInterval(() => {
-            const d = new Date();
-            document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-        }, 1000);
-    </script>
-</body>
-</html>
