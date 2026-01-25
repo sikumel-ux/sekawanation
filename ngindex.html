@@ -8,7 +8,6 @@
     <meta name="theme-color" content="#005461">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968322.png">
     <link rel="manifest" href='data:application/json,{"name":"Sekawan","short_name":"Sekawan","start_url":"/index.html","display":"standalone","background_color":"#005461","theme_color":"#005461","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/5968/5968322.png","sizes":"512x512","type":"image/png"}]}'>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,9 +15,9 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
+        .ticker-move { display: inline-block; animation: move 25s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
         .link-more { font-weight: 800; font-size: 8px; color: #00B7B5; text-transform: uppercase; letter-spacing: 1px; }
     </style>
@@ -26,33 +25,21 @@
 <body class="pb-32">
 
     <div id="splash-screen" class="fixed inset-0 z-[200] flex items-center justify-center p-6 transition-all duration-500">
-        <div class="absolute inset-0 bg-[#005461]/60 backdrop-blur-md"></div>
+        <div class="absolute inset-0 bg-[#005461]/70 backdrop-blur-md"></div>
         <div class="relative bg-white w-full max-w-xs rounded-[3rem] p-8 text-center shadow-2xl border border-white/20 overflow-hidden">
-            
             <div id="greeting-bg-icon" class="absolute -top-6 -right-6 text-slate-50 text-6xl opacity-20"></div>
-
-            <div class="flex justify-center mb-6">
-                <div class="w-16 h-16 bg-[#005461] rounded-3xl flex items-center justify-center shadow-lg relative z-10">
+            <div class="flex justify-center mb-6 relative z-10">
+                <div class="w-16 h-16 bg-[#005461] rounded-3xl flex items-center justify-center shadow-lg">
                     <h1 class="text-2xl font-black text-[#00B7B5]">S<span class="text-white">.</span></h1>
                 </div>
             </div>
-
             <h2 id="greeting-text" class="text-[#005461] text-lg font-black uppercase tracking-tighter leading-none">Halo Warga!</h2>
             <div class="w-8 h-1 bg-[#00B7B5] mx-auto my-3 rounded-full"></div>
-            
-            <p class="text-slate-500 text-[11px] font-bold leading-relaxed px-2 mb-8">
-                Selamat datang di portal informasi digital. Silakan hubungi admin untuk akses penuh.
-            </p>
-            
+            <p class="text-slate-500 text-[11px] font-bold leading-relaxed px-2 mb-8">Hubungi admin untuk mendapatkan akses login sistem Sekawan.</p>
             <div class="flex items-center justify-center gap-3">
-                <a href="https://wa.me/6281234567890" class="flex-1 flex items-center justify-center h-12 rounded-2xl border-2 border-slate-100 text-[#005461] active:scale-95 transition-all">
-                    <i class="fab fa-whatsapp text-xl"></i>
-                </a>
-                <button onclick="closeSplash()" class="flex-[2] h-12 bg-[#005461] text-[#00B7B5] text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg active:scale-95 transition-all">
-                    Buka Dashboard
-                </button>
+                <a href="https://wa.me/6281234567890" class="flex-1 flex items-center justify-center h-12 rounded-2xl border-2 border-slate-100 text-[#005461] active:scale-95 transition-all"><i class="fab fa-whatsapp text-xl"></i></a>
+                <button onclick="closeSplash()" class="flex-[2] h-12 bg-[#005461] text-[#00B7B5] text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg active:scale-95 transition-all">Masuk Web</button>
             </div>
-            <button onclick="closeSplash()" class="mt-6 text-[9px] font-black text-slate-300 uppercase tracking-widest">Tutup</button>
         </div>
     </div>
 
@@ -75,7 +62,7 @@
     </header>
 
     <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-xl overflow-hidden border border-[#018790]/10 relative z-30 text-center">
-        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">✦ Memuat Warta...</div>
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">✦ Memuat Warta Terbaru...</div>
     </div>
 
     <main class="mt-8 px-6 space-y-7">
@@ -84,18 +71,49 @@
                 <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-wallet text-white text-lg"></i></div>
                 <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Kas RT</span>
             </button>
-            </section>
+            <button onclick="restrictedLink('lapor.html')" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-bullhorn text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Lapor</span>
+            </button>
+            <button onclick="location.href='ronda.html'" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-shield-halved text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Ronda</span>
+            </button>
+            <button onclick="location.href='lapak.html'" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-store text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Lapak</span>
+            </button>
+        </section>
 
         <p id="quote-text" class="text-center text-[11px] font-bold italic text-[#005461] opacity-60 px-4">"Rukun Warga, Maju Bersama."</p>
 
-        <section id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm"></section>
+        <section onclick="restrictedLink('keuangan.html')" class="grid grid-cols-2 gap-3">
+            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
+                <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Kas Utama</p>
+                <p id="val-kas" class="text-sm font-black italic opacity-40">Login...</p>
+            </div>
+            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
+                <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black italic opacity-40">Login...</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-end px-4 mb-3">
+                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Warta</p>
+                <a href="informasi.html" class="link-more">Semua <i class="fas fa-chevron-right ml-1"></i></a>
+            </div>
+            <div id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm text-[11px] text-slate-400 italic">Memuat warta...</div>
+        </section>
+
         <section id="agenda-view"></section>
         <section id="blog-list"></section>
+        <section id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></section>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home text-lg"></i></button>
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full active:scale-90 transition-all"><i class="fas fa-home text-lg"></i></button>
             <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white active:scale-95 transition-all">
                 <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
                 <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Login</span>
@@ -103,11 +121,11 @@
         </nav>
     </div>
 
-    <div id="blog-modal" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end justify-center hidden">
-        <div class="bg-white w-full max-w-md rounded-t-[3rem] p-8 max-h-[85vh] overflow-y-auto border-t-4 border-[#00B7B5]">
-            <h2 id="modal-title" class="text-lg font-black text-[#005461]"></h2>
-            <p id="modal-content" class="mt-4 text-sm text-black leading-relaxed"></p>
-            <button onclick="closeModal()" class="mt-8 w-full py-3 bg-slate-100 rounded-2xl font-black text-[10px] uppercase">Tutup</button>
+    <div id="blog-modal" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-[3rem] p-8 relative border-t-4 border-[#00B7B5] mb-10">
+            <h2 id="modal-title" class="text-lg font-black text-[#005461] leading-tight mb-4 uppercase"></h2>
+            <div id="modal-content" class="text-sm text-slate-600 leading-relaxed max-h-[50vh] overflow-y-auto pr-2 mb-6"></div>
+            <button onclick="closeModal()" class="w-full py-4 bg-slate-100 rounded-2xl font-black text-[10px] uppercase tracking-widest">Tutup</button>
         </div>
     </div>
 
@@ -127,48 +145,116 @@
         const db = getDatabase(app);
         const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-        // --- GLOBAL FUNCTIONS ---
-        window.closeSplash = () => {
-            document.getElementById('splash-screen').classList.add('opacity-0', 'pointer-events-none');
-        };
+        // GREETING LOGIC
+        function setGreeting() {
+            const h = new Date().getHours();
+            let t = "Halo"; let i = "";
+            if (h >= 5 && h < 11) { t = "Selamat Pagi"; i = '<i class="fas fa-sun"></i>'; }
+            else if (h >= 11 && h < 15) { t = "Selamat Siang"; i = '<i class="fas fa-cloud-sun"></i>'; }
+            else if (h >= 15 && h < 18) { t = "Selamat Sore"; i = '<i class="fas fa-cloud-meatball"></i>'; }
+            else { t = "Selamat Malam"; i = '<i class="fas fa-moon"></i>'; }
+            document.getElementById('greeting-text').innerText = t + ", Warga!";
+            document.getElementById('greeting-bg-icon').innerHTML = i;
+        }
+
+        // FIREBASE DATA
+        function loadFirebaseData() {
+            onValue(ref(db, 'settings'), (s) => {
+                const d = s.val(); if(d) {
+                    document.getElementById('ticker-text').innerText = "✦ " + (d.ticker || "Warta Sekawan");
+                    document.getElementById('quote-text').innerText = `"${d.quote || "Rukun Warga, Maju Bersama."}"`;
+                }
+            });
+
+            onValue(ref(db, 'keuangan'), (s) => {
+                const d = s.val(); if(d && isAdmin) {
+                    document.getElementById('val-kas').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
+                    document.getElementById('val-sosial').innerText = 'Rp ' + (parseInt(d.sosial) || 0).toLocaleString('id-ID');
+                    document.getElementById('val-kas').classList.remove('italic', 'opacity-40');
+                    document.getElementById('val-sosial').classList.remove('italic', 'opacity-40');
+                }
+            });
+
+            onValue(query(ref(db, 'content/info'), limitToLast(1)), (s) => {
+                if(s.exists()){
+                    const d = Object.values(s.val())[0];
+                    document.getElementById('info-view').innerHTML = `<h4 class="text-sm font-black text-black uppercase leading-tight">${d.judul}</h4><p class="text-[13px] text-black font-medium mt-2 leading-relaxed">${d.keterangan}</p>`;
+                }
+            });
+
+            onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (s) => {
+                if(s.exists()){
+                    const a = Object.values(s.val())[0];
+                    document.getElementById('agenda-view').innerHTML = `<div class="flex items-center gap-4 bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm"><div class="bg-[#005461] text-white p-4 rounded-3xl text-center min-w-[60px] font-black">${a.tgl || '--'}</div><div><h4 class="text-sm font-black text-black uppercase">${a.judul}</h4><p class="text-[11px] font-bold text-[#00B7B5] uppercase mt-1 italic">${a.jam || '07:00'} WIB</p></div></div>`;
+                }
+            });
+
+            onValue(query(ref(db, 'content/blog'), limitToLast(3)), (s) => {
+                const list = document.getElementById('blog-list'); list.innerHTML = "";
+                s.forEach(c => {
+                    const b = c.val(); const div = document.createElement('div');
+                    div.className = "bg-white p-6 rounded-[2.5rem] border border-[#018790]/5 mb-3 shadow-sm active:scale-95 transition-all";
+                    div.innerHTML = `<span class="text-[8px] font-black bg-[#00B7B5]/10 text-[#00B7B5] px-2 py-1 rounded-full uppercase italic">${b.tgl}</span><h4 class="text-sm font-black text-black mt-3 uppercase">${b.judul}</h4><p class="text-[13px] text-black font-medium mt-2 line-clamp-2">${b.isi}</p>`;
+                    div.onclick = () => {
+                        document.getElementById('modal-title').innerText = b.judul;
+                        document.getElementById('modal-content').innerText = b.isi;
+                        document.getElementById('blog-modal').classList.remove('hidden');
+                    };
+                    list.prepend(div);
+                });
+            });
+
+            onValue(ref(db, 'lapak'), (s) => {
+                const list = document.getElementById('lapak-list'); list.innerHTML = "";
+                s.forEach(c => {
+                    const i = c.val();
+                    list.innerHTML += `<div class="min-w-[150px] bg-white p-4 rounded-[2rem] border border-slate-100 text-center shadow-sm"><h4 class="text-[11px] font-black text-[#005461] truncate uppercase">${i.produk}</h4><p class="text-[12px] font-black text-[#00B7B5] mt-1">Rp ${parseInt(i.harga).toLocaleString('id-ID')}</p><a href="https://wa.me/${i.wa}" class="block bg-[#005461] text-white text-[8px] font-black py-2.5 rounded-full mt-3 uppercase tracking-widest">Pesan</a></div>`;
+                });
+            });
+        }
+
+        // EXTERNAL APIs
+        async function getUIExtras() {
+            try {
+                const sholat = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`);
+                const sJ = await sholat.json(); const j = sJ.data.jadwal;
+                const s = [{n:'Subuh',t:j.subuh},{n:'Dzuhur',t:j.dzuhur},{n:'Ashar',t:j.ashar},{n:'Maghrib',t:j.maghrib},{n:'Isya',t:j.isya}];
+                document.getElementById('sholat-view').innerHTML = s.map(x => `<div class="text-center flex-1 bg-white/10 py-2 rounded-2xl border border-white/5"><p class="text-[7px] uppercase font-black text-[#00B7B5]">${x.n}</p><p class="text-[10px] font-bold text-white">${x.t}</p></div>`).join('');
+                
+                const cuaca = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
+                const cJ = await cuaca.json(); const t = Math.round(cJ.current_weather.temperature);
+                document.getElementById('temp').innerText = t + '°C';
+                document.getElementById('weather-desc').innerText = t > 30 ? 'Cerah' : 'Berawan';
+                document.getElementById('weather-icon').innerHTML = t > 30 ? '<i class="fas fa-sun text-amber-400 text-sm"></i>' : '<i class="fas fa-cloud-sun text-blue-400 text-sm"></i>';
+            } catch(e) {}
+        }
+
+        // INITIALIZE
+        window.closeSplash = () => document.getElementById('splash-screen').classList.add('opacity-0', 'pointer-events-none');
         window.closeModal = () => document.getElementById('blog-modal').classList.add('hidden');
         window.handleAuthAction = () => {
             if (isAdmin) { if(confirm("Logout?")) { localStorage.removeItem('isAdmin'); location.reload(); } }
-            else { location.href = 'admin.html'; }
+            else { location.href = 'login.html'; }
+        };
+        window.restrictedLink = (u) => {
+            if (isAdmin) location.href = u;
+            else { alert("Akses Terbatas. Silakan login."); location.href = 'login.html'; }
         };
 
-        // --- LOGIKA GREETING ---
-        function setGreeting() {
-            const jam = new Date().getHours();
-            let teks = "";
-            let icon = "";
-
-            if (jam >= 5 && jam < 11) { teks = "Selamat Pagi"; icon = '<i class="fas fa-sun"></i>'; }
-            else if (jam >= 11 && jam < 15) { teks = "Selamat Siang"; icon = '<i class="fas fa-cloud-sun"></i>'; }
-            else if (jam >= 15 && jam < 18) { teks = "Selamat Sore"; icon = '<i class="fas fa-cloud-meatball"></i>'; }
-            else { teks = "Selamat Malam"; icon = '<i class="fas fa-moon"></i>'; }
-
-            document.getElementById('greeting-text').innerText = teks + ", Warga!";
-            document.getElementById('greeting-bg-icon').innerHTML = icon;
-        }
-
-        // --- LOAD DATA ---
         window.onload = () => {
             setGreeting();
-            // Cuaca, Sholat, & Firebase listeners lo panggil di sini semua
-            // (Isi fungsi sama seperti kode sebelumnya)
-            
+            getUIExtras();
+            loadFirebaseData();
+            if(isAdmin) {
+                document.getElementById('label-auth').innerText = "Logout";
+                document.getElementById('btn-auth').querySelector('i').className = "fas fa-power-off text-[#00B7B5]";
+            }
             setInterval(() => {
                 const d = new Date();
                 document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0')+":"+d.getMinutes().toString().padStart(2,'0');
             }, 1000);
-
-            if(isAdmin) {
-                document.getElementById('label-auth').innerText = "Logout";
-                document.getElementById('btn-auth').querySelector('i').className = "fas fa-power-off text-lg text-[#00B7B5]";
-            }
         };
     </script>
 </body>
-    </html>
+                </html>
                 
