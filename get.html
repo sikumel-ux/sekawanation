@@ -2,73 +2,113 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sekawan Digital Hub</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
-        .restricted-blur { filter: blur(8px); opacity: 0.3; pointer-events: none; }
-        .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
+        
+        /* Animasi Ticker */
+        .ticker-move { display: inline-block; animation: move 25s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        
+        /* Efek Blur untuk Keuangan */
+        .restricted-blur { filter: blur(10px); opacity: 0.3; pointer-events: none; transition: all 0.5s ease; }
+        .unlocked { filter: blur(0); opacity: 1; pointer-events: auto; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="pb-32">
 
     <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black italic">Sekawan<span class="text-[#00B7B5]">.</span></h1>
-            <p id="jam" class="text-2xl font-black text-[#00B7B5]">00:00</p>
-        </div>
-        <div id="sholat-view" class="grid grid-cols-5 gap-1 text-[9px] text-center font-bold">
+            <h1 class="text-2xl font-black italic tracking-tighter uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+            <div class="text-right">
+                <p id="jam" class="text-2xl font-black">00:00</p>
+                <p class="text-[8px] font-bold opacity-60 uppercase tracking-widest">Digital Hub RT</p>
             </div>
+        </div>
+        
+        <div id="sholat-view" class="flex justify-between gap-1 overflow-x-auto no-scrollbar">
+            <div class="bg-white/10 p-2 rounded-xl text-center min-w-[55px] border border-white/5">
+                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Subuh</p>
+                <p class="text-[9px] font-bold" id="sholat-subuh">04:12</p>
+            </div>
+            <div class="bg-white/10 p-2 rounded-xl text-center min-w-[55px] border border-white/5">
+                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Dzuhur</p>
+                <p class="text-[9px] font-bold" id="sholat-dzuhur">11:52</p>
+            </div>
+            <div class="bg-white/10 p-2 rounded-xl text-center min-w-[55px] border border-white/5">
+                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Ashar</p>
+                <p class="text-[9px] font-bold" id="sholat-ashar">15:10</p>
+            </div>
+            <div class="bg-white/10 p-2 rounded-xl text-center min-w-[55px] border border-white/5">
+                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Maghrib</p>
+                <p class="text-[9px] font-bold" id="sholat-maghrib">18:05</p>
+            </div>
+            <div class="bg-white/10 p-2 rounded-xl text-center min-w-[55px] border border-white/5">
+                <p class="text-[6px] uppercase font-black text-[#00B7B5]">Isya</p>
+                <p class="text-[9px] font-bold" id="sholat-isya">19:18</p>
+            </div>
+        </div>
     </header>
 
-    <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-lg overflow-hidden border border-slate-100">
-        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase" id="ticker-text">✦ MEMUAT INFORMASI SEKAWAN DIGITAL...</div>
+    <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-lg overflow-hidden border border-slate-100 relative z-10">
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-widest" id="ticker-text">
+            ✦ SELAMAT DATANG DI SEKAWAN DIGITAL HUB ✦ INFORMASI WARGA TERKINI ✦
+        </div>
     </div>
 
     <main class="mt-8 px-6 space-y-8">
         <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
-                <p class="text-[8px] opacity-60 uppercase font-black">Kas Utama</p>
-                <p id="val-kas" class="text-sm font-black italic">Rp 0</p>
+                <p class="text-[8px] opacity-60 uppercase font-black mb-1">Kas Utama</p>
+                <p id="val-kas" class="text-sm font-black italic">Rp --</p>
             </div>
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
-                <p class="text-[8px] opacity-60 uppercase font-black">Dana Sosial</p>
-                <p id="val-sosial" class="text-sm font-black italic">Rp 0</p>
+                <p class="text-[8px] opacity-60 uppercase font-black mb-1">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black italic">Rp --</p>
             </div>
         </section>
 
         <section class="grid grid-cols-4 gap-4 text-center">
+            <button onclick="restrictedLink('keuangan.html')" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg"><i class="fas fa-wallet text-white text-lg"></i></div>
+                <span class="text-[8px] font-bold uppercase text-slate-400">Kas RT</span>
+            </button>
             <button onclick="restrictedLink('lapor.html')" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1"><i class="fas fa-bullhorn text-white"></i></div>
-                <span class="text-[8px] font-black text-slate-400">LAPOR</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg"><i class="fas fa-bullhorn text-white text-lg"></i></div>
+                <span class="text-[8px] font-bold uppercase text-slate-400">Lapor</span>
             </button>
             <a href="ronda.html" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1"><i class="fas fa-shield-halved text-white"></i></div>
-                <span class="text-[8px] font-black text-slate-400">RONDA</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg"><i class="fas fa-shield-halved text-white text-lg"></i></div>
+                <span class="text-[8px] font-bold uppercase text-slate-400">Ronda</span>
             </a>
             <a href="lapak.html" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1"><i class="fas fa-store text-white"></i></div>
-                <span class="text-[8px] font-black text-slate-400">LAPAK</span>
-            </a>
-            <a href="kontak.html" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1"><i class="fas fa-phone text-white"></i></div>
-                <span class="text-[8px] font-black text-slate-400">KONTAK</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg"><i class="fas fa-store text-white text-lg"></i></div>
+                <span class="text-[8px] font-bold uppercase text-slate-400">Lapak</span>
             </a>
         </section>
 
-        <section id="blog-list" class="space-y-4"></section>
+        <div id="blog-list" class="space-y-4">
+            <p class="text-center text-[10px] text-slate-300">Memuat warta warga...</p>
+        </div>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
-            <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full">
+                <i class="fas fa-home"></i>
+            </button>
+            
+            <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white transition-all active:scale-95">
                 <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
-                <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
+                <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Warga Login</span>
             </button>
         </nav>
     </div>
@@ -78,6 +118,7 @@
         import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // Konfigurasi Database lo
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
             authDomain: "websekawan.firebaseapp.com",
@@ -93,50 +134,77 @@
 
         setPersistence(auth, browserLocalPersistence);
 
-        // --- CORE WHITELIST CHECK ---
-        async function verifyWarga(email) {
-            console.log("Mengecek database untuk:", email);
-            const snapshot = await get(ref(db, 'users'));
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                // Bongkar objek -Ojpj...
-                const emails = Object.values(data).map(u => u.email.toLowerCase().trim());
-                console.log("Daftar Whitelist:", emails);
-                return emails.includes(email.toLowerCase().trim());
-            }
-            return false;
-        }
-
-        onAuthStateChanged(auth, async (user) => {
+        // --- FUNGSI UPDATE TAMPILAN (UI) ---
+        function updateUI(isLoggedIn, name = "") {
             const label = document.getElementById('label-auth');
+            const icon = document.getElementById('auth-icon');
             const view = document.getElementById('keuangan-view');
-            if (user) {
-                const allowed = await verifyWarga(user.email);
-                if (allowed) {
-                    label.innerText = user.displayName.split(' ')[0];
-                    view.classList.remove('restricted-blur');
-                    loadData();
-                } else {
-                    alert("Akses Ditolak! Email Anda tidak ada dalam daftar warga.");
-                    await signOut(auth);
-                }
+
+            if (isLoggedIn) {
+                label.innerText = name;
+                icon.className = "fas fa-power-off text-[#00B7B5]";
+                view.classList.add('unlocked');
+                view.classList.remove('restricted-blur');
             } else {
                 label.innerText = "Warga Login";
+                icon.className = "fab fa-google text-[#00B7B5]";
                 view.classList.add('restricted-blur');
+                view.classList.remove('unlocked');
+                document.getElementById('val-kas').innerText = "Rp --";
+                document.getElementById('val-sosial').innerText = "Rp --";
+            }
+        }
+
+        // --- CEK WHITELIST ---
+        async function checkWhitelist(email) {
+            try {
+                const snapshot = await get(ref(db, 'users'));
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const listEmail = Object.values(data).map(u => u.email.toLowerCase().trim());
+                    return listEmail.includes(email.toLowerCase().trim());
+                }
+                return false;
+            } catch (e) { return false; }
+        }
+
+        // --- MONITOR LOGIN ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const terdaftar = await checkWhitelist(user.email);
+                if (terdaftar) {
+                    updateUI(true, user.displayName.split(' ')[0]);
+                    loadKeuangan();
+                } else {
+                    alert("Akses Ditolak! Email Anda tidak terdaftar di database warga.");
+                    await signOut(auth);
+                    updateUI(false);
+                }
+            } else {
+                updateUI(false);
             }
         });
 
+        // --- TOMBOL LOGIN/LOGOUT ---
         window.handleAuthAction = async () => {
-            if (auth.currentUser) { if(confirm("Keluar?")) await signOut(auth); }
-            else { try { await signInWithPopup(auth, provider); } catch(e) { alert("Login Error"); } }
+            if (auth.currentUser) {
+                if(confirm("Ingin keluar dari akses warga?")) await signOut(auth);
+            } else {
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (e) {
+                    alert("Gagal Login. Coba lagi.");
+                }
+            }
         };
 
         window.restrictedLink = (url) => {
             if (auth.currentUser) location.href = url;
-            else alert("Khusus warga! Silakan login.");
+            else alert("Silakan Login Gmail Warga Terlebih Dahulu!");
         };
 
-        function loadData() {
+        // --- LOAD DATA REALTIME ---
+        function loadKeuangan() {
             onValue(ref(db, 'keuangan'), (s) => {
                 if(s.exists()){
                     document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
@@ -145,19 +213,30 @@
             });
         }
 
-        // --- META DATA (TICKER & BLOG) ---
-        onValue(ref(db, 'settings/ticker'), (s) => { if(s.exists()) document.getElementById('ticker-text').innerText = "✦ " + s.val().toUpperCase(); });
+        // Ticker & Blog (Data Umum)
+        onValue(ref(db, 'settings/ticker'), (s) => { 
+            if(s.exists()) document.getElementById('ticker-text').innerText = "✦ " + s.val().toUpperCase(); 
+        });
+
         onValue(ref(db, 'content/blog'), (s) => {
-            const list = document.getElementById('blog-list'); list.innerHTML = "";
+            const list = document.getElementById('blog-list');
+            list.innerHTML = "";
             s.forEach(c => {
-                list.innerHTML += `<div class="bg-white p-5 rounded-[2rem] shadow-sm">
-                    <h4 class="text-[10px] font-black uppercase text-[#005461]">${c.val().judul}</h4>
-                    <p class="text-[10px] text-slate-500 mt-1">${c.val().isi}</p>
-                </div>`;
+                const data = c.val();
+                list.innerHTML += `
+                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-50">
+                        <h4 class="text-[10px] font-black uppercase text-[#005461]">${data.judul}</h4>
+                        <p class="text-[10px] text-slate-500 mt-2 font-medium">${data.isi}</p>
+                    </div>`;
             });
         });
 
-        setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
+        // Clock
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0')+":"+d.getMinutes().toString().padStart(2,'0');
+        }, 1000);
+
     </script>
 </body>
 </html>
