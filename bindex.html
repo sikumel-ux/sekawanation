@@ -9,13 +9,13 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
-        .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.5s ease; }
+        .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.4s ease; }
         .unlocked { filter: blur(0) !important; opacity: 1 !important; pointer-events: auto !important; }
-        #status-bar { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 10px; padding: 4px; z-index: 9999; font-family: monospace; border-bottom: 1px solid #00B7B5; }
+        #monitor { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 9px; padding: 4px; z-index: 9999; font-family: monospace; border-bottom: 1px solid #00B7B5; }
     </style>
 </head>
 <body class="pb-32">
-    <div id="status-bar">Sistem Siap...</div>
+    <div id="monitor">Sistem Siap...</div>
 
     <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
         <div class="flex justify-between items-center mb-6">
@@ -37,26 +37,26 @@
         </section>
 
         <section class="grid grid-cols-4 gap-4 text-center">
-            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-bullhorn"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">LAPOR</span></button>
-            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-shield-halved"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">RONDA</span></button>
-            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-store"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">LAPAK</span></button>
-            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-user-gear"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">ADMIN</span></button>
+            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-bullhorn"></i></div></button>
+            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-shield-halved"></i></div></button>
+            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-store"></i></div></button>
+            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-user-gear"></i></div></button>
         </section>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-between items-center shadow-2xl">
             <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
             <button id="btn-auth" onclick="handleAuth()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
-                <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
-                <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Warga Login</span>
+                <i class="fab fa-google text-[#00B7B5]"></i>
+                <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
             </button>
         </nav>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.app/firebase-database.js";
+        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -71,76 +71,64 @@
         const db = getDatabase(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
-        const stat = (m) => { document.getElementById('status-bar').innerText = m; };
+        const mon = (m) => { document.getElementById('monitor').innerText = m; };
 
         setPersistence(auth, browserLocalPersistence);
 
-        async function checkWhitelist(userEmail) {
-            stat("Mencari email di database...");
-            const snap = await get(ref(db, 'users'));
-            if (snap.exists()) {
-                const users = snap.val();
-                // Cari email secara manual di dalam object users
-                return Object.values(users).some(u => u.email && u.email.toLowerCase().trim() === userEmail.toLowerCase().trim());
-            }
-            return false;
+        async function verifyEmail(user) {
+            if (!user) return;
+            mon("Cek Database...");
+            try {
+                const snap = await get(ref(db, 'users'));
+                if (snap.exists()) {
+                    const emailList = Object.values(snap.val()).map(u => u.email.toLowerCase().trim());
+                    if (emailList.includes(user.email.toLowerCase().trim())) {
+                        mon("Akses Dibuka: " + user.email);
+                        document.getElementById('keuangan-view').classList.add('unlocked');
+                        document.getElementById('label-auth').innerText = user.displayName.split(' ')[0];
+                        
+                        onValue(ref(db, 'keuangan'), (s) => {
+                            if(s.exists()){
+                                document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
+                                document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
+                            }
+                        });
+                    } else {
+                        mon("Email Tidak Terdaftar!");
+                        alert("Email lo belum didaftarin Pak RT!");
+                        signOut(auth);
+                    }
+                }
+            } catch (e) { mon("Error DB: " + e.message); }
         }
 
-        onAuthStateChanged(auth, async (user) => {
-            const view = document.getElementById('keuangan-view');
-            const label = document.getElementById('label-auth');
-            
-            if (user && user.email) {
-                stat("Verifikasi email: " + user.email);
-                const allowed = await checkWhitelist(user.email);
-                
-                if (allowed) {
-                    stat("Akses Diterima!");
-                    view.classList.add('unlocked');
-                    label.innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
-                    
-                    onValue(ref(db, 'keuangan'), (s) => {
-                        if(s.exists()){
-                            document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
-                            document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
-                        }
-                    });
-                } else {
-                    stat("Email tidak terdaftar!");
-                    alert("Akses Ditolak!");
-                    await signOut(auth);
-                }
-            } else {
-                stat("Status: Belum Login");
-                view.classList.remove('unlocked');
-                label.innerText = "Warga Login";
+        onAuthStateChanged(auth, (user) => {
+            if (user) verifyEmail(user);
+            else {
+                mon("Status: Belum Login");
+                document.getElementById('keuangan-view').classList.remove('unlocked');
+                document.getElementById('label-auth').innerText = "Warga Login";
             }
         });
 
         window.handleAuth = async () => {
             if (auth.currentUser) {
-                if(confirm("Logout?")) await signOut(auth);
+                if(confirm("Keluar sistem?")) signOut(auth).then(() => location.reload());
             } else {
-                stat("Menghubungkan ke Google...");
+                mon("Membuka Google...");
                 try {
-                    // Pakai Popup (Pastikan browser tidak blokir popup)
-                    const result = await signInWithPopup(auth, provider);
-                    stat("Login Sukses: " + result.user.email);
-                } catch (e) {
-                    stat("Login Gagal: " + e.message);
-                    console.error(e);
-                    // Jika popup diblokir, lo bisa tambahin fallback redirect di sini
-                }
+                    const res = await signInWithPopup(auth, provider);
+                    if(res.user) location.reload(); 
+                } catch (e) { mon("Login Gagal: " + e.message); }
             }
         };
 
         window.linkKe = (u) => {
             if (auth.currentUser) location.href = u;
-            else alert("Login Warga dulu!");
+            else alert("Login dulu Bos!");
         };
 
         setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
     </script>
 </body>
 </html>
-
