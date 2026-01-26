@@ -11,15 +11,15 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
         .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.6s ease; }
         .unlocked { filter: blur(0) !important; opacity: 1 !important; pointer-events: auto !important; }
-        #log-layar { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 10px; padding: 5px; z-index: 9999; max-height: 80px; overflow: auto; border-bottom: 2px solid #00B7B5; }
+        #monitor-sistem { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 9px; padding: 4px; z-index: 9999; border-bottom: 1px solid #00B7B5; font-family: monospace; }
     </style>
 </head>
 <body class="pb-32">
-    <div id="log-layar">Sistem Ready... Menunggu Auth...</div>
+    <div id="monitor-sistem">Memulai Sistem...</div>
 
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-black italic">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl border-b-4 border-[#00B7B5]">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-black italic uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
             <p id="jam" class="text-2xl font-black text-[#00B7B5]">00:00</p>
         </div>
     </header>
@@ -28,20 +28,19 @@
         <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
                 <p class="text-[8px] opacity-60 uppercase font-black mb-1">Kas Utama</p>
-                <p id="val-kas" class="text-sm font-black italic text-[#00B7B5]">Rp --</p>
+                <p id="val-kas" class="text-lg font-black italic text-[#00B7B5]">Rp --</p>
             </div>
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
                 <p class="text-[8px] opacity-60 uppercase font-black mb-1">Dana Sosial</p>
-                <p id="val-sosial" class="text-sm font-black italic text-[#00B7B5]">Rp --</p>
+                <p id="val-sosial" class="text-lg font-black italic text-[#00B7B5]">Rp --</p>
             </div>
         </section>
-        
-        <div class="text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">Akses Menu Warga</div>
+
         <section class="grid grid-cols-4 gap-4 text-center">
-            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-bullhorn"></i></div></button>
-            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-shield-halved"></i></div></button>
-            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-store"></i></div></button>
-            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-user-gear"></i></div></button>
+            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-bullhorn"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">LAPOR</span></button>
+            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-shield-halved"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">RONDA</span></button>
+            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-store"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">LAPAK</span></button>
+            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-user-gear"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">ADMIN</span></button>
         </section>
     </main>
 
@@ -50,7 +49,7 @@
             <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
             <button id="btn-auth" onclick="handleAuth()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
                 <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
-                <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
+                <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Warga Login</span>
             </button>
         </nav>
     </div>
@@ -58,9 +57,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const config = {
+        const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
             authDomain: "websekawan.firebaseapp.com",
             projectId: "websekawan",
@@ -68,70 +67,86 @@
             appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
-        const app = initializeApp(config);
+        const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
+        
+        const monitor = (m) => { document.getElementById('monitor-sistem').innerText = m; };
 
-        const log = (m) => { document.getElementById('log-layar').innerText = m; console.log(m); };
-
-        // PAKSA PERSISTENCE AGAR LOGIN TETAP AWET
+        // 1. Paksa Browser buat inget login
         setPersistence(auth, browserLocalPersistence);
 
-        // CEK HASIL REDIRECT (Gue taruh di paling atas biar langsung sikat!)
+        // 2. Handler buat nangkep hasil redirect (kalo popup diblokir)
         getRedirectResult(auth).then(res => {
-            if(res?.user) log("Redirect OK: " + res.user.email);
-            else log("Siap... Silakan klik login.");
-        }).catch(e => log("ERR: " + e.message));
+            if (res?.user) monitor("Login Berhasil (Redirect): " + res.user.email);
+        }).catch(e => monitor("Err Redirect: " + e.message));
 
+        // 3. Monitor Perubahan Status (Ini Mesin Utamanya)
         onAuthStateChanged(auth, async (user) => {
             const label = document.getElementById('label-auth');
             const view = document.getElementById('keuangan-view');
 
-            if (user) {
-                log("User Aktif: " + user.email);
-                const snap = await get(ref(db, 'users'));
-                if (snap.exists()) {
-                    const list = Object.values(snap.val()).map(u => u.email.toLowerCase().trim());
-                    if (list.includes(user.email.toLowerCase().trim())) {
-                        log("MATCH! Membuka Akses...");
-                        label.innerText = user.displayName.split(' ')[0];
-                        view.classList.add('unlocked');
-                        onValue(ref(db, 'keuangan'), s => {
-                            if(s.exists()){
-                                document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
-                                document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
-                            }
-                        });
+            if (user && user.email) {
+                monitor("Mengecek Whitelist: " + user.email);
+                
+                try {
+                    const snap = await get(ref(db, 'users'));
+                    if (snap.exists()) {
+                        const data = snap.val();
+                        const whitelist = Object.values(data).map(u => u.email.toLowerCase().trim());
+                        
+                        if (whitelist.includes(user.email.toLowerCase().trim())) {
+                            monitor("Akses Diterima! Memuat Data...");
+                            label.innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
+                            view.classList.add('unlocked');
+                            
+                            // Tarik Saldo
+                            onValue(ref(db, 'keuangan'), (s) => {
+                                if(s.exists()){
+                                    document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
+                                    document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
+                                }
+                            });
+                        } else {
+                            monitor("Email tidak terdaftar!");
+                            alert("Akses Ditolak: " + user.email + " tidak ada di database warga.");
+                            signOut(auth);
+                        }
                     } else {
-                        log("EMAIL TIDAK TERDAFTAR!");
-                        alert("Akses Ditolak: " + user.email);
-                        signOut(auth);
+                        monitor("Data 'users' tidak ditemukan di database!");
                     }
-                }
+                } catch (e) { monitor("DB Error: " + e.message); }
             } else {
-                log("Status: Belum Login");
+                monitor("Status: Belum Login. Silakan Login.");
                 label.innerText = "Warga Login";
                 view.classList.remove('unlocked');
             }
         });
 
+        // 4. Fungsi Tombol Login (Gue pake POPUP dulu)
         window.handleAuth = () => {
             if (auth.currentUser) {
-                if(confirm("Logout?")) signOut(auth);
+                if(confirm("Logout?")) signOut(auth).then(() => location.reload());
             } else {
-                log("Membuka Google...");
-                signInWithRedirect(auth, provider);
+                monitor("Membuka Login Google...");
+                // Coba Popup, kalo browser HP blokir, baru pake Redirect
+                signInWithPopup(auth, provider).then(res => {
+                    monitor("Login Berhasil (Popup): " + res.user.email);
+                }).catch(err => {
+                    monitor("Popup diblokir, beralih ke Redirect...");
+                    signInWithRedirect(auth, provider);
+                });
             }
         };
 
-        window.linkKe = (u) => {
-            if (auth.currentUser) location.href = u;
-            else alert("Login dulu!");
+        window.linkKe = (url) => {
+            if (auth.currentUser) location.href = url;
+            else alert("Silakan Login Warga terlebih dahulu!");
         };
 
         setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
     </script>
 </body>
-        </html>
-    
+            </html>
+            
