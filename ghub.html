@@ -26,32 +26,41 @@
 
     <main id="admin-content" class="mt-8 px-6 space-y-6 admin-locked">
         <div class="bg-white p-6 rounded-[2.5rem] shadow-lg space-y-4 border border-slate-100">
-            <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Update Kas Warga</h2>
-            
-            <div class="space-y-2">
-                <label class="text-[10px] font-bold ml-2">SALDO KAS UTAMA</label>
-                <input type="number" id="input-kas" class="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold text-lg" placeholder="0">
+            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Pembaruan Kas</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <label class="text-[9px] font-bold ml-1">KAS UTAMA</label>
+                    <input type="number" id="input-kas" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold" placeholder="0">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[9px] font-bold ml-1">DANA SOSIAL</label>
+                    <input type="number" id="input-sosial" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold" placeholder="0">
+                </div>
             </div>
-
-            <div class="space-y-2">
-                <label class="text-[10px] font-bold ml-2">DANA SOSIAL</label>
-                <input type="number" id="input-sosial" class="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold text-lg" placeholder="0">
-            </div>
-
-            <button onclick="updateData()" class="w-full bg-[#005461] text-white p-4 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">
-                Simpan Perubahan
-            </button>
+            <button onclick="updateSaldo()" class="w-full bg-[#005461] text-white p-4 rounded-xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all">Simpan Saldo</button>
         </div>
 
-        <div class="text-center">
-            <p class="text-[10px] text-slate-400 font-bold uppercase">Log Aktivitas</p>
-            <p id="last-update" class="text-[9px] italic mt-1 text-slate-500">Belum ada pembaruan sesi ini</p>
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-lg space-y-4 border border-slate-100">
+            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Tambah Warga Baru</h2>
+            <div class="space-y-1">
+                <label class="text-[9px] font-bold ml-1">NAMA WARGA</label>
+                <input type="text" id="new-name" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5]" placeholder="Contoh: Pak Budi">
+            </div>
+            <div class="space-y-1">
+                <label class="text-[9px] font-bold ml-1">EMAIL GOOGLE</label>
+                <input type="email" id="new-email" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5]" placeholder="warga@gmail.com">
+            </div>
+            <button onclick="addWarga()" class="w-full bg-[#00B7B5] text-[#005461] p-4 rounded-xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all">Daftarkan Warga</button>
+        </div>
+
+        <div class="text-center p-4">
+            <p id="last-update" class="text-[9px] italic text-slate-400 tracking-wider font-bold uppercase"></p>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, get, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -69,21 +78,20 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                mon("Mengecek Otoritas...");
+                mon("Otentikasi: " + user.email);
                 const snap = await get(ref(db, 'users'));
                 if (snap.exists()) {
                     const whitelist = Object.values(snap.val()).map(u => u.email?.toLowerCase().trim());
                     if (whitelist.includes(user.email.toLowerCase().trim())) {
-                        mon("Admin Terverifikasi: " + user.email);
+                        mon("Status: Admin Terverifikasi");
                         document.getElementById('admin-content').classList.remove('admin-locked');
                         loadCurrentData();
                     } else {
-                        alert("Anda bukan Admin!");
+                        alert("Bukan Admin!");
                         location.href = 'index.html';
                     }
                 }
             } else {
-                alert("Login dulu Bos!");
                 location.href = 'index.html';
             }
         });
@@ -97,25 +105,36 @@
             });
         }
 
-        window.updateData = async () => {
+        window.updateSaldo = async () => {
             const kas = parseInt(document.getElementById('input-kas').value);
             const sosial = parseInt(document.getElementById('input-sosial').value);
+            if (isNaN(kas) || isNaN(sosial)) return alert("Isi angka!");
+            
+            mon("Menyimpan saldo...");
+            await set(ref(db, 'keuangan'), { kas, sosial });
+            mon("Saldo Berhasil Diupdate!");
+        };
 
-            if (isNaN(kas) || isNaN(sosial)) return alert("Isi angka yang bener!");
+        window.addWarga = async () => {
+            const name = document.getElementById('new-name').value;
+            const email = document.getElementById('new-email').value.toLowerCase().trim();
 
-            mon("Sedang menyimpan...");
+            if (!name || !email) return alert("Isi nama & email!");
+            if (!email.includes("@")) return alert("Email ga valid!");
+
+            mon("Mendaftarkan warga...");
             try {
-                await set(ref(db, 'keuangan'), {
-                    kas: kas,
-                    sosial: sosial,
-                    lastUpdate: new Date().toLocaleString('id-ID')
+                const newUserRef = push(ref(db, 'users'));
+                await set(newUserRef, {
+                    nama: name,
+                    email: email
                 });
-                document.getElementById('last-update').innerText = "Terakhir disimpan: " + new Date().toLocaleTimeString();
-                mon("Data Berhasil Diperbarui!");
-                setTimeout(() => mon("Admin Hub Ready"), 2000);
+                alert("Berhasil! " + name + " sekarang bisa login.");
+                document.getElementById('new-name').value = "";
+                document.getElementById('new-email').value = "";
+                mon("Warga Baru Berhasil Ditambah!");
             } catch (e) {
-                mon("Gagal Simpan: " + e.message);
-                alert("Error: Pastikan Rules Firebase sudah 'auth != null'");
+                mon("Gagal: " + e.message);
             }
         };
     </script>
