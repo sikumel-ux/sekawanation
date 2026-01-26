@@ -3,37 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sekawan AdminHub</title>
+    <title>AdminHub Sekawan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F7F8; color: #005461; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-<body class="bg-slate-50 p-6">
-    <div class="max-w-md mx-auto space-y-6">
-        <div class="bg-[#005461] p-8 rounded-[2.5rem] shadow-xl text-white">
-            <h1 class="font-black text-2xl italic">Admin<span class="text-[#00B7B5]">Hub</span></h1>
-            <p class="text-[10px] opacity-70 mt-1 uppercase font-bold tracking-widest">Whitelist Management</p>
-        </div>
+<body class="pb-24">
 
-        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
-            <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Input Email Google Warga</label>
-            <div class="flex gap-2 mt-2">
-                <input type="email" id="email-warga" placeholder="warga@gmail.com" 
-                    class="flex-1 p-4 bg-slate-50 rounded-2xl text-sm font-bold border-none outline-none focus:ring-2 focus:ring-[#00B7B5]">
-                <button onclick="addWarga()" class="bg-[#005461] text-white w-14 h-14 rounded-2xl flex items-center justify-center active:scale-90 transition-all shadow-lg">
-                    <i class="fas fa-plus"></i>
-                </button>
+    <header class="p-6 bg-[#005461] text-white rounded-b-[2.5rem] shadow-xl sticky top-0 z-50">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-xl font-black italic">ADMIN<span class="text-[#00B7B5]">HUB.</span></h1>
+            <a href="index.html" class="text-[9px] font-bold bg-white/10 px-4 py-2 rounded-full uppercase tracking-widest">Ke Web</a>
+        </div>
+    </header>
+
+    <main class="p-6 space-y-8">
+        
+        <section class="space-y-4">
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm">
+                <h3 class="text-[10px] font-black uppercase text-[#018790] mb-4 tracking-widest">Tambah Warga Login</h3>
+                <div class="flex gap-2">
+                    <input type="email" id="email-warga" placeholder="email@gmail.com" class="flex-1 px-5 py-3 bg-gray-50 rounded-2xl text-sm font-bold border-none outline-none focus:ring-2 focus:ring-[#00B7B5]">
+                    <button onclick="window.addWarga()" class="bg-[#005461] text-white w-12 h-12 rounded-2xl flex items-center justify-center active:scale-90 transition-all shadow-lg">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <div class="space-y-3" id="container-warga">
-            <p class="text-center text-xs text-slate-400 animate-pulse">Menghubungkan ke Database...</p>
-        </div>
-    </div>
+            <div id="container-warga" class="space-y-3">
+                </div>
+        </section>
+
+        <hr class="border-slate-200">
+
+        <section class="bg-white p-6 rounded-[2rem] shadow-sm space-y-4">
+            <h3 class="text-[10px] font-black uppercase text-[#018790] tracking-widest">Update Keuangan</h3>
+            <select id="fin-type" class="w-full px-5 py-3 bg-gray-50 rounded-2xl text-sm font-bold uppercase border-none outline-none">
+                <option value="kas">Kas Utama</option>
+                <option value="sosial">Dana Sosial</option>
+            </select>
+            <input type="number" id="fin-amount" placeholder="Nominal (Cth: 500000)" class="w-full px-5 py-3 bg-gray-50 rounded-2xl text-sm font-bold border-none outline-none">
+            <button onclick="window.updateKeuangan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] shadow-lg active:scale-95 transition-all">Update Saldo</button>
+        </section>
+
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // Konfigurasi lo
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
             authDomain: "websekawan.firebaseapp.com",
@@ -45,64 +68,70 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- FUNGSI TAMBAH WARGA ---
+        // --- TAMBAH WARGA ---
         window.addWarga = () => {
-            const emailInput = document.getElementById('email-warga').value;
-            // Bersihkan email: huruf kecil semua dan hapus spasi
-            const cleanEmail = emailInput.toLowerCase().trim();
-
-            if (cleanEmail.includes('@gmail.com')) {
-                const userRef = ref(db, 'users');
-                // Push data sebagai object {email: "..."}
-                push(userRef, {
-                    email: cleanEmail,
-                    role: "warga",
-                    addedAt: new Date().toISOString()
+            const emailIn = document.getElementById('email-warga').value.toLowerCase().trim();
+            if (emailIn.includes('@')) {
+                push(ref(db, 'users'), {
+                    email: emailIn,
+                    added: new Date().toLocaleDateString()
                 }).then(() => {
                     document.getElementById('email-warga').value = "";
-                    alert("Email " + cleanEmail + " Berhasil Didaftarkan!");
-                }).catch((error) => {
-                    alert("Gagal: " + error.message);
+                    alert("Warga Berhasil Didaftarkan!");
                 });
             } else {
-                alert("Gunakan email @gmail.com yang valid!");
+                alert("Masukkan email yang bener, Bro.");
             }
         };
 
-        // --- TAMPILKAN DAFTAR WARGA ---
+        // --- TAMPILKAN DAFTAR ---
         onValue(ref(db, 'users'), (snapshot) => {
             const container = document.getElementById('container-warga');
             container.innerHTML = "";
-            
             if (snapshot.exists()) {
                 snapshot.forEach((child) => {
                     const data = child.val();
                     const key = child.key;
                     container.innerHTML += `
-                        <div class="bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm border border-slate-50">
-                            <div>
-                                <p class="text-xs font-black text-[#005461]">${data.email}</p>
-                                <p class="text-[8px] text-slate-400 font-bold uppercase tracking-tighter">Verified Warga</p>
+                        <div class="bg-white p-4 rounded-3xl flex justify-between items-center shadow-sm border border-slate-50">
+                            <div class="flex flex-col">
+                                <span class="text-[11px] font-black">${data.email}</span>
+                                <span class="text-[8px] text-slate-400 font-bold uppercase tracking-widest">ID: ${key}</span>
                             </div>
-                            <button onclick="hapusWarga('${key}')" class="text-red-400 bg-red-50 w-10 h-10 rounded-xl flex items-center justify-center active:bg-red-100 transition-colors">
+                            <button onclick="window.delWarga('${key}')" class="w-10 h-10 text-red-400 bg-red-50 rounded-xl flex items-center justify-center active:scale-90 transition-all">
                                 <i class="fas fa-trash-alt text-xs"></i>
                             </button>
-                        </div>
-                    `;
+                        </div>`;
                 });
             } else {
-                container.innerHTML = `<div class="text-center p-10 bg-white rounded-3xl border-2 border-dashed border-slate-200">
-                    <p class="text-[10px] font-black text-slate-300 uppercase">Belum ada warga terdaftar</p>
-                </div>`;
+                container.innerHTML = `<p class="text-center text-[10px] text-slate-300">Belum ada warga terdaftar.</p>`;
             }
         });
 
-        // --- FUNGSI HAPUS ---
-        window.hapusWarga = (id) => {
-            if (confirm("Hapus warga dari whitelist?")) {
-                remove(ref(db, 'users/' + id));
+        // --- HAPUS WARGA (FIX) ---
+        window.delWarga = (id) => {
+            if (confirm("Hapus warga ini?")) {
+                remove(ref(db, 'users/' + id))
+                    .then(() => alert("Terhapus!"))
+                    .catch((err) => alert("Gagal: " + err.message));
             }
         };
+
+        // --- UPDATE SALDO ---
+        window.updateKeuangan = () => {
+            const type = document.getElementById('fin-type').value;
+            const amount = document.getElementById('fin-amount').value;
+            if (amount) {
+                set(ref(db, 'keuangan/' + type), parseInt(amount)).then(() => {
+                    alert("Saldo Berhasil Diupdate!");
+                    document.getElementById('fin-amount').value = "";
+                });
+            } else {
+                alert("Isi nominalnya dulu!");
+            }
+        };
+
     </script>
 </body>
-</html>
+    </html>
+    
