@@ -8,18 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
-        .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.4s ease; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
+        .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.5s ease; }
         .unlocked { filter: blur(0) !important; opacity: 1 !important; pointer-events: auto !important; }
         #monitor { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 9px; padding: 4px; z-index: 9999; font-family: monospace; border-bottom: 1px solid #00B7B5; }
     </style>
 </head>
 <body class="pb-32">
-    <div id="monitor">Sistem Siap...</div>
+    <div id="monitor">Menghubungkan...</div>
 
     <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black italic uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+            <h1 class="text-2xl font-black italic uppercase italic">Sekawan<span class="text-[#00B7B5]">.</span></h1>
             <p id="jam" class="text-2xl font-black text-[#00B7B5]">00:00</p>
         </div>
     </header>
@@ -27,12 +27,12 @@
     <main class="mt-8 px-6 space-y-8">
         <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
-                <p class="text-[8px] opacity-60 uppercase font-black mb-1">Kas Utama</p>
-                <p id="val-kas" class="text-lg font-black italic text-[#00B7B5]">Rp --</p>
+                <p class="text-[8px] opacity-60 uppercase font-black mb-1 text-[#00B7B5]">Kas Utama</p>
+                <p id="val-kas" class="text-sm font-black italic">Rp 0</p>
             </div>
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
-                <p class="text-[8px] opacity-60 uppercase font-black mb-1">Dana Sosial</p>
-                <p id="val-sosial" class="text-lg font-black italic text-[#00B7B5]">Rp --</p>
+                <p class="text-[8px] opacity-60 uppercase font-black mb-1 text-[#00B7B5]">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black italic">Rp 0</p>
             </div>
         </section>
 
@@ -45,10 +45,10 @@
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-between items-center shadow-2xl">
+        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
             <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
             <button id="btn-auth" onclick="handleAuth()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
-                <i class="fab fa-google text-[#00B7B5]"></i>
+                <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
                 <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
             </button>
         </nav>
@@ -75,75 +75,74 @@
 
         setPersistence(auth, browserLocalPersistence);
 
-        async function verifyEmail(user) {
-            if (!user || !user.email) return;
-            mon("Memeriksa data warga...");
-            try {
-                const snap = await get(ref(db, 'users'));
-                if (snap.exists()) {
-                    const data = snap.val();
-                    // FILTER SUPER KETAT: Mencegah error 'toLowerCase' dari data null
-                    const emailWarga = Object.values(data)
-                        .filter(item => item && typeof item.email === 'string')
-                        .map(item => item.email.toLowerCase().trim());
-
-                    const emailUser = user.email.toLowerCase().trim();
-
-                    if (emailWarga.includes(emailUser)) {
-                        mon("AKSES DITERIMA: " + emailUser);
-                        document.getElementById('keuangan-view').classList.add('unlocked');
-                        document.getElementById('label-auth').innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
-                        
-                        onValue(ref(db, 'keuangan'), (s) => {
-                            if(s.exists()){
-                                const k = s.val();
-                                document.getElementById('val-kas').innerText = 'Rp ' + (k.kas || 0).toLocaleString('id-ID');
-                                document.getElementById('val-sosial').innerText = 'Rp ' + (k.sosial || 0).toLocaleString('id-ID');
-                            }
-                        });
-                    } else {
-                        mon("EMAIL TIDAK TERDAFTAR!");
-                        alert("Maaf, email " + emailUser + " tidak terdaftar sebagai warga.");
-                        signOut(auth);
-                    }
+        function loadSaldo() {
+            mon("Memuat Saldo...");
+            onValue(ref(db, 'keuangan'), (s) => {
+                if(s.exists()){
+                    const data = s.val();
+                    document.getElementById('val-kas').innerText = 'Rp ' + (data.kas || 0).toLocaleString('id-ID');
+                    document.getElementById('val-sosial').innerText = 'Rp ' + (data.sosial || 0).toLocaleString('id-ID');
+                    mon("Sistem Aktif & Sinkron");
                 } else {
-                    mon("DATABASE USER KOSONG!");
+                    mon("Data Saldo Tak Ditemukan di DB");
                 }
-            } catch (e) { 
-                mon("ERR: " + e.message);
-                console.error(e);
+            }, (err) => {
+                mon("Error Saldo: Cek Rules Firebase lo!");
+            });
+        }
+
+        async function startSystem(user) {
+            mon("Cek Whitelist...");
+            const snap = await get(ref(db, 'users'));
+            if(snap.exists()){
+                const whitelist = Object.values(snap.val())
+                    .filter(u => u && u.email)
+                    .map(u => u.email.toLowerCase().trim());
+                
+                if(whitelist.includes(user.email.toLowerCase().trim())){
+                    document.getElementById('keuangan-view').classList.add('unlocked');
+                    document.getElementById('label-auth').innerText = "LOGOUT (" + (user.displayName ? user.displayName.split(' ')[0] : "WARGA") + ")";
+                    document.getElementById('auth-icon').className = "fas fa-sign-out-alt text-red-400";
+                    loadSaldo();
+                } else {
+                    mon("Email lo ga terdaftar!");
+                    signOut(auth);
+                }
             }
         }
 
         onAuthStateChanged(auth, (user) => {
-            if (user) verifyEmail(user);
-            else {
-                mon("Status: Belum Login");
+            if (user) {
+                startSystem(user);
+            } else {
+                mon("Sistem Siap (Silakan Login)");
                 document.getElementById('keuangan-view').classList.remove('unlocked');
-                document.getElementById('label-auth').innerText = "Warga Login";
+                document.getElementById('label-auth').innerText = "WARGA LOGIN";
+                document.getElementById('auth-icon').className = "fab fa-google text-[#00B7B5]";
+                document.getElementById('val-kas').innerText = "Rp --";
+                document.getElementById('val-sosial').innerText = "Rp --";
             }
         });
 
         window.handleAuth = async () => {
             if (auth.currentUser) {
-                if(confirm("Logout dari sistem?")) {
+                if(confirm("Yakin mau Keluar/Logout?")) {
                     await signOut(auth);
                     location.reload();
                 }
             } else {
-                mon("Membuka Google...");
                 try {
-                    const res = await signInWithPopup(auth, provider);
-                    // Setelah login popup, biarkan onAuthStateChanged yang bekerja
-                } catch (e) { 
-                    mon("Login Gagal: " + e.message); 
+                    mon("Menghubungkan Google...");
+                    await signInWithPopup(auth, provider);
+                } catch (e) {
+                    mon("Login Gagal: " + e.message);
                 }
             }
         };
 
-        window.linkKe = (u) => {
-            if (auth.currentUser) location.href = u;
-            else alert("Akses terbatas! Login dulu.");
+        window.linkKe = (path) => {
+            if(auth.currentUser) location.href = path;
+            else alert("Akses Khusus Warga! Silakan Login.");
         };
 
         setInterval(() => { 
@@ -151,4 +150,5 @@
         }, 1000);
     </script>
 </body>
-</html>
+                </html>
+                
