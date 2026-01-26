@@ -11,7 +11,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
         .admin-locked { display: none; }
         #monitor { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 9px; padding: 4px; z-index: 9999; font-family: monospace; border-bottom: 1px solid #00B7B5; }
-        .card-admin { background: white; border-radius: 2rem; padding: 1.5rem; shadow: 0 10px 25px -5px rgba(0, 84, 97, 0.1); border: 1px solid rgba(0, 183, 181, 0.1); }
+        .card-admin { background: white; border-radius: 2rem; padding: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 84, 97, 0.1); border: 1px solid rgba(0, 183, 181, 0.1); }
     </style>
 </head>
 <body class="pb-32">
@@ -48,17 +48,17 @@
         <div class="card-admin space-y-4 border-l-4 border-l-[#00B7B5]">
             <div class="flex items-center gap-3 mb-2">
                 <div class="w-8 h-8 bg-[#005461]/10 rounded-lg flex items-center justify-center text-[#005461]"><i class="fas fa-user-plus"></i></div>
-                <h2 class="text-xs font-black uppercase tracking-widest">Tambah Warga</h2>
+                <h2 class="text-xs font-black uppercase tracking-widest">Daftarkan Warga</h2>
             </div>
             <input type="text" id="new-name" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] text-sm" placeholder="Nama Lengkap Warga">
             <input type="email" id="new-email" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] text-sm" placeholder="Email Google (gmail.com)">
-            <button onclick="addWarga()" class="w-full bg-[#00B7B5] text-[#005461] p-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">Daftarkan Warga Baru</button>
+            <button onclick="addWarga()" class="w-full bg-[#00B7B5] text-[#005461] p-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">Tambah Warga Baru</button>
         </div>
 
         <div class="card-admin space-y-4">
-            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Warga Terdaftar</h2>
-            <div id="list-warga" class="space-y-2 max-h-48 overflow-y-auto pr-2">
-                <p class="text-[10px] italic">Memuat daftar...</p>
+            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Daftar Warga Akses</h2>
+            <div id="list-warga" class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                <p class="text-[10px] italic">Memuat data warga...</p>
             </div>
         </div>
 
@@ -84,33 +84,47 @@
 
         setPersistence(auth, browserLocalPersistence);
 
-        // CEK LOGIN & ADMIN
+        // --- SISTEM LOGIN & CEK OTORITAS ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                mon("Mengecek Otoritas: " + user.email);
-                const snap = await get(ref(db, 'users'));
-                if (snap.exists()) {
-                    const data = snap.val();
-                    const whitelist = Object.values(data).filter(u => u && u.email).map(u => u.email.toLowerCase().trim());
-                    
-                    if (whitelist.includes(user.email.toLowerCase().trim())) {
-                        mon("Status: Admin Aktif");
-                        document.getElementById('admin-content').classList.remove('admin-locked');
-                        loadData();
-                        loadListWarga();
-                    } else {
-                        alert("Akses Ditolak: Bukan Admin!");
-                        location.href = 'index.html';
+                const emailUser = user.email.toLowerCase().trim();
+                mon("Mengecek Otoritas: " + emailUser);
+                
+                try {
+                    const snap = await get(ref(db, 'users'));
+                    let whitelist = [];
+                    if (snap.exists()) {
+                        whitelist = Object.values(snap.val())
+                            .filter(u => u && u.email)
+                            .map(u => u.email.toLowerCase().trim());
                     }
+
+                    // --- JURUS BYPASS (GANTI DISINI) ---
+                    const emailAdminUtama = "sikumel@gmail.com"; 
+
+                    if (whitelist.includes(emailUser) || emailUser === emailAdminUtama.toLowerCase().trim()) {
+                        mon("Status: Admin Terverifikasi");
+                        document.getElementById('admin-content').classList.remove('admin-locked');
+                        loadSaldoRealtime();
+                        loadListWargaRealtime();
+                    } else {
+                        mon("Akses Ditolak: Email tidak terdaftar!");
+                        setTimeout(() => {
+                            alert("Maaf, " + emailUser + " tidak memiliki akses admin.");
+                            location.href = 'index.html';
+                        }, 2000);
+                    }
+                } catch (e) {
+                    mon("Gagal memuat database: " + e.message);
                 }
             } else {
-                mon("Sesi Null. Menunggu 2 detik...");
-                setTimeout(() => { if(!auth.currentUser) location.href = 'index.html'; }, 2000);
+                mon("Sesi Kosong. Menunggu...");
+                setTimeout(() => { if(!auth.currentUser) location.href = 'index.html'; }, 3000);
             }
         });
 
-        // MUAT DATA KAS
-        function loadData() {
+        // --- MUAT DATA SALDO ---
+        function loadSaldoRealtime() {
             onValue(ref(db, 'keuangan'), (s) => {
                 if(s.exists()){
                     document.getElementById('input-kas').value = s.val().kas || 0;
@@ -119,50 +133,65 @@
             });
         }
 
-        // MUAT DAFTAR WARGA
-        function loadListWarga() {
+        // --- MUAT DAFTAR WARGA ---
+        function loadListWargaRealtime() {
             onValue(ref(db, 'users'), (s) => {
-                const list = document.getElementById('list-warga');
-                list.innerHTML = "";
+                const container = document.getElementById('list-warga');
+                container.innerHTML = "";
                 if(s.exists()){
-                    Object.values(s.val()).forEach(u => {
+                    const entries = Object.entries(s.val());
+                    entries.forEach(([key, u]) => {
                         if(u && u.email){
-                            list.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
-                                <div>
-                                    <p class="text-[10px] font-black uppercase">${u.nama || 'Tanpa Nama'}</p>
-                                    <p class="text-[8px] opacity-60">${u.email}</p>
-                                </div>
-                                <i class="fas fa-check-circle text-[#00B7B5] text-[10px]"></i>
-                            </div>`;
+                            container.innerHTML += `
+                                <div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border border-slate-100">
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase text-[#005461]">${u.nama || 'Warga'}</p>
+                                        <p class="text-[8px] opacity-60">${u.email}</p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <i class="fas fa-check-circle text-[#00B7B5] text-xs"></i>
+                                    </div>
+                                </div>`;
                         }
                     });
+                } else {
+                    container.innerHTML = "<p class='text-[10px] italic'>Belum ada warga terdaftar.</p>";
                 }
             });
         }
 
-        // UPDATE SALDO
+        // --- FUNGSI UPDATE SALDO ---
         window.updateSaldo = async () => {
             const kas = parseInt(document.getElementById('input-kas').value);
             const sosial = parseInt(document.getElementById('input-sosial').value);
-            mon("Menyimpan...");
-            await set(ref(db, 'keuangan'), { kas, sosial });
-            mon("Saldo Berhasil Diperbarui!");
-            alert("Berhasil simpan saldo!");
+            if(isNaN(kas) || isNaN(sosial)) return alert("Masukkan angka yang benar!");
+            
+            mon("Sedang menyimpan saldo...");
+            try {
+                await set(ref(db, 'keuangan'), { kas, sosial, lastUpdate: new Date().toISOString() });
+                mon("Saldo Berhasil Disimpan!");
+                alert("Kas Berhasil Diperbarui!");
+            } catch (e) { alert("Gagal simpan: " + e.message); }
         };
 
-        // TAMBAH WARGA
+        // --- FUNGSI TAMBAH WARGA ---
         window.addWarga = async () => {
-            const name = document.getElementById('new-name').value;
+            const nama = document.getElementById('new-name').value;
             const email = document.getElementById('new-email').value.toLowerCase().trim();
-            if(!name || !email) return alert("Isi semua data!");
             
-            mon("Menambah warga...");
-            await push(ref(db, 'users'), { nama: name, email: email });
-            mon("Warga " + name + " ditambahkan!");
-            document.getElementById('new-name').value = "";
-            document.getElementById('new-email').value = "";
-            alert("Warga baru berhasil didaftarkan!");
+            if(!nama || !email) return alert("Nama dan Email wajib diisi!");
+            if(!email.includes("@")) return alert("Email tidak valid!");
+
+            mon("Mendaftarkan warga baru...");
+            try {
+                await push(ref(db, 'users'), { nama, email });
+                mon("Warga Berhasil Ditambahkan!");
+                document.getElementById('new-name').value = "";
+                document.getElementById('new-email').value = "";
+                alert("Sukses! " + nama + " sudah masuk whitelist.");
+            } catch (e) { alert("Gagal daftar: " + e.message); }
         };
+
     </script>
 </body>
 </html>
