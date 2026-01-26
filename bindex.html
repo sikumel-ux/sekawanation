@@ -15,9 +15,9 @@
     </style>
 </head>
 <body class="pb-32">
-    <div id="monitor-sistem">Memulai Sistem...</div>
+    <div id="monitor-sistem">Sistem Memuat...</div>
 
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl border-b-4 border-[#00B7B5]">
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-black italic uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
             <p id="jam" class="text-2xl font-black text-[#00B7B5]">00:00</p>
@@ -27,20 +27,20 @@
     <main class="mt-8 px-6 space-y-8">
         <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
-                <p class="text-[8px] opacity-60 uppercase font-black mb-1">Kas Utama</p>
+                <p class="text-[8px] opacity-60 uppercase font-black mb-1 tracking-widest">Kas Utama</p>
                 <p id="val-kas" class="text-lg font-black italic text-[#00B7B5]">Rp --</p>
             </div>
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
-                <p class="text-[8px] opacity-60 uppercase font-black mb-1">Dana Sosial</p>
+                <p class="text-[8px] opacity-60 uppercase font-black mb-1 tracking-widest">Dana Sosial</p>
                 <p id="val-sosial" class="text-lg font-black italic text-[#00B7B5]">Rp --</p>
             </div>
         </section>
 
         <section class="grid grid-cols-4 gap-4 text-center">
-            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-bullhorn"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">LAPOR</span></button>
-            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-shield-halved"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">RONDA</span></button>
-            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-store"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">LAPAK</span></button>
-            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-user-gear"></i></div><span class="text-[8px] font-bold mt-1 text-slate-400">ADMIN</span></button>
+            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-bullhorn"></i></div></button>
+            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-shield-halved"></i></div></button>
+            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-store"></i></div></button>
+            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-user-gear"></i></div></button>
         </section>
     </main>
 
@@ -57,7 +57,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -74,34 +74,22 @@
         
         const monitor = (m) => { document.getElementById('monitor-sistem').innerText = m; };
 
-        // 1. Paksa Browser buat inget login
         setPersistence(auth, browserLocalPersistence);
 
-        // 2. Handler buat nangkep hasil redirect (kalo popup diblokir)
-        getRedirectResult(auth).then(res => {
-            if (res?.user) monitor("Login Berhasil (Redirect): " + res.user.email);
-        }).catch(e => monitor("Err Redirect: " + e.message));
-
-        // 3. Monitor Perubahan Status (Ini Mesin Utamanya)
         onAuthStateChanged(auth, async (user) => {
             const label = document.getElementById('label-auth');
             const view = document.getElementById('keuangan-view');
 
             if (user && user.email) {
-                monitor("Mengecek Whitelist: " + user.email);
-                
+                monitor("VALIDASI DATA: " + user.email);
                 try {
                     const snap = await get(ref(db, 'users'));
                     if (snap.exists()) {
-                        const data = snap.val();
-                        const whitelist = Object.values(data).map(u => u.email.toLowerCase().trim());
-                        
+                        const whitelist = Object.values(snap.val()).map(u => u.email.toLowerCase().trim());
                         if (whitelist.includes(user.email.toLowerCase().trim())) {
-                            monitor("Akses Diterima! Memuat Data...");
-                            label.innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
+                            monitor("DATA COCOK! Memuat Saldo...");
+                            label.innerText = user.displayName ? user.displayName.split(' ')[0] : "WARGA";
                             view.classList.add('unlocked');
-                            
-                            // Tarik Saldo
                             onValue(ref(db, 'keuangan'), (s) => {
                                 if(s.exists()){
                                     document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
@@ -109,44 +97,46 @@
                                 }
                             });
                         } else {
-                            monitor("Email tidak terdaftar!");
-                            alert("Akses Ditolak: " + user.email + " tidak ada di database warga.");
+                            monitor("EMAIL TIDAK TERDAFTAR!");
+                            alert("Akses Ditolak: " + user.email);
                             signOut(auth);
                         }
-                    } else {
-                        monitor("Data 'users' tidak ditemukan di database!");
                     }
-                } catch (e) { monitor("DB Error: " + e.message); }
+                } catch (e) { monitor("ERROR DB: " + e.message); }
             } else {
-                monitor("Status: Belum Login. Silakan Login.");
+                monitor("STATUS: BELUM LOGIN");
                 label.innerText = "Warga Login";
                 view.classList.remove('unlocked');
             }
         });
 
-        // 4. Fungsi Tombol Login (Gue pake POPUP dulu)
-        window.handleAuth = () => {
+        window.handleAuth = async () => {
             if (auth.currentUser) {
                 if(confirm("Logout?")) signOut(auth).then(() => location.reload());
             } else {
-                monitor("Membuka Login Google...");
-                // Coba Popup, kalo browser HP blokir, baru pake Redirect
-                signInWithPopup(auth, provider).then(res => {
-                    monitor("Login Berhasil (Popup): " + res.user.email);
-                }).catch(err => {
-                    monitor("Popup diblokir, beralih ke Redirect...");
-                    signInWithRedirect(auth, provider);
-                });
+                monitor("MEMBUKA GOOGLE...");
+                try {
+                    // Pakai Popup secara manual
+                    const result = await signInWithPopup(auth, provider);
+                    if(result.user) {
+                        monitor("LOGIN SUKSES: " + result.user.email);
+                        // Paksa refresh data
+                        location.reload(); 
+                    }
+                } catch (err) {
+                    monitor("POPUP GAGAL: " + err.message);
+                    alert("Coba lagi atau gunakan browser Chrome!");
+                }
             }
         };
 
-        window.linkKe = (url) => {
-            if (auth.currentUser) location.href = url;
-            else alert("Silakan Login Warga terlebih dahulu!");
+        window.linkKe = (u) => {
+            if (auth.currentUser) location.href = u;
+            else alert("Login dulu!");
         };
 
         setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
     </script>
 </body>
-            </html>
-            
+    </html>
+    
