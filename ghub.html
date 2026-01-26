@@ -11,57 +11,63 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
         .admin-locked { display: none; }
         #monitor { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 9px; padding: 4px; z-index: 9999; font-family: monospace; border-bottom: 1px solid #00B7B5; }
+        .card-admin { background: white; border-radius: 2rem; padding: 1.5rem; shadow: 0 10px 25px -5px rgba(0, 84, 97, 0.1); border: 1px solid rgba(0, 183, 181, 0.1); }
     </style>
 </head>
 <body class="pb-32">
-    <div id="monitor">Memverifikasi Admin...</div>
+    <div id="monitor">Memulai Otentikasi...</div>
 
-    <header class="p-6 bg-[#00B7B5] text-[#005461] rounded-b-[3rem] shadow-xl">
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-center">
-            <button onclick="location.href='index.html'" class="text-xl"><i class="fas fa-arrow-left"></i></button>
-            <h1 class="text-xl font-black uppercase italic">Admin Hub</h1>
-            <div class="w-6"></div>
+            <button onclick="location.href='index.html'" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
+            <h1 class="text-xl font-black uppercase italic tracking-tighter">Admin <span class="text-[#00B7B5]">Hub</span></h1>
+            <div class="w-10"></div>
         </div>
     </header>
 
     <main id="admin-content" class="mt-8 px-6 space-y-6 admin-locked">
-        <div class="bg-white p-6 rounded-[2.5rem] shadow-lg space-y-4 border border-slate-100">
-            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Pembaruan Kas</h2>
+        
+        <div class="card-admin space-y-4">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 bg-[#00B7B5]/20 rounded-lg flex items-center justify-center text-[#00B7B5]"><i class="fas fa-wallet"></i></div>
+                <h2 class="text-xs font-black uppercase tracking-widest">Manajemen Kas</h2>
+            </div>
             <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1">
-                    <label class="text-[9px] font-bold ml-1">KAS UTAMA</label>
-                    <input type="number" id="input-kas" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold" placeholder="0">
+                    <label class="text-[9px] font-bold opacity-50 ml-1">KAS UTAMA</label>
+                    <input type="number" id="input-kas" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold text-sm" placeholder="0">
                 </div>
                 <div class="space-y-1">
-                    <label class="text-[9px] font-bold ml-1">DANA SOSIAL</label>
-                    <input type="number" id="input-sosial" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold" placeholder="0">
+                    <label class="text-[9px] font-bold opacity-50 ml-1">DANA SOSIAL</label>
+                    <input type="number" id="input-sosial" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold text-sm" placeholder="0">
                 </div>
             </div>
-            <button onclick="updateSaldo()" class="w-full bg-[#005461] text-white p-4 rounded-xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all">Simpan Saldo</button>
+            <button onclick="updateSaldo()" class="w-full bg-[#005461] text-white p-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">Simpan Perubahan Kas</button>
         </div>
 
-        <div class="bg-white p-6 rounded-[2.5rem] shadow-lg space-y-4 border border-slate-100">
-            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Tambah Warga Baru</h2>
-            <div class="space-y-1">
-                <label class="text-[9px] font-bold ml-1">NAMA WARGA</label>
-                <input type="text" id="new-name" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5]" placeholder="Contoh: Pak Budi">
+        <div class="card-admin space-y-4 border-l-4 border-l-[#00B7B5]">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 bg-[#005461]/10 rounded-lg flex items-center justify-center text-[#005461]"><i class="fas fa-user-plus"></i></div>
+                <h2 class="text-xs font-black uppercase tracking-widest">Tambah Warga</h2>
             </div>
-            <div class="space-y-1">
-                <label class="text-[9px] font-bold ml-1">EMAIL GOOGLE</label>
-                <input type="email" id="new-email" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5]" placeholder="warga@gmail.com">
-            </div>
-            <button onclick="addWarga()" class="w-full bg-[#00B7B5] text-[#005461] p-4 rounded-xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all">Daftarkan Warga</button>
+            <input type="text" id="new-name" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] text-sm" placeholder="Nama Lengkap Warga">
+            <input type="email" id="new-email" class="w-full p-3 bg-slate-50 rounded-xl border-none focus:ring-2 focus:ring-[#00B7B5] text-sm" placeholder="Email Google (gmail.com)">
+            <button onclick="addWarga()" class="w-full bg-[#00B7B5] text-[#005461] p-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">Daftarkan Warga Baru</button>
         </div>
 
-        <div class="text-center p-4">
-            <p id="last-update" class="text-[9px] italic text-slate-400 tracking-wider font-bold uppercase"></p>
+        <div class="card-admin space-y-4">
+            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Warga Terdaftar</h2>
+            <div id="list-warga" class="space-y-2 max-h-48 overflow-y-auto pr-2">
+                <p class="text-[10px] italic">Memuat daftar...</p>
+            </div>
         </div>
+
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -76,27 +82,35 @@
         const auth = getAuth(app);
         const mon = (m) => { document.getElementById('monitor').innerText = m; };
 
+        setPersistence(auth, browserLocalPersistence);
+
+        // CEK LOGIN & ADMIN
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                mon("Otentikasi: " + user.email);
+                mon("Mengecek Otoritas: " + user.email);
                 const snap = await get(ref(db, 'users'));
                 if (snap.exists()) {
-                    const whitelist = Object.values(snap.val()).map(u => u.email?.toLowerCase().trim());
+                    const data = snap.val();
+                    const whitelist = Object.values(data).filter(u => u && u.email).map(u => u.email.toLowerCase().trim());
+                    
                     if (whitelist.includes(user.email.toLowerCase().trim())) {
-                        mon("Status: Admin Terverifikasi");
+                        mon("Status: Admin Aktif");
                         document.getElementById('admin-content').classList.remove('admin-locked');
-                        loadCurrentData();
+                        loadData();
+                        loadListWarga();
                     } else {
-                        alert("Bukan Admin!");
+                        alert("Akses Ditolak: Bukan Admin!");
                         location.href = 'index.html';
                     }
                 }
             } else {
-                location.href = 'index.html';
+                mon("Sesi Null. Menunggu 2 detik...");
+                setTimeout(() => { if(!auth.currentUser) location.href = 'index.html'; }, 2000);
             }
         });
 
-        function loadCurrentData() {
+        // MUAT DATA KAS
+        function loadData() {
             onValue(ref(db, 'keuangan'), (s) => {
                 if(s.exists()){
                     document.getElementById('input-kas').value = s.val().kas || 0;
@@ -105,37 +119,49 @@
             });
         }
 
+        // MUAT DAFTAR WARGA
+        function loadListWarga() {
+            onValue(ref(db, 'users'), (s) => {
+                const list = document.getElementById('list-warga');
+                list.innerHTML = "";
+                if(s.exists()){
+                    Object.values(s.val()).forEach(u => {
+                        if(u && u.email){
+                            list.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase">${u.nama || 'Tanpa Nama'}</p>
+                                    <p class="text-[8px] opacity-60">${u.email}</p>
+                                </div>
+                                <i class="fas fa-check-circle text-[#00B7B5] text-[10px]"></i>
+                            </div>`;
+                        }
+                    });
+                }
+            });
+        }
+
+        // UPDATE SALDO
         window.updateSaldo = async () => {
             const kas = parseInt(document.getElementById('input-kas').value);
             const sosial = parseInt(document.getElementById('input-sosial').value);
-            if (isNaN(kas) || isNaN(sosial)) return alert("Isi angka!");
-            
-            mon("Menyimpan saldo...");
+            mon("Menyimpan...");
             await set(ref(db, 'keuangan'), { kas, sosial });
-            mon("Saldo Berhasil Diupdate!");
+            mon("Saldo Berhasil Diperbarui!");
+            alert("Berhasil simpan saldo!");
         };
 
+        // TAMBAH WARGA
         window.addWarga = async () => {
             const name = document.getElementById('new-name').value;
             const email = document.getElementById('new-email').value.toLowerCase().trim();
-
-            if (!name || !email) return alert("Isi nama & email!");
-            if (!email.includes("@")) return alert("Email ga valid!");
-
-            mon("Mendaftarkan warga...");
-            try {
-                const newUserRef = push(ref(db, 'users'));
-                await set(newUserRef, {
-                    nama: name,
-                    email: email
-                });
-                alert("Berhasil! " + name + " sekarang bisa login.");
-                document.getElementById('new-name').value = "";
-                document.getElementById('new-email').value = "";
-                mon("Warga Baru Berhasil Ditambah!");
-            } catch (e) {
-                mon("Gagal: " + e.message);
-            }
+            if(!name || !email) return alert("Isi semua data!");
+            
+            mon("Menambah warga...");
+            await push(ref(db, 'users'), { nama: name, email: email });
+            mon("Warga " + name + " ditambahkan!");
+            document.getElementById('new-name').value = "";
+            document.getElementById('new-email').value = "";
+            alert("Warga baru berhasil didaftarkan!");
         };
     </script>
 </body>
