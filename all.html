@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sekawan Hub v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
+        .page { display: none; }
+        .active-page { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.5s ease; }
+        .unlocked { filter: blur(0) !important; opacity: 1 !important; pointer-events: auto !important; }
+        #monitor { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 9px; padding: 4px; z-index: 9999; font-family: monospace; border-bottom: 1px solid #00B7B5; }
+    </style>
+</head>
+<body class="pb-32">
+    <div id="monitor">Inisialisasi...</div>
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-black italic">SEKAWAN<span class="text-[#00B7B5]">.</span></h1>
+            <p id="jam" class="text-xl font-black text-[#00B7B5]">00:00</p>
+        </div>
+        <div id="user-info" class="text-[10px] font-bold opacity-60">Status: Belum Login</div>
+    </header>
+
+    <main id="page-warga" class="page active-page mt-8 px-6 space-y-8">
+        <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
+            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
+                <p class="text-[8px] opacity-60 uppercase font-black mb-1 text-[#00B7B5]">Kas Utama</p>
+                <p id="val-kas" class="text-lg font-black italic">Rp --</p>
+            </div>
+            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
+                <p class="text-[8px] opacity-60 uppercase font-black mb-1 text-[#00B7B5]">Dana Sosial</p>
+                <p id="val-sosial" class="text-lg font-black italic">Rp --</p>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-4 gap-4 text-center">
+            <div class="flex flex-col items-center opacity-50"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-bullhorn"></i></div><span class="text-[8px] mt-1 font-bold">LAPOR</span></div>
+            <div class="flex flex-col items-center opacity-50"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-shield-halved"></i></div><span class="text-[8px] mt-1 font-bold">RONDA</span></div>
+            <div class="flex flex-col items-center opacity-50"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-store"></i></div><span class="text-[8px] mt-1 font-bold">LAPAK</span></div>
+            <button onclick="bukaHalaman('page-admin')" id="btn-admin-gate" class="hidden flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-user-gear"></i></div><span class="text-[8px] mt-1 font-bold">ADMIN</span></button>
+        </section>
+    </main>
+
+    <main id="page-admin" class="page mt-8 px-6 space-y-6">
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-lg space-y-4">
+            <h2 class="text-xs font-black uppercase text-[#00B7B5]">💰 Update Kas</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <input type="number" id="input-kas" class="w-full p-3 bg-slate-100 rounded-xl text-sm" placeholder="Kas Utama">
+                <input type="number" id="input-sosial" class="w-full p-3 bg-slate-100 rounded-xl text-sm" placeholder="Sosial">
+            </div>
+            <button onclick="simpanSaldo()" class="w-full bg-[#005461] text-white p-4 rounded-xl font-black text-[10px]">SIMPAN SALDO</button>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-lg space-y-4">
+            <h2 class="text-xs font-black uppercase text-[#005461]">👤 Tambah Warga</h2>
+            <input type="text" id="new-name" class="w-full p-3 bg-slate-100 rounded-xl text-sm" placeholder="Nama Warga">
+            <input type="email" id="new-email" class="w-full p-3 bg-slate-100 rounded-xl text-sm" placeholder="Email Google">
+            <button onclick="tambahWarga()" class="w-full bg-[#00B7B5] text-[#005461] p-4 rounded-xl font-black text-[10px]">DAFTARKAN</button>
+        </div>
+
+        <button onclick="bukaHalaman('page-warga')" class="w-full text-[10px] font-bold text-slate-400 uppercase tracking-widest"><i class="fas fa-arrow-left mr-2"></i> Kembali ke Dashboard</button>
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-between items-center shadow-2xl">
+            <button onclick="bukaHalaman('page-warga')" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
+            <button id="btn-auth" onclick="handleAuth()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
+                <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
+                <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
+            </button>
+        </nav>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+            authDomain: "websekawan.firebaseapp.com",
+            projectId: "websekawan",
+            databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+        const mon = (m) => { document.getElementById('monitor').innerText = m; };
+
+        setPersistence(auth, browserLocalPersistence);
+
+        // --- SISTEM NAVIGASI (SPA) ---
+        window.bukaHalaman = (pageId) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(pageId).classList.add('active-page');
+            window.scrollTo(0,0);
+        };
+
+        // --- SISTEM OTENTIKASI ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const email = user.email.toLowerCase().trim();
+                mon("User: " + email);
+                document.getElementById('user-info').innerText = "Logged in as: " + email;
+                
+                // Cek Whitelist
+                const snap = await get(ref(db, 'users'));
+                let isWarga = false;
+                if(snap.exists()){
+                    const whitelist = Object.values(snap.val()).map(u => u.email?.toLowerCase().trim());
+                    if(whitelist.includes(email)) isWarga = true;
+                }
+
+                // BYPASS ADMIN (Masukkan email lo di sini)
+                const superAdmin = "EMAIL_LO_DISINI@gmail.com"; 
+                if(email === superAdmin.toLowerCase().trim()) {
+                    isWarga = true;
+                    document.getElementById('btn-admin-gate').classList.remove('hidden');
+                }
+
+                if(isWarga) {
+                    document.getElementById('keuangan-view').classList.add('unlocked');
+                    document.getElementById('label-auth').innerText = "LOGOUT";
+                    document.getElementById('auth-icon').className = "fas fa-sign-out-alt text-red-400";
+                    loadDataRealtime();
+                } else {
+                    mon("Email tidak terdaftar!");
+                    alert("Akses Ditolak! Email belum terdaftar di sistem warga.");
+                    signOut(auth);
+                }
+            } else {
+                mon("Sistem Siap. Silakan Login.");
+                document.getElementById('keuangan-view').classList.remove('unlocked');
+                document.getElementById('label-auth').innerText = "WARGA LOGIN";
+                document.getElementById('auth-icon').className = "fab fa-google text-[#00B7B5]";
+                document.getElementById('btn-admin-gate').classList.add('hidden');
+                document.getElementById('user-info').innerText = "Status: Belum Login";
+            }
+        });
+
+        window.handleAuth = async () => {
+            if(auth.currentUser) {
+                if(confirm("Logout?")) signOut(auth).then(() => location.reload());
+            } else {
+                mon("Membuka Google...");
+                signInWithPopup(auth, provider).catch(e => mon("Gagal: " + e.message));
+            }
+        };
+
+        // --- DATA REALTIME ---
+        function loadDataRealtime() {
+            onValue(ref(db, 'keuangan'), (s) => {
+                if(s.exists()){
+                    document.getElementById('val-kas').innerText = "Rp " + s.val().kas.toLocaleString('id-ID');
+                    document.getElementById('val-sosial').innerText = "Rp " + s.val().sosial.toLocaleString('id-ID');
+                    // Sync ke input admin
+                    document.getElementById('input-kas').value = s.val().kas;
+                    document.getElementById('input-sosial').value = s.val().sosial;
+                }
+            });
+        }
+
+        window.simpanSaldo = async () => {
+            const kas = parseInt(document.getElementById('input-kas').value);
+            const sosial = parseInt(document.getElementById('input-sosial').value);
+            await set(ref(db, 'keuangan'), { kas, sosial });
+            mon("Saldo Disimpan!");
+            alert("Saldo berhasil diperbarui!");
+        };
+
+        window.tambahWarga = async () => {
+            const nama = document.getElementById('new-name').value;
+            const email = document.getElementById('new-email').value.toLowerCase().trim();
+            if(nama && email) {
+                await push(ref(db, 'users'), { nama, email });
+                mon("Warga " + nama + " ditambahkan!");
+                alert("Berhasil mendaftarkan warga.");
+                document.getElementById('new-name').value = "";
+                document.getElementById('new-email').value = "";
+            }
+        };
+
+        setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
+    </script>
+</body>
+</html>
