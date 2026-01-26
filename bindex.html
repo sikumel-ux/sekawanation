@@ -8,18 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
         .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.6s ease; }
         .unlocked { filter: blur(0) !important; opacity: 1 !important; pointer-events: auto !important; }
-        #debug-log { font-family: monospace; font-size: 8px; position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.8); color: lime; width: 100%; z-index: 9999; max-height: 100px; overflow: auto; padding: 5px; display: none; }
+        #log-layar { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 10px; padding: 5px; z-index: 9999; max-height: 80px; overflow: auto; border-bottom: 2px solid #00B7B5; }
     </style>
 </head>
 <body class="pb-32">
-    <div id="debug-log"></div>
+    <div id="log-layar">Sistem Ready... Menunggu Auth...</div>
 
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl border-b-4 border-[#00B7B5]">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black italic uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-black italic">Sekawan<span class="text-[#00B7B5]">.</span></h1>
             <p id="jam" class="text-2xl font-black text-[#00B7B5]">00:00</p>
         </div>
     </header>
@@ -28,19 +28,20 @@
         <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
                 <p class="text-[8px] opacity-60 uppercase font-black mb-1">Kas Utama</p>
-                <p id="val-kas" class="text-sm font-black italic">Rp --</p>
+                <p id="val-kas" class="text-sm font-black italic text-[#00B7B5]">Rp --</p>
             </div>
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
                 <p class="text-[8px] opacity-60 uppercase font-black mb-1">Dana Sosial</p>
-                <p id="val-sosial" class="text-sm font-black italic">Rp --</p>
+                <p id="val-sosial" class="text-sm font-black italic text-[#00B7B5]">Rp --</p>
             </div>
         </section>
-
+        
+        <div class="text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">Akses Menu Warga</div>
         <section class="grid grid-cols-4 gap-4 text-center">
-            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-bullhorn"></i></div><span class="text-[8px] font-bold mt-1 uppercase text-slate-400">Lapor</span></button>
-            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-shield-halved"></i></div><span class="text-[8px] font-bold mt-1 uppercase text-slate-400">Ronda</span></button>
-            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-store"></i></div><span class="text-[8px] font-bold mt-1 uppercase text-slate-400">Lapak</span></button>
-            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-user-gear"></i></div><span class="text-[8px] font-bold mt-1 uppercase text-slate-400">Admin</span></button>
+            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-bullhorn"></i></div></button>
+            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-shield-halved"></i></div></button>
+            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-store"></i></div></button>
+            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-user-gear"></i></div></button>
         </section>
     </main>
 
@@ -49,7 +50,7 @@
             <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
             <button id="btn-auth" onclick="handleAuth()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
                 <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
-                <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Warga Login</span>
+                <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
             </button>
         </nav>
     </div>
@@ -59,7 +60,7 @@
         import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const firebaseConfig = {
+        const config = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
             authDomain: "websekawan.firebaseapp.com",
             projectId: "websekawan",
@@ -67,58 +68,49 @@
             appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp(config);
         const db = getDatabase(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        function logger(msg) {
-            const el = document.getElementById('debug-log');
-            el.style.display = "block";
-            el.innerHTML += "> " + msg + "<br>";
-        }
+        const log = (m) => { document.getElementById('log-layar').innerText = m; console.log(m); };
 
+        // PAKSA PERSISTENCE AGAR LOGIN TETAP AWET
         setPersistence(auth, browserLocalPersistence);
 
-        // Langsung cek hasil redirect
+        // CEK HASIL REDIRECT (Gue taruh di paling atas biar langsung sikat!)
         getRedirectResult(auth).then(res => {
-            if(res?.user) logger("Redirect Success: " + res.user.email);
-        }).catch(e => logger("Redirect Error: " + e.message));
+            if(res?.user) log("Redirect OK: " + res.user.email);
+            else log("Siap... Silakan klik login.");
+        }).catch(e => log("ERR: " + e.message));
 
         onAuthStateChanged(auth, async (user) => {
             const label = document.getElementById('label-auth');
             const view = document.getElementById('keuangan-view');
 
-            if (user && user.email) {
-                logger("Auth Detect: " + user.email);
-                
-                // AMBIL DATA USER DARI DATABASE
+            if (user) {
+                log("User Aktif: " + user.email);
                 const snap = await get(ref(db, 'users'));
                 if (snap.exists()) {
-                    const data = snap.val();
-                    const whitelist = Object.values(data).map(u => u.email.toLowerCase().trim());
-                    logger("Whitelist count: " + whitelist.length);
-                    
-                    if (whitelist.includes(user.email.toLowerCase().trim())) {
-                        logger("MATCH! Unlocking...");
+                    const list = Object.values(snap.val()).map(u => u.email.toLowerCase().trim());
+                    if (list.includes(user.email.toLowerCase().trim())) {
+                        log("MATCH! Membuka Akses...");
                         label.innerText = user.displayName.split(' ')[0];
                         view.classList.add('unlocked');
-                        
-                        onValue(ref(db, 'keuangan'), (s) => {
+                        onValue(ref(db, 'keuangan'), s => {
                             if(s.exists()){
                                 document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
                                 document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
                             }
                         });
                     } else {
-                        logger("NO MATCH!");
-                        alert("Email " + user.email + " tidak ada di database warga!");
+                        log("EMAIL TIDAK TERDAFTAR!");
+                        alert("Akses Ditolak: " + user.email);
                         signOut(auth);
                     }
-                } else {
-                    logger("Database 'users' KOSONG!");
                 }
             } else {
+                log("Status: Belum Login");
                 label.innerText = "Warga Login";
                 view.classList.remove('unlocked');
             }
@@ -128,7 +120,7 @@
             if (auth.currentUser) {
                 if(confirm("Logout?")) signOut(auth);
             } else {
-                logger("Starting Redirect...");
+                log("Membuka Google...");
                 signInWithRedirect(auth, provider);
             }
         };
@@ -141,4 +133,5 @@
         setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
     </script>
 </body>
-</html>
+        </html>
+    
