@@ -19,8 +19,8 @@
 
     <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black italic tracking-tighter uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
-            <p id="jam" class="text-2xl font-black">00:00</p>
+            <h1 class="text-2xl font-black italic">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+            <p id="jam" class="text-2xl font-black text-[#00B7B5]">00:00</p>
         </div>
         <div class="flex justify-between gap-1 text-[9px] font-bold opacity-80">
             <div class="bg-white/10 p-2 rounded-xl text-center flex-1">Subuh<br>04:15</div>
@@ -32,37 +32,37 @@
     </header>
 
     <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-lg overflow-hidden border border-slate-100 relative z-10 text-center">
-        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-widest" id="ticker-text">✦ MEMUAT INFORMASI SEKAWAN...</div>
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-widest" id="ticker-text">✦ MEMUAT INFORMASI...</div>
     </div>
 
     <main class="mt-8 px-6 space-y-8">
         <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
-            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
+            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl border-b-4 border-[#00B7B5]">
                 <p class="text-[8px] opacity-60 uppercase font-black mb-1">Kas Utama</p>
-                <p id="val-kas" class="text-sm font-black italic">Rp --</p>
+                <p id="val-kas" class="text-sm font-black italic text-[#00B7B5]">Rp --</p>
             </div>
-            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
+            <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl border-b-4 border-[#00B7B5]">
                 <p class="text-[8px] opacity-60 uppercase font-black mb-1">Dana Sosial</p>
-                <p id="val-sosial" class="text-sm font-black italic">Rp --</p>
+                <p id="val-sosial" class="text-sm font-black italic text-[#00B7B5]">Rp --</p>
             </div>
         </section>
 
         <section class="grid grid-cols-4 gap-4 text-center">
             <button onclick="restrictedLink('keuangan.html')" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg active:scale-90 transition-all"><i class="fas fa-wallet text-white"></i></div>
-                <span class="text-[8px] font-bold uppercase text-slate-400 tracking-tighter">Kas RT</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg"><i class="fas fa-wallet text-white"></i></div>
+                <span class="text-[8px] font-bold uppercase text-slate-400">Kas RT</span>
             </button>
             <button onclick="restrictedLink('lapor.html')" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg active:scale-90 transition-all"><i class="fas fa-bullhorn text-white"></i></div>
-                <span class="text-[8px] font-bold uppercase text-slate-400 tracking-tighter">Lapor</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg"><i class="fas fa-bullhorn text-white"></i></div>
+                <span class="text-[8px] font-bold uppercase text-slate-400">Lapor</span>
             </button>
             <a href="ronda.html" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg active:scale-90 transition-all"><i class="fas fa-shield-halved text-white"></i></div>
-                <span class="text-[8px] font-bold uppercase text-slate-400 tracking-tighter">Ronda</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg"><i class="fas fa-shield-halved text-white"></i></div>
+                <span class="text-[8px] font-bold uppercase text-slate-400">Ronda</span>
             </a>
             <a href="lapak.html" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg active:scale-90 transition-all"><i class="fas fa-store text-white"></i></div>
-                <span class="text-[8px] font-bold uppercase text-slate-400 tracking-tighter">Lapak</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center mb-1 shadow-lg"><i class="fas fa-store text-white"></i></div>
+                <span class="text-[8px] font-bold uppercase text-slate-400">Lapak</span>
             </a>
         </section>
 
@@ -71,10 +71,10 @@
 
     <div class="fixed bottom-6 left-0 right-0 px-8 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full active:scale-90"><i class="fas fa-home"></i></button>
-            <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white active:scale-95 transition-all">
+            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
+            <button id="btn-auth" onclick="handleAuthAction()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
                 <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
-                <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Warga Login</span>
+                <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
             </button>
         </nav>
     </div>
@@ -98,36 +98,31 @@
         const provider = new GoogleAuthProvider();
         setPersistence(auth, browserLocalPersistence);
 
-        // --- FUNGSI CEK WHITELIST ---
-        async function verifyEmail(emailLogin) {
-            console.log("Mengecek email:", emailLogin);
+        // --- CEK WHITELIST ---
+        async function checkWhitelist(emailLogin) {
             try {
                 const snapshot = await get(ref(db, 'users'));
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    // Bongkar ID unik (-Ojpj...) dan ambil field emailnya
-                    const allowed = Object.values(data).map(u => u.email.toLowerCase().trim());
-                    console.log("Daftar Whitelist:", allowed);
-                    return allowed.includes(emailLogin.toLowerCase().trim());
+                    // Bongkar ID unik ke array email murni
+                    const listEmail = Object.values(data).map(u => u.email.toLowerCase().trim());
+                    return listEmail.includes(emailLogin.toLowerCase().trim());
                 }
-                return false;
-            } catch (e) { return false; }
+            } catch (e) { console.error(e); }
+            return false;
         }
 
-        // --- MONITOR STATUS ---
         onAuthStateChanged(auth, async (user) => {
             const label = document.getElementById('label-auth');
             const view = document.getElementById('keuangan-view');
             const icon = document.getElementById('auth-icon');
 
             if (user) {
-                const isWarga = await verifyEmail(user.email);
+                const isWarga = await checkWhitelist(user.email);
                 if (isWarga) {
                     label.innerText = user.displayName.split(' ')[0];
                     icon.className = "fas fa-power-off text-[#00B7B5]";
                     view.classList.add('unlocked');
-                    view.classList.remove('restricted-blur');
-                    // Load Saldo
                     onValue(ref(db, 'keuangan'), (s) => {
                         if(s.exists()){
                             document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
@@ -135,23 +130,21 @@
                         }
                     });
                 } else {
-                    alert("Akses Ditolak! Email " + user.email + " tidak ada dalam daftar warga.");
+                    alert("Email " + user.email + " Belum Terdaftar!");
                     await signOut(auth);
                 }
             } else {
                 label.innerText = "Warga Login";
                 icon.className = "fab fa-google text-[#00B7B5]";
-                view.classList.add('restricted-blur');
                 view.classList.remove('unlocked');
+                document.getElementById('val-kas').innerText = "Rp --";
+                document.getElementById('val-sosial').innerText = "Rp --";
             }
         });
 
         window.handleAuthAction = async () => {
-            if (auth.currentUser) {
-                if(confirm("Logout dari sistem warga?")) await signOut(auth);
-            } else {
-                try { await signInWithPopup(auth, provider); } catch(e) { alert("Login Gagal!"); }
-            }
+            if (auth.currentUser) { if(confirm("Logout?")) await signOut(auth); }
+            else { try { await signInWithPopup(auth, provider); } catch(e) { alert("Gagal Login"); } }
         };
 
         window.restrictedLink = (url) => {
@@ -159,14 +152,7 @@
             else alert("Silakan Login Dulu!");
         };
 
-        // UI Tambahan
         onValue(ref(db, 'settings/ticker'), (s) => { if(s.exists()) document.getElementById('ticker-text').innerText = "✦ " + s.val().toUpperCase(); });
-        onValue(ref(db, 'content/blog'), (s) => {
-            const list = document.getElementById('blog-list'); list.innerHTML = "";
-            s.forEach(c => {
-                list.innerHTML += `<div class="bg-white p-5 rounded-[2rem] shadow-sm"><h4 class="text-[10px] font-black uppercase">${c.val().judul}</h4><p class="text-[10px] text-slate-500 mt-1">${c.val().isi}</p></div>`;
-            });
-        });
         setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
     </script>
 </body>
