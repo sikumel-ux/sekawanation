@@ -76,30 +76,43 @@
         setPersistence(auth, browserLocalPersistence);
 
         async function verifyEmail(user) {
-            if (!user) return;
-            mon("Cek Database...");
+            if (!user || !user.email) return;
+            mon("Memeriksa data warga...");
             try {
                 const snap = await get(ref(db, 'users'));
                 if (snap.exists()) {
-                    const emailList = Object.values(snap.val()).map(u => u.email.toLowerCase().trim());
-                    if (emailList.includes(user.email.toLowerCase().trim())) {
-                        mon("Akses Dibuka: " + user.email);
+                    const data = snap.val();
+                    // FILTER SUPER KETAT: Mencegah error 'toLowerCase' dari data null
+                    const emailWarga = Object.values(data)
+                        .filter(item => item && typeof item.email === 'string')
+                        .map(item => item.email.toLowerCase().trim());
+
+                    const emailUser = user.email.toLowerCase().trim();
+
+                    if (emailWarga.includes(emailUser)) {
+                        mon("AKSES DITERIMA: " + emailUser);
                         document.getElementById('keuangan-view').classList.add('unlocked');
-                        document.getElementById('label-auth').innerText = user.displayName.split(' ')[0];
+                        document.getElementById('label-auth').innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
                         
                         onValue(ref(db, 'keuangan'), (s) => {
                             if(s.exists()){
-                                document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
-                                document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
+                                const k = s.val();
+                                document.getElementById('val-kas').innerText = 'Rp ' + (k.kas || 0).toLocaleString('id-ID');
+                                document.getElementById('val-sosial').innerText = 'Rp ' + (k.sosial || 0).toLocaleString('id-ID');
                             }
                         });
                     } else {
-                        mon("Email Tidak Terdaftar!");
-                        alert("Email lo belum didaftarin Pak RT!");
+                        mon("EMAIL TIDAK TERDAFTAR!");
+                        alert("Maaf, email " + emailUser + " tidak terdaftar sebagai warga.");
                         signOut(auth);
                     }
+                } else {
+                    mon("DATABASE USER KOSONG!");
                 }
-            } catch (e) { mon("Error DB: " + e.message); }
+            } catch (e) { 
+                mon("ERR: " + e.message);
+                console.error(e);
+            }
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -113,22 +126,29 @@
 
         window.handleAuth = async () => {
             if (auth.currentUser) {
-                if(confirm("Keluar sistem?")) signOut(auth).then(() => location.reload());
+                if(confirm("Logout dari sistem?")) {
+                    await signOut(auth);
+                    location.reload();
+                }
             } else {
                 mon("Membuka Google...");
                 try {
                     const res = await signInWithPopup(auth, provider);
-                    if(res.user) location.reload(); 
-                } catch (e) { mon("Login Gagal: " + e.message); }
+                    // Setelah login popup, biarkan onAuthStateChanged yang bekerja
+                } catch (e) { 
+                    mon("Login Gagal: " + e.message); 
+                }
             }
         };
 
         window.linkKe = (u) => {
             if (auth.currentUser) location.href = u;
-            else alert("Login dulu Bos!");
+            else alert("Akses terbatas! Login dulu.");
         };
 
-        setInterval(() => { document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }, 1000);
+        setInterval(() => { 
+            document.getElementById('jam').innerText = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); 
+        }, 1000);
     </script>
 </body>
 </html>
