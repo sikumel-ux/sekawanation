@@ -2,28 +2,57 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdminHub Sekawan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Hub - Sekawan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
+        .admin-locked { display: none; }
+        #monitor { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 9px; padding: 4px; z-index: 9999; font-family: monospace; border-bottom: 1px solid #00B7B5; }
+    </style>
 </head>
-<body class="bg-slate-50 p-6">
-    <div class="max-w-md mx-auto space-y-6">
-        <div class="bg-[#005461] p-6 rounded-3xl text-white shadow-lg">
-            <h1 class="font-black italic">ADMIN<span class="text-[#00B7B5]">HUB</span></h1>
+<body class="pb-32">
+    <div id="monitor">Memverifikasi Admin...</div>
+
+    <header class="p-6 bg-[#00B7B5] text-[#005461] rounded-b-[3rem] shadow-xl">
+        <div class="flex justify-between items-center">
+            <button onclick="location.href='index.html'" class="text-xl"><i class="fas fa-arrow-left"></i></button>
+            <h1 class="text-xl font-black uppercase italic">Admin Hub</h1>
+            <div class="w-6"></div>
+        </div>
+    </header>
+
+    <main id="admin-content" class="mt-8 px-6 space-y-6 admin-locked">
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-lg space-y-4 border border-slate-100">
+            <h2 class="text-sm font-black uppercase tracking-widest text-slate-400">Update Kas Warga</h2>
+            
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold ml-2">SALDO KAS UTAMA</label>
+                <input type="number" id="input-kas" class="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold text-lg" placeholder="0">
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold ml-2">DANA SOSIAL</label>
+                <input type="number" id="input-sosial" class="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-[#00B7B5] font-bold text-lg" placeholder="0">
+            </div>
+
+            <button onclick="updateData()" class="w-full bg-[#005461] text-white p-4 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">
+                Simpan Perubahan
+            </button>
         </div>
 
-        <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-            <input type="email" id="email-in" placeholder="email.warga@gmail.com" class="w-full p-4 bg-slate-50 rounded-2xl text-sm font-bold outline-none border-none">
-            <button onclick="window.addWarga()" class="w-full bg-[#005461] text-white font-bold py-4 rounded-2xl uppercase text-xs">Tambah Whitelist</button>
+        <div class="text-center">
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Log Aktivitas</p>
+            <p id="last-update" class="text-[9px] italic mt-1 text-slate-500">Belum ada pembaruan sesi ini</p>
         </div>
-
-        <div id="list-warga" class="space-y-3"></div>
-    </div>
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -35,30 +64,60 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
+        const mon = (m) => { document.getElementById('monitor').innerText = m; };
 
-        window.addWarga = () => {
-            const email = document.getElementById('email-in').value.toLowerCase().trim();
-            if(email.includes('@')) {
-                push(ref(db, 'users'), { email: email }).then(() => {
-                    document.getElementById('email-in').value = "";
-                });
-            }
-        };
-
-        onValue(ref(db, 'users'), (snap) => {
-            const list = document.getElementById('list-warga');
-            list.innerHTML = "";
-            if(snap.exists()) {
-                snap.forEach(c => {
-                    list.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm">
-                        <span class="text-xs font-bold">${c.val().email}</span>
-                        <button onclick="window.delWarga('${c.key}')" class="text-red-400"><i class="fas fa-trash"></i></button>
-                    </div>`;
-                });
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                mon("Mengecek Otoritas...");
+                const snap = await get(ref(db, 'users'));
+                if (snap.exists()) {
+                    const whitelist = Object.values(snap.val()).map(u => u.email?.toLowerCase().trim());
+                    if (whitelist.includes(user.email.toLowerCase().trim())) {
+                        mon("Admin Terverifikasi: " + user.email);
+                        document.getElementById('admin-content').classList.remove('admin-locked');
+                        loadCurrentData();
+                    } else {
+                        alert("Anda bukan Admin!");
+                        location.href = 'index.html';
+                    }
+                }
+            } else {
+                alert("Login dulu Bos!");
+                location.href = 'index.html';
             }
         });
 
-        window.delWarga = (id) => { if(confirm("Hapus?")) remove(ref(db, 'users/' + id)); };
+        function loadCurrentData() {
+            onValue(ref(db, 'keuangan'), (s) => {
+                if(s.exists()){
+                    document.getElementById('input-kas').value = s.val().kas || 0;
+                    document.getElementById('input-sosial').value = s.val().sosial || 0;
+                }
+            });
+        }
+
+        window.updateData = async () => {
+            const kas = parseInt(document.getElementById('input-kas').value);
+            const sosial = parseInt(document.getElementById('input-sosial').value);
+
+            if (isNaN(kas) || isNaN(sosial)) return alert("Isi angka yang bener!");
+
+            mon("Sedang menyimpan...");
+            try {
+                await set(ref(db, 'keuangan'), {
+                    kas: kas,
+                    sosial: sosial,
+                    lastUpdate: new Date().toLocaleString('id-ID')
+                });
+                document.getElementById('last-update').innerText = "Terakhir disimpan: " + new Date().toLocaleTimeString();
+                mon("Data Berhasil Diperbarui!");
+                setTimeout(() => mon("Admin Hub Ready"), 2000);
+            } catch (e) {
+                mon("Gagal Simpan: " + e.message);
+                alert("Error: Pastikan Rules Firebase sudah 'auth != null'");
+            }
+        };
     </script>
 </body>
 </html>
