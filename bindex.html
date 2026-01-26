@@ -8,19 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
-        /* Transisi blur dipercepat agar tidak terasa nge-lag */
-        .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.3s ease; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; color: #005461; }
+        .restricted-blur { filter: blur(15px); opacity: 0.3; pointer-events: none; transition: all 0.4s ease; }
         .unlocked { filter: blur(0) !important; opacity: 1 !important; pointer-events: auto !important; }
         #monitor-sistem { position: fixed; top: 0; left: 0; width: 100%; background: #000; color: #0f0; font-size: 9px; padding: 4px; z-index: 9999; border-bottom: 1px solid #00B7B5; font-family: monospace; }
     </style>
 </head>
 <body class="pb-32">
-    <div id="monitor-sistem">Sistem Memuat...</div>
+    <div id="monitor-sistem">Sistem Ready...</div>
 
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black italic uppercase italic">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+            <h1 class="text-2xl font-black italic uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
             <p id="jam" class="text-2xl font-black text-[#00B7B5]">00:00</p>
         </div>
     </header>
@@ -29,19 +28,19 @@
         <section id="keuangan-view" class="grid grid-cols-2 gap-4 restricted-blur">
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
                 <p class="text-[8px] opacity-60 uppercase font-black mb-1">Kas Utama</p>
-                <p id="val-kas" class="text-sm font-black italic">Rp --</p>
+                <p id="val-kas" class="text-lg font-black italic text-[#00B7B5]">Rp --</p>
             </div>
             <div class="bg-[#005461] p-6 rounded-[2.5rem] text-white shadow-xl">
                 <p class="text-[8px] opacity-60 uppercase font-black mb-1">Dana Sosial</p>
-                <p id="val-sosial" class="text-sm font-black italic">Rp --</p>
+                <p id="val-sosial" class="text-lg font-black italic text-[#00B7B5]">Rp --</p>
             </div>
         </section>
 
         <section class="grid grid-cols-4 gap-4 text-center">
-            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-bullhorn"></i></div></button>
-            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-shield-halved"></i></div></button>
-            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-store"></i></div></button>
-            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white"><i class="fas fa-user-gear"></i></div></button>
+            <button onclick="linkKe('lapor.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-bullhorn"></i></div></button>
+            <button onclick="linkKe('ronda.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-shield-halved"></i></div></button>
+            <button onclick="linkKe('lapak.html')" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#005461] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-store"></i></div></button>
+            <button onclick="location.href='admin.html'" class="flex flex-col items-center"><div class="w-14 h-14 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-user-gear"></i></div></button>
         </section>
     </main>
 
@@ -50,7 +49,7 @@
             <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white/10 rounded-full"><i class="fas fa-home"></i></button>
             <button id="btn-auth" onclick="handleAuth()" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
                 <i id="auth-icon" class="fab fa-google text-[#00B7B5]"></i>
-                <span id="label-auth" class="text-[10px] font-black uppercase">Warga Login</span>
+                <span id="label-auth" class="text-[10px] font-black uppercase tracking-widest">Warga Login</span>
             </button>
         </nav>
     </div>
@@ -72,39 +71,48 @@
         const db = getDatabase(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
-        
         const monitor = (m) => { document.getElementById('monitor-sistem').innerText = m; };
 
         setPersistence(auth, browserLocalPersistence);
 
-        // --- FUNGSI UTAMA BUKA AKSES ---
-        async function bukaAkses(user) {
-            monitor("Memverifikasi: " + user.email);
-            const snap = await get(ref(db, 'users'));
-            if (snap.exists()) {
-                const whitelist = Object.values(snap.val()).map(u => u.email.toLowerCase().trim());
-                if (whitelist.includes(user.email.toLowerCase().trim())) {
-                    document.getElementById('label-auth').innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
-                    document.getElementById('keuangan-view').classList.add('unlocked');
-                    monitor("Login Aktif: " + user.email);
-                    
-                    onValue(ref(db, 'keuangan'), (s) => {
-                        if(s.exists()){
-                            document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
-                            document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
-                        }
-                    });
-                } else {
-                    monitor("Email tidak terdaftar!");
-                    signOut(auth);
+        async function verifyAndUnlock(user) {
+            if (!user || !user.email) return;
+            monitor("Mencocokkan email: " + user.email);
+
+            try {
+                const snap = await get(ref(db, 'users'));
+                if (snap.exists()) {
+                    const data = snap.val();
+                    // FILTER: Hanya ambil email yang valid (tidak null/undefined)
+                    const whitelist = Object.values(data)
+                        .filter(u => u && u.email) 
+                        .map(u => u.email.toLowerCase().trim());
+
+                    if (whitelist.includes(user.email.toLowerCase().trim())) {
+                        monitor("Akses Diterima! Membuka Saldo...");
+                        document.getElementById('label-auth').innerText = user.displayName ? user.displayName.split(' ')[0] : "Warga";
+                        document.getElementById('keuangan-view').classList.add('unlocked');
+                        
+                        onValue(ref(db, 'keuangan'), (s) => {
+                            if(s.exists()){
+                                document.getElementById('val-kas').innerText = 'Rp ' + s.val().kas.toLocaleString('id-ID');
+                                document.getElementById('val-sosial').innerText = 'Rp ' + s.val().sosial.toLocaleString('id-ID');
+                            }
+                        });
+                    } else {
+                        monitor("Email tidak terdaftar di database warga.");
+                        alert("Akses Ditolak: " + user.email);
+                        signOut(auth);
+                    }
                 }
+            } catch (e) {
+                monitor("Error DB: " + e.message);
             }
         }
 
-        // Jalankan setiap kali status berubah
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                bukaAkses(user);
+                verifyAndUnlock(user);
             } else {
                 monitor("Status: Belum Login");
                 document.getElementById('label-auth').innerText = "Warga Login";
@@ -113,29 +121,28 @@
         });
 
         window.handleAuth = async () => {
-            // Gunakan auth.currentUser langsung biar gak kena tipu status "null"
             if (auth.currentUser) {
-                if(confirm("Mau Keluar/Logout?")) {
+                if(confirm("Logout dari sistem?")) {
                     await signOut(auth);
                     location.reload();
                 }
             } else {
-                monitor("Menghubungkan ke Google...");
+                monitor("Membuka Login Google...");
                 try {
                     const res = await signInWithPopup(auth, provider);
                     if(res.user) {
-                        await bukaAkses(res.user);
-                        location.reload(); // Paksa refresh biar sinkron
+                        await verifyAndUnlock(res.user);
+                        location.reload();
                     }
                 } catch (e) {
-                    monitor("Gagal: " + e.message);
+                    monitor("Login Gagal: " + e.message);
                 }
             }
         };
 
         window.linkKe = (u) => {
             if (auth.currentUser) location.href = u;
-            else alert("Akses khusus warga! Silakan login dulu.");
+            else alert("Silakan Login Warga dulu!");
         };
 
         setInterval(() => { 
