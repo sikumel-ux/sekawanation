@@ -3,71 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sekawan AdminHub</title>
+    <title>AdminHub Sekawan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F7F8; color: #005461; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .btn-active { background-color: #005461; color: white; }
-    </style>
 </head>
-<body class="pb-24">
-
-    <header class="p-6 bg-[#005461] text-white rounded-b-[2.5rem] shadow-xl sticky top-0 z-50">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-xl font-black italic">ADMIN<span class="text-[#00B7B5]">HUB.</span></h1>
-            <a href="index.html" class="text-[10px] font-bold bg-white/10 px-4 py-2 rounded-full uppercase">Web Utama</a>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-md mx-auto space-y-6">
+        <h1 class="font-black text-2xl text-[#005461]">ADMIN HUB</h1>
+        
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm">
+            <h3 class="text-xs font-bold uppercase mb-4">Input Email Warga</h3>
+            <div class="flex gap-2">
+                <input type="email" id="email-in" placeholder="warga@gmail.com" class="flex-1 p-3 bg-gray-50 rounded-xl text-sm border-none outline-none">
+                <button onclick="addWarga()" class="bg-[#005461] text-white px-5 rounded-xl text-xs font-bold">ADD</button>
+            </div>
         </div>
-        <div class="flex gap-2 overflow-x-auto no-scrollbar">
-            <button onclick="openTab('warga')" id="btn-warga" class="tab-btn px-5 py-2 rounded-full font-black text-[10px] uppercase bg-white/10">Akses Warga</button>
-            <button onclick="openTab('keuangan')" id="btn-keuangan" class="tab-btn px-5 py-2 rounded-full font-black text-[10px] uppercase bg-white/10">Keuangan</button>
-            <button onclick="openTab('info')" id="btn-info" class="tab-btn px-5 py-2 rounded-full font-black text-[10px] uppercase bg-white/10">Informasi</button>
-        </div>
-    </header>
 
-    <main class="p-6">
-        <section id="tab-warga" class="tab-content active space-y-6">
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
-                <h3 class="text-[10px] font-black uppercase text-[#018790] mb-4 tracking-widest">Daftarkan Gmail Warga</h3>
-                <div class="flex gap-2">
-                    <input type="email" id="input-email" placeholder="contoh@gmail.com" class="flex-1 px-5 py-3 bg-gray-50 rounded-2xl text-sm font-bold border-none outline-none focus:ring-2 focus:ring-[#00B7B5]">
-                    <button onclick="saveWarga()" class="bg-[#005461] text-white w-12 h-12 rounded-2xl flex items-center justify-center active:scale-90 transition-all">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-                <p class="text-[8px] text-slate-400 mt-3">*Pastikan email Gmail aktif untuk login warga.</p>
-            </div>
-
-            <div id="list-warga" class="space-y-3">
-                </div>
-        </section>
-
-        <section id="tab-keuangan" class="tab-content space-y-6">
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm space-y-4">
-                <select id="fin-type" class="w-full px-5 py-3 bg-gray-50 rounded-2xl text-sm font-bold uppercase border-none outline-none">
-                    <option value="kas">Kas Utama</option>
-                    <option value="sosial">Dana Sosial</option>
-                </select>
-                <input type="number" id="fin-amount" placeholder="Nominal (Tanpa titik/koma)" class="w-full px-5 py-3 bg-gray-50 rounded-2xl text-sm font-bold border-none outline-none">
-                <button onclick="updateKeuangan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-xs shadow-lg active:scale-95 transition-all">Update Saldo</button>
-            </div>
-        </section>
-
-        <section id="tab-info" class="tab-content space-y-6">
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm">
-                <h3 class="text-[10px] font-black uppercase mb-4">Update Running Text</h3>
-                <textarea id="input-ticker" class="w-full p-4 bg-gray-50 rounded-2xl text-xs font-bold border-none mb-3" rows="3"></textarea>
-                <button onclick="saveTicker()" class="w-full bg-[#005461] text-white font-black py-3 rounded-2xl uppercase text-[10px]">Simpan Ticker</button>
-            </div>
-        </section>
-    </main>
+        <div id="warga-list" class="space-y-3"></div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -80,75 +36,31 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- TAB SYSTEM ---
-        window.openTab = (tabName) => {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('btn-active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
-            document.getElementById('btn-' + tabName).classList.add('btn-active');
-        };
-        openTab('warga'); // Default tab
-
-        // --- CRUD WARGA (WHITELIST) ---
-        window.saveWarga = () => {
-            const email = document.getElementById('input-email').value.toLowerCase().trim();
-            if (email.includes('@')) {
-                // Gunakan PUSH agar tersimpan dengan ID unik -Ojpj...
+        window.addWarga = () => {
+            const email = document.getElementById('email-in').value.toLowerCase().trim();
+            if(email.includes('@')) {
                 push(ref(db, 'users'), { email: email }).then(() => {
-                    document.getElementById('input-email').value = "";
-                    alert("Warga Berhasil Didaftarkan!");
+                    document.getElementById('email-in').value = "";
+                    alert("Berhasil!");
                 });
-            } else {
-                alert("Format email salah!");
             }
         };
 
-        onValue(ref(db, 'users'), (snapshot) => {
-            const container = document.getElementById('list-warga');
-            container.innerHTML = "";
-            if (snapshot.exists()) {
-                snapshot.forEach(child => {
-                    const data = child.val();
-                    container.innerHTML += `
-                        <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-slate-50">
-                            <div class="flex flex-col">
-                                <span class="text-[11px] font-black">${data.email}</span>
-                                <span class="text-[8px] opacity-40 uppercase font-bold">ID: ${child.key}</span>
-                            </div>
-                            <button onclick="delUser('${child.key}')" class="w-10 h-10 text-red-400 bg-red-50 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-trash-can"></i>
-                            </button>
-                        </div>`;
+        onValue(ref(db, 'users'), (snap) => {
+            const list = document.getElementById('warga-list'); list.innerHTML = "";
+            if(snap.exists()){
+                snap.forEach(c => {
+                    list.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between items-center text-xs font-bold">
+                        <span>${c.val().email}</span>
+                        <button onclick="delUser('${c.key}')" class="text-red-500">Hapus</button>
+                    </div>`;
                 });
             }
         });
 
-        window.delUser = (id) => {
-            if(confirm("Hapus warga ini dari daftar?")) remove(ref(db, 'users/' + id));
-        };
-
-        // --- UPDATE KEUANGAN ---
-        window.updateKeuangan = () => {
-            const type = document.getElementById('fin-type').value;
-            const amount = document.getElementById('fin-amount').value;
-            if(amount) {
-                // Update langsung ke field yang dibaca index.html
-                set(ref(db, 'keuangan/' + type), parseInt(amount)).then(() => {
-                    alert("Saldo " + type + " berhasil diupdate!");
-                    document.getElementById('fin-amount').value = "";
-                });
-            }
-        };
-
-        // --- UPDATE TICKER ---
-        window.saveTicker = () => {
-            const text = document.getElementById('input-ticker').value;
-            if(text) {
-                set(ref(db, 'settings/ticker'), text).then(() => alert("Ticker diupdate!"));
-            }
-        };
-
+        window.delUser = (id) => { if(confirm("Hapus?")) remove(ref(db, 'users/' + id)); };
     </script>
 </body>
-    </html>
+</html>
+
     
