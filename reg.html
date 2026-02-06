@@ -2,52 +2,128 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gabung Warga - RT Sekwan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi Warga - Sekawan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        :root { --biru-tua: #1C4D8D; --biru-mid: #4988C4; --biru-muda: #BDE8F5; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; }
-        .floating-curve { border-radius: 2.5rem; }
-        .input-curve { border-radius: 1.2rem; }
-        .soft-shadow { box-shadow: 0 20px 40px -10px rgba(28, 77, 141, 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #005461; }
+        input:focus { outline: none; border-color: #00B7B5; }
     </style>
 </head>
-<body class="p-6">
+<body class="flex items-center justify-center min-h-screen p-6">
 
-    <div class="max-w-md mx-auto space-y-8 pt-10">
-        <div class="text-center">
-            <h1 class="text-3xl font-black italic tracking-tighter" style="color: var(--biru-tua);">GABUNG<span style="color: var(--biru-mid);">.</span></h1>
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] mt-2">Daftar Akun Warga Baru</p>
+    <div class="w-full max-w-sm bg-white rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#00B7B5]/10 rounded-full"></div>
+        
+        <div class="text-center mb-10">
+            <div class="w-16 h-16 bg-[#005461] rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <i class="fas fa-user-plus text-[#00B7B5] text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-black text-[#005461] tracking-tighter uppercase">Daftar Warga</h2>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Gabung Ekosistem Sekawan</p>
         </div>
 
-        <div class="bg-white p-8 floating-curve soft-shadow border border-white space-y-5">
+        <form id="regForm" class="space-y-5">
             <div>
-                <label class="text-[9px] font-black uppercase ml-4 text-slate-400 tracking-widest">Nama Lengkap</label>
-                <input type="text" placeholder="Masukkan nama sesuai KTP" class="w-full mt-1 p-4 bg-slate-50 border-none input-curve text-sm font-bold outline-none focus:ring-2 focus:ring-blue-200">
+                <label class="text-[10px] font-black text-[#005461] uppercase ml-4 mb-2 block">Nama Lengkap</label>
+                <div class="relative">
+                    <i class="fas fa-id-card absolute left-5 top-4 text-slate-300 text-sm"></i>
+                    <input type="text" id="regNama" required placeholder="Contoh: Budi Santoso" 
+                        class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl py-3.5 pl-12 pr-6 text-sm font-bold text-[#005461] transition-all">
+                </div>
             </div>
 
             <div>
-                <label class="text-[9px] font-black uppercase ml-4 text-slate-400 tracking-widest">Alamat / No. Rumah</label>
-                <input type="text" placeholder="Blok A-12" class="w-full mt-1 p-4 bg-slate-50 border-none input-curve text-sm font-bold outline-none focus:ring-2 focus:ring-blue-200">
+                <label class="text-[10px] font-black text-[#005461] uppercase ml-4 mb-2 block">Nomor HP (WhatsApp)</label>
+                <div class="relative">
+                    <i class="fab fa-whatsapp absolute left-5 top-4 text-slate-300 text-sm"></i>
+                    <input type="number" id="regHp" required placeholder="081234567xxx" 
+                        class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl py-3.5 pl-12 pr-6 text-sm font-bold text-[#005461] transition-all">
+                </div>
             </div>
 
             <div>
-                <label class="text-[9px] font-black uppercase ml-4 text-slate-400 tracking-widest">Nomor WhatsApp</label>
-                <input type="tel" placeholder="08xxxx" class="w-full mt-1 p-4 bg-slate-50 border-none input-curve text-sm font-bold outline-none focus:ring-2 focus:ring-blue-200">
+                <label class="text-[10px] font-black text-[#005461] uppercase ml-4 mb-2 block">Kata Sandi</label>
+                <div class="relative">
+                    <i class="fas fa-lock absolute left-5 top-4 text-slate-300 text-sm"></i>
+                    <input type="password" id="regPass" required placeholder="••••••••" 
+                        class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl py-3.5 pl-12 pr-6 text-sm font-bold text-[#005461] transition-all">
+                </div>
             </div>
 
-            <button class="w-full p-4 input-curve text-white font-black italic uppercase tracking-widest shadow-lg shadow-blue-200 transition active:scale-95" style="background: var(--biru-tua);">
-                Daftar Sekarang
+            <button type="submit" id="btnDaftar" class="w-full bg-[#005461] text-[#00B7B5] py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all mt-4">
+                Konfirmasi Pendaftaran
+            </button>
+        </form>
+
+        <div class="text-center mt-8">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Sudah punya akun? 
+                <a href="login.html" class="text-[#00B7B5] ml-1">Masuk</a>
+            </p>
+            <button onclick="location.href='index.html'" class="mt-4 text-[9px] font-black text-slate-300 uppercase hover:text-[#005461]">
+                <i class="fas fa-arrow-left mr-1"></i> Kembali ke Home
             </button>
         </div>
-
-        <p class="text-center text-[10px] font-bold text-slate-400">
-            Sudah terdaftar? <a href="login.html" class="text-blue-600">Masuk di sini</a>
-        </p>
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.getElementById('regForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnDaftar');
+            const nama = document.getElementById('regNama').value;
+            const hp = document.getElementById('regHp').value;
+            const pass = document.getElementById('regPass').value;
+
+            btn.innerText = "MEMPROSES...";
+            btn.disabled = true;
+
+            try {
+                // Cek apakah nomor HP sudah terdaftar
+                const dbRef = ref(db);
+                const snapshot = await get(child(dbRef, `users/${hp}`));
+
+                if (snapshot.exists()) {
+                    alert("Nomor HP ini sudah terdaftar. Silakan login.");
+                    btn.innerText = "KONFIRMASI PENDAFTARAN";
+                    btn.disabled = false;
+                } else {
+                    // Simpan data warga baru
+                    await set(ref(db, 'users/' + hp), {
+                        nama: nama,
+                        hp: hp,
+                        password: pass,
+                        joinDate: new Date().toISOString()
+                    });
+
+                    // Set Auto Login
+                    localStorage.setItem('userSekawan', nama);
+                    localStorage.setItem('userHp', hp);
+
+                    alert("Selamat! Registrasi berhasil.");
+                    location.href = 'index.html';
+                }
+            } catch (error) {
+                alert("Gagal mendaftar: " + error.message);
+                btn.innerText = "KONFIRMASI PENDAFTARAN";
+                btn.disabled = false;
+            }
+        };
+    </script>
 </body>
 </html>
