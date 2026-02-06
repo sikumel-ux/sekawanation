@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Doku Sekawan - Keuangan Pribadi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .btn-income { background: #005461; color: #00B7B5; }
+        .btn-expense { background: #FEE2E2; color: #EF4444; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10 text-8xl"><i class="fas fa-wallet"></i></div>
+        <div class="relative z-10">
+            <button onclick="location.href='index.html'" class="mb-6 text-[#00B7B5]"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Saldo Doku Kamu</p>
+            <h1 id="total-saldo" class="text-3xl font-black italic mt-1">Rp 0</h1>
+            <div class="flex gap-4 mt-6">
+                <div class="flex-1 bg-white/10 p-3 rounded-2xl border border-white/5">
+                    <p class="text-[8px] font-bold uppercase text-[#00B7B5]">Masuk</p>
+                    <p id="total-masuk" class="text-[13px] font-black">Rp 0</p>
+                </div>
+                <div class="flex-1 bg-white/10 p-3 rounded-2xl border border-white/5">
+                    <p class="text-[8px] font-bold uppercase text-red-400">Keluar</p>
+                    <p id="total-keluar" class="text-[13px] font-black">Rp 0</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="px-6 -mt-8 relative z-20">
+        <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100">
+            <h3 class="text-xs font-black text-[#005461] uppercase tracking-widest mb-6 text-center">Catat Transaksi Baru</h3>
+            
+            <form id="dokuForm" class="space-y-4">
+                <div class="flex gap-2">
+                    <button type="button" onclick="setType('masuk')" id="btn-masuk" class="flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-[#005461] btn-income">Pemasukan</button>
+                    <button type="button" onclick="setType('keluar')" id="btn-keluar" class="flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-transparent bg-slate-100 text-slate-400">Pengeluaran</button>
+                </div>
+
+                <input type="hidden" id="transType" value="masuk">
+
+                <div class="space-y-1">
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-4">Nominal (Rp)</label>
+                    <input type="number" id="nominal" required placeholder="0" class="w-full bg-slate-50 rounded-2xl py-4 px-6 text-sm font-black text-[#005461] focus:ring-2 ring-[#00B7B5] outline-none">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-4">Kategori / Catatan</label>
+                    <input type="text" id="catatan" required placeholder="Contoh: Gaji, Jajan Bakso, Listrik" class="w-full bg-slate-50 rounded-2xl py-4 px-6 text-sm font-bold text-[#005461] focus:ring-2 ring-[#00B7B5] outline-none">
+                </div>
+
+                <button type="submit" id="btnSimpan" class="w-full bg-[#005461] text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all mt-2">
+                    Simpan ke Doku
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-8">
+            <div class="flex justify-between items-center px-4 mb-4">
+                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Riwayat Terakhir</p>
+                <i class="fas fa-clock-rotate-left text-slate-300"></i>
+            </div>
+            <div id="history-list" class="space-y-3">
+                <div class="text-center py-10 text-slate-300 text-[10px] font-bold uppercase italic">Belum ada catatan...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
+        const userHp = localStorage.getItem('userHp');
+        const userNama = localStorage.getItem('userSekawan');
+
+        if (!userHp) {
+            alert("Harap login dulu!");
+            location.href = 'login.html';
+        }
+
+        function setType(type) {
+            document.getElementById('transType').value = type;
+            const bM = document.getElementById('btn-masuk');
+            const bK = document.getElementById('btn-keluar');
+            
+            if(type === 'masuk') {
+                bM.className = "flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-[#005461] btn-income";
+                bK.className = "flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-transparent bg-slate-100 text-slate-400";
+            } else {
+                bK.className = "flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-red-500 btn-expense";
+                bM.className = "flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-transparent bg-slate-100 text-slate-400";
+            }
+        }
+
+        document.getElementById('dokuForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSimpan');
+            const data = {
+                action: 'tambahDoku', // Pastikan di Apps Script kamu ada handler action ini
+                hp: userHp,
+                nama: userNama,
+                jenis: document.getElementById('transType').value,
+                nominal: document.getElementById('nominal').value,
+                keterangan: document.getElementById('catatan').value,
+                tanggal: new Date().toISOString()
+            };
+
+            btn.innerText = "MENYIMPAN...";
+            btn.disabled = true;
+
+            try {
+                // Gunakan mode no-cors jika Apps Script hanya membalas simpel, 
+                // tapi disarankan Apps Script membalas dengan JSON + CORS header.
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(data)
+                });
+                
+                alert("Catatan tersimpan di Google Sheets!");
+                document.getElementById('dokuForm').reset();
+                // Opsional: Muat ulang data saldo di sini
+            } catch (err) {
+                alert("Gagal konek ke API: " + err.message);
+            } finally {
+                btn.innerText = "SIMPAN KE DOKU";
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
