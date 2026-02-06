@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CAKES - Diary Warga Sekwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        :root { --biru-tua: #1C4D8D; --biru-mid: #4988C4; --biru-muda: #BDE8F5; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfefe; }
+        .floating-curve { border-radius: 2.2rem; }
+        .note-curve { border-radius: 1.5rem; }
+        .soft-shadow { box-shadow: 0 10px 30px -5px rgba(28, 77, 141, 0.06); }
+        
+        /* Glassmorphism for notes */
+        .glass-note { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid white; }
+    </style>
+</head>
+<body class="pb-36">
+
+    <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div>
+            <h1 class="text-2xl font-black italic tracking-tighter" style="color: var(--biru-tua);">CAKES<span style="color: var(--biru-mid);">.</span></h1>
+            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Personal Diary & Notes</p>
+        </div>
+        <button class="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-50 flex items-center justify-center text-blue-500">
+            <i class="fas fa-plus"></i>
+        </button>
+    </header>
+
+    <main class="max-w-md mx-auto px-5 mt-4 space-y-6">
+
+        <div class="px-1">
+            <div class="bg-slate-100 p-4 rounded-3xl flex items-center space-x-3">
+                <i class="fas fa-search text-slate-400 text-xs"></i>
+                <input type="text" placeholder="Cari catatan..." class="bg-transparent border-none outline-none text-xs font-bold w-full text-slate-600">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            
+            <div class="glass-note p-5 note-curve soft-shadow space-y-3 border-l-4 border-l-blue-400">
+                <p class="text-[8px] font-black text-blue-400 uppercase">06 Feb 2026</p>
+                <h4 class="text-xs font-black italic text-slate-800 leading-tight uppercase">Resep Soto Ayam Pak RT</h4>
+                <p class="text-[10px] font-bold text-slate-500 line-clamp-3 italic">
+                    Ternyata kuncinya ada di kunyit bakar sama daun jeruk yang banyak...
+                </p>
+            </div>
+
+            <div class="glass-note p-5 note-curve soft-shadow space-y-3 border-l-4 border-l-amber-400" style="background: #fffcf0;">
+                <p class="text-[8px] font-black text-amber-500 uppercase">04 Feb 2026</p>
+                <h4 class="text-xs font-black italic text-slate-800 leading-tight uppercase">Ide Lomba 17an</h4>
+                <p class="text-[10px] font-bold text-slate-500 line-clamp-3 italic">
+                    Bikin balap karung pake helm biar aman dan lucu...
+                </p>
+            </div>
+
+            <div class="glass-note p-5 note-curve soft-shadow space-y-3 border-l-4 border-l-emerald-400" style="background: #f0fff4;">
+                <p class="text-[8px] font-black text-emerald-500 uppercase">01 Feb 2026</p>
+                <h4 class="text-xs font-black italic text-slate-800 leading-tight uppercase">Rencana Renov Teras</h4>
+                <p class="text-[10px] font-bold text-slate-500 line-clamp-3 italic">
+                    Tanya ke Mas Andi blok C soal tukang cat yang bagus...
+                </p>
+            </div>
+
+            <div class="glass-note p-5 note-curve soft-shadow border-dashed border-2 border-slate-200 flex flex-col items-center justify-center text-center opacity-50">
+                <i class="fas fa-pen-nib text-slate-300 mb-2"></i>
+                <p class="text-[8px] font-black uppercase tracking-widest text-slate-400">Tambah Catatan</p>
+            </div>
+
+        </div>
+
+        <section class="bg-blue-50 p-6 note-curve border border-blue-100 relative overflow-hidden">
+            <div class="relative z-10 flex items-center space-x-4">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-500 shadow-sm">
+                    <i class="fas fa-lightbulb text-xs"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-blue-900 uppercase italic">Ingat, Bro!</p>
+                    <p class="text-[10px] font-bold text-blue-700">Ada rapat RT besok jam 8 malam di Balai.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-6 left-8 right-8 z-50">
+        <nav class="bg-white/95 backdrop-blur-xl floating-curve shadow-2xl p-4 flex justify-around items-center border border-white/50">
+            <button onclick="location.href='index.html'" class="flex flex-col items-center text-slate-300">
+                <i class="fas fa-house-chimney text-lg"></i>
+            </button>
+            <button onclick="location.href='doku.html'" class="flex flex-col items-center text-slate-300">
+                <i class="fas fa-wallet text-lg"></i>
+            </button>
+            <button class="flex flex-col items-center" style="color: var(--biru-tua);">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-[7px] mt-1 font-black uppercase italic">Cakes</span>
+            </button>
+            <button onclick="location.href='cuit.html'" class="flex flex-col items-center text-slate-300">
+                <i class="fas fa-comment-dots text-lg"></i>
+            </button>
+        </nav>
+    </div>
+
+</body>
+  </html>
+  
