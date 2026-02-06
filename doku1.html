@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Doku Sekawan - Keuangan Pintar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
+        .btn-income-active { background: #005461 !important; color: #00B7B5 !important; border-color: #005461 !important; }
+        .btn-expense-active { background: #EF4444 !important; color: white !important; border-color: #EF4444 !important; }
+        input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.5; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10 text-8xl"><i class="fas fa-wallet"></i></div>
+        <div class="relative z-10">
+            <button onclick="location.href='index.html'" class="mb-6 text-[#00B7B5] flex items-center gap-2 font-bold text-xs uppercase tracking-widest">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Estimasi Saldo Doku</p>
+            <h1 id="total-saldo" class="text-3xl font-black italic mt-1">Rp 0</h1>
+            
+            <div class="flex gap-4 mt-8">
+                <div class="flex-1 bg-white/10 p-4 rounded-[2rem] border border-white/5 backdrop-blur-sm">
+                    <p class="text-[8px] font-black uppercase text-[#00B7B5] mb-1">Total Masuk</p>
+                    <p id="sum-masuk" class="text-sm font-black">Rp 0</p>
+                </div>
+                <div class="flex-1 bg-white/10 p-4 rounded-[2rem] border border-white/5 backdrop-blur-sm">
+                    <p class="text-[8px] font-black uppercase text-red-400 mb-1">Total Keluar</p>
+                    <p id="sum-keluar" class="text-sm font-black">Rp 0</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="px-6 -mt-8 relative z-20 space-y-8">
+        <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100">
+            <h3 class="text-[10px] font-black text-[#005461] uppercase tracking-[0.2em] mb-6 text-center">Input Transaksi Baru</h3>
+            
+            <form id="dokuForm" class="space-y-4">
+                <div class="flex gap-2 bg-slate-50 p-1.5 rounded-2xl">
+                    <button type="button" onclick="setType('masuk')" id="btn-masuk" class="flex-1 py-3 rounded-xl font-black text-[10px] uppercase transition-all btn-income-active">Pemasukan</button>
+                    <button type="button" onclick="setType('keluar')" id="btn-keluar" class="flex-1 py-3 rounded-xl font-black text-[10px] uppercase transition-all bg-transparent text-slate-400">Pengeluaran</button>
+                </div>
+                <input type="hidden" id="transType" value="masuk">
+
+                <div class="space-y-1">
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-4">Tanggal</label>
+                    <div class="relative">
+                        <i class="fas fa-calendar absolute left-5 top-4 text-[#00B7B5] text-sm"></i>
+                        <input type="date" id="tglTrans" required class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl py-3.5 pl-12 pr-6 text-sm font-black text-[#005461] focus:border-[#00B7B5] outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-4">Nominal (Rp)</label>
+                    <div class="relative">
+                        <span class="absolute left-5 top-3.5 text-slate-300 font-black text-sm">Rp</span>
+                        <input type="number" id="nominal" required placeholder="0" class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl py-3.5 pl-12 pr-6 text-sm font-black text-[#005461] focus:border-[#00B7B5] outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-4">Keterangan / Kategori</label>
+                    <input type="text" id="catatan" required placeholder="Gaji, Jajan, Bayar Hutang..." class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl py-3.5 px-6 text-sm font-bold text-[#005461] focus:border-[#00B7B5] outline-none transition-all">
+                </div>
+
+                <button type="submit" id="btnSimpan" class="w-full bg-[#005461] text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all mt-2">
+                    Simpan Catatan
+                </button>
+            </form>
+        </div>
+
+        <div>
+            <div class="flex justify-between items-center px-4 mb-4">
+                <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest">Aktivitas Terakhir</p>
+                <button onclick="loadHistory()" class="text-[#00B7B5] text-[10px] font-black uppercase"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            
+            <div id="history-list" class="space-y-3">
+                <div class="text-center py-10 glass rounded-[2rem] border-2 border-dashed border-slate-200">
+                    <p class="text-[10px] font-bold text-slate-300 uppercase italic">Belum ada aktivitas...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
+        const userHp = localStorage.getItem('userHp');
+        const userNama = localStorage.getItem('userSekawan');
+
+        // Proteksi Halaman
+        if (!userHp) {
+            alert("Sesi berakhir. Silakan login kembali.");
+            location.href = 'login.html';
+        }
+
+        // Fungsi Ganti Jenis Transaksi
+        window.setType = (type) => {
+            document.getElementById('transType').value = type;
+            const bM = document.getElementById('btn-masuk');
+            const bK = document.getElementById('btn-keluar');
+            
+            if(type === 'masuk') {
+                bM.className = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase transition-all btn-income-active";
+                bK.className = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase transition-all bg-transparent text-slate-400";
+            } else {
+                bK.className = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase transition-all btn-expense-active";
+                bM.className = "flex-1 py-3 rounded-xl font-black text-[10px] uppercase transition-all bg-transparent text-slate-400";
+            }
+        };
+
+        // Kirim Data ke Google Sheets
+        document.getElementById('dokuForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSimpan');
+            
+            const payload = {
+                action: 'tambahDoku',
+                hp: userHp,
+                nama: userNama,
+                tanggal: document.getElementById('tglTrans').value,
+                jenis: document.getElementById('transType').value,
+                nominal: document.getElementById('nominal').value,
+                keterangan: document.getElementById('catatan').value
+            };
+
+            btn.innerText = "MENGIRIM...";
+            btn.disabled = true;
+
+            try {
+                // Menggunakan fetch dengan mode no-cors karena Apps Script
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    body: JSON.stringify(payload)
+                });
+                
+                alert("Berhasil! Data tersimpan di Google Sheets.");
+                
+                // Tambahkan ke riwayat lokal (sementara sebelum refresh)
+                updateLocalHistory(payload);
+                
+                document.getElementById('catatan').value = "";
+                document.getElementById('nominal').value = "";
+            } catch (err) {
+                alert("Gagal koneksi: " + err.message);
+            } finally {
+                btn.innerText = "SIMPAN CATATAN";
+                btn.disabled = false;
+            }
+        };
+
+        function updateLocalHistory(data) {
+            const list = document.getElementById('history-list');
+            const isNoData = list.innerText.includes('Belum ada');
+            if(isNoData) list.innerHTML = "";
+
+            const div = document.createElement('div');
+            const color = data.jenis === 'masuk' ? 'text-teal-600' : 'text-red-500';
+            const icon = data.jenis === 'masuk' ? 'fa-arrow-down' : 'fa-arrow-up';
+            const sign = data.jenis === 'masuk' ? '+' : '-';
+
+            div.className = "bg-white p-5 rounded-[2rem] shadow-sm flex justify-between items-center border border-slate-50";
+            div.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center ${color}">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-black text-[#005461] uppercase">${data.keterangan}</p>
+                        <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">${data.tanggal}</p>
+                    </div>
+                </div>
+                <p class="text-xs font-black ${color}">${sign} Rp ${parseInt(data.nominal).toLocaleString('id-ID')}</p>
+            `;
+            list.prepend(div);
+        }
+
+        window.onload = () => {
+            // Set input tanggal ke hari ini
+            document.getElementById('tglTrans').value = new Date().toISOString().split('T')[0];
+            // Di sini nanti bisa panggil fetch untuk ambil saldo dari Sheets
+        };
+    </script>
+</body>
+                      </html>
+                      
