@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gabung Warga - RT Sekwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        :root { --biru-tua: #1C4D8D; --biru-mid: #4988C4; --biru-muda: #BDE8F5; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; }
+        .floating-curve { border-radius: 2.5rem; }
+        .input-curve { border-radius: 1.2rem; }
+        .soft-shadow { box-shadow: 0 20px 40px -10px rgba(28, 77, 141, 0.1); }
+    </style>
+</head>
+<body class="p-6">
+
+    <div class="max-w-md mx-auto space-y-8 pt-10">
+        <div class="text-center">
+            <h1 class="text-3xl font-black italic tracking-tighter" style="color: var(--biru-tua);">GABUNG<span style="color: var(--biru-mid);">.</span></h1>
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] mt-2">Daftar Akun Warga Baru</p>
+        </div>
+
+        <div class="bg-white p-8 floating-curve soft-shadow border border-white space-y-5">
+            <div>
+                <label class="text-[9px] font-black uppercase ml-4 text-slate-400 tracking-widest">Nama Lengkap</label>
+                <input type="text" placeholder="Masukkan nama sesuai KTP" class="w-full mt-1 p-4 bg-slate-50 border-none input-curve text-sm font-bold outline-none focus:ring-2 focus:ring-blue-200">
+            </div>
+
+            <div>
+                <label class="text-[9px] font-black uppercase ml-4 text-slate-400 tracking-widest">Alamat / No. Rumah</label>
+                <input type="text" placeholder="Blok A-12" class="w-full mt-1 p-4 bg-slate-50 border-none input-curve text-sm font-bold outline-none focus:ring-2 focus:ring-blue-200">
+            </div>
+
+            <div>
+                <label class="text-[9px] font-black uppercase ml-4 text-slate-400 tracking-widest">Nomor WhatsApp</label>
+                <input type="tel" placeholder="08xxxx" class="w-full mt-1 p-4 bg-slate-50 border-none input-curve text-sm font-bold outline-none focus:ring-2 focus:ring-blue-200">
+            </div>
+
+            <button class="w-full p-4 input-curve text-white font-black italic uppercase tracking-widest shadow-lg shadow-blue-200 transition active:scale-95" style="background: var(--biru-tua);">
+                Daftar Sekarang
+            </button>
+        </div>
+
+        <p class="text-center text-[10px] font-bold text-slate-400">
+            Sudah terdaftar? <a href="login.html" class="text-blue-600">Masuk di sini</a>
+        </p>
+    </div>
+
+</body>
+</html>
