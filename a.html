@@ -4,8 +4,7 @@
     <link rel="manifest" href="manifest.json">
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-          .then(() => console.log("Service Worker Registered"));
+        navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Aktif"));
       }
     </script>
     
@@ -19,11 +18,19 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; overflow-x: hidden; color: #1e293b; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #F8FAFB; 
+            -webkit-tap-highlight-color: transparent; 
+            overflow-x: hidden; 
+            color: #0f172a; /* Warna teks utama lebih tajam/hitam */
+        }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .ticker-move { display: inline-block; animation: move 20s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
         .cuit-border { border-left: 5px solid #00B7B5; }
+        /* Pertegas semua font bold */
+        .font-black { font-weight: 800 !important; }
     </style>
 </head>
 <body class="pb-36">
@@ -31,91 +38,91 @@
     <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative z-20 border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-start mb-6">
             <div>
-                <h1 class="text-3xl font-black tracking-tighter uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+                <h1 class="text-2xl font-black tracking-tighter uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
                 <div class="flex items-center gap-2 mt-1">
                     <span id="weather-icon"></span>
-                    <span id="temp" class="text-xs font-black">--°C</span>
-                    <span id="weather-desc" class="text-[10px] font-black uppercase text-[#00B7B5]">Memuat...</span>
+                    <span id="temp" class="text-[11px] font-black">--°C</span>
+                    <span id="weather-desc" class="text-[9px] font-black uppercase text-[#00B7B5] tracking-widest">Memuat...</span>
                 </div>
             </div>
             <div class="text-right">
-                <p id="jam" class="text-3xl font-black">00:00</p>
-                <span class="text-[10px] font-black bg-[#00B7B5] text-[#005461] px-3 py-1 rounded-full uppercase italic">Bantul</span>
+                <p id="jam" class="text-2xl font-black italic">00:00</p>
+                <span class="text-[9px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase">Bantul</span>
             </div>
         </div>
         <div id="sholat-view" class="flex gap-2 justify-between"></div>
     </header>
 
-    <div class="mx-6 -mt-4 bg-white rounded-full py-3 shadow-xl overflow-hidden border border-[#018790]/10 relative z-30 text-center">
-        <div class="ticker-move text-[11px] font-black text-[#018790] uppercase tracking-widest" id="ticker-text">✦ Memuat Warta Terbaru...</div>
+    <div class="mx-6 -mt-4 bg-white rounded-full py-2.5 shadow-xl overflow-hidden border border-[#005461]/20 relative z-30 text-center">
+        <div class="ticker-move text-[10px] font-black text-[#005461] uppercase tracking-[0.15em]" id="ticker-text">✦ Memuat Warta Terbaru...</div>
     </div>
 
     <main class="mt-8 px-6 space-y-7">
 
         <section class="grid grid-cols-2 gap-3">
             <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
-                <p class="text-[10px] font-black opacity-60 uppercase mb-1 tracking-widest text-[#00B7B5]">Saldo Kas RT</p>
-                <p id="val-kas" class="text-lg font-black italic">Rp --</p>
+                <p class="text-[9px] font-black text-[#00B7B5] uppercase mb-1 tracking-widest opacity-80">Saldo Kas RT</p>
+                <p id="val-kas" class="text-[15px] font-black tracking-tight italic">Rp --</p>
             </div>
             <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
-                <p class="text-[10px] font-black opacity-60 uppercase mb-1 tracking-widest text-[#00B7B5]">Dana Sosial</p>
-                <p id="val-sosial" class="text-lg font-black italic">Rp --</p>
+                <p class="text-[9px] font-black text-[#00B7B5] uppercase mb-1 tracking-widest opacity-80">Dana Sosial</p>
+                <p id="val-sosial" class="text-[15px] font-black tracking-tight italic">Rp --</p>
             </div>
         </section>
 
-        <section class="grid grid-cols-4 gap-2 text-center bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-50">
+        <section class="grid grid-cols-4 gap-2 text-center bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100">
             <button onclick="location.href='keuangan.html'" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-1.5 active:scale-90 transition-all"><i class="fas fa-wallet text-[#005461] text-xl"></i></div>
-                <span class="text-[10px] font-black text-slate-500 uppercase">Kas</span>
+                <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-1.5 active:scale-90 transition-all border border-slate-100"><i class="fas fa-wallet text-[#005461] text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-800 uppercase tracking-tighter">Kas</span>
             </button>
             <button onclick="location.href='ronda.html'" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-1.5 active:scale-90 transition-all"><i class="fas fa-shield-halved text-[#005461] text-xl"></i></div>
-                <span class="text-[10px] font-black text-slate-500 uppercase">Ronda</span>
+                <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-1.5 active:scale-90 transition-all border border-slate-100"><i class="fas fa-shield-halved text-[#005461] text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-800 uppercase tracking-tighter">Ronda</span>
             </button>
             <button onclick="location.href='lapor.html'" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-1.5 active:scale-90 transition-all"><i class="fas fa-bullhorn text-[#005461] text-xl"></i></div>
-                <span class="text-[10px] font-black text-slate-500 uppercase">Lapor</span>
+                <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-1.5 active:scale-90 transition-all border border-slate-100"><i class="fas fa-bullhorn text-[#005461] text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-800 uppercase tracking-tighter">Lapor</span>
             </button>
             <button onclick="location.href='lapak.html'" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-1.5 active:scale-90 transition-all"><i class="fas fa-store text-[#005461] text-xl"></i></div>
-                <span class="text-[10px] font-black text-slate-500 uppercase">Lapak</span>
+                <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-1.5 active:scale-90 transition-all border border-slate-100"><i class="fas fa-store text-[#005461] text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-800 uppercase tracking-tighter">Lapak</span>
             </button>
         </section>
 
         <section class="space-y-4 pt-2">
-            <div id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                <p class="text-xs italic text-slate-400">Memuat warta admin...</p>
+            <div id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm">
+                <p class="text-xs font-bold text-slate-400">Memuat warta...</p>
             </div>
             <div id="agenda-view"></div>
         </section>
 
         <section>
-            <p class="text-xs font-black text-[#018790] uppercase tracking-widest px-2 mb-3">Blog & Catatan</p>
+            <p class="text-[10px] font-black text-[#005461] uppercase tracking-[0.2em] px-2 mb-3">Blog & Catatan</p>
             <div id="blog-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-2"></div>
         </section>
 
         <section>
             <div class="flex justify-between items-end px-2 mb-4">
-                <p class="text-xs font-black text-[#018790] uppercase tracking-widest">Suara Warga</p>
-                <a href="cuitan.html" class="text-[10px] font-black text-[#00B7B5] uppercase">Ngobrol <i class="fas fa-chevron-right ml-1"></i></a>
+                <p class="text-[10px] font-black text-[#005461] uppercase tracking-[0.2em]">Suara Warga</p>
+                <a href="cuitan.html" class="text-[9px] font-black text-[#00B7B5] uppercase">Lihat Semua <i class="fas fa-arrow-right ml-1"></i></a>
             </div>
             <div id="index-feed" class="space-y-3"></div>
         </section>
 
         <section>
-            <p class="text-xs font-black text-[#018790] uppercase tracking-widest px-2 mb-3">Pasar Sekawan</p>
+            <p class="text-[10px] font-black text-[#005461] uppercase tracking-[0.2em] px-2 mb-3">Pasar Sekawan</p>
             <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-6"></div>
         </section>
 
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-12 h-12 flex items-center justify-center text-[#005461] bg-white rounded-full shadow-lg"><i class="fas fa-home text-xl"></i></button>
-            <button onclick="location.href='cuitan.html'" class="flex flex-col items-center text-white/60"><i class="fas fa-comment-dots text-xl"></i><span class="text-[8px] uppercase mt-0.5 font-bold">Cuit</span></button>
-            <button onclick="aksesPrivat('doku.html')" class="flex flex-col items-center text-white/60"><i class="fas fa-wallet text-xl"></i><span class="text-[8px] uppercase mt-0.5 font-bold text-amber-400">Doku</span></button>
-            <button onclick="aksesPrivat('cakes.html')" class="flex flex-col items-center text-white/60"><i class="fas fa-book-open text-xl"></i><span class="text-[8px] uppercase mt-0.5 font-bold text-[#00B7B5]">Cakes</span></button>
-            <button id="auth-btn" onclick="handleAuth()" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] border-l border-white/10 ml-1"><i class="fas fa-user-gear text-xl"></i></button>
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/20">
+            <button onclick="location.reload()" class="w-10 h-10 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg"><i class="fas fa-home"></i></button>
+            <button onclick="location.href='cuitan.html'" class="flex flex-col items-center text-white/50"><i class="fas fa-comment-dots text-lg"></i><span class="text-[7px] uppercase mt-0.5 font-black">Cuit</span></button>
+            <button onclick="aksesPrivat('doku.html')" class="flex flex-col items-center text-white/50"><i class="fas fa-wallet text-xl"></i><span class="text-[7px] uppercase mt-0.5 font-black text-amber-400">Doku</span></button>
+            <button onclick="aksesPrivat('cakes.html')" class="flex flex-col items-center text-white/50"><i class="fas fa-book-open text-xl"></i><span class="text-[7px] uppercase mt-0.5 font-black text-[#00B7B5]">Cakes</span></button>
+            <button id="auth-btn" onclick="handleAuth()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] border-l border-white/10 ml-1"><i class="fas fa-user-gear text-lg"></i></button>
         </nav>
     </div>
 
@@ -139,9 +146,10 @@
                 if(confirm("Keluar dari akun?")) { localStorage.clear(); location.reload(); }
             } else { location.href = 'login.html'; }
         };
+
         window.aksesPrivat = (h) => {
             if (localStorage.getItem('userHp')) location.href = h;
-            else if (confirm("Login sebagai warga dulu, Bro!")) location.href = 'login.html';
+            else if (confirm("Login warga dulu, Bro!")) location.href = 'login.html';
         };
 
         function initApp() {
@@ -154,57 +162,52 @@
 
             onValue(ref(db, 'settings'), s => { if(s.val()) document.getElementById('ticker-text').innerText = "✦ " + s.val().ticker; });
             
-            // WARTA: Font Content Diperbesar (text-[14px])
             onValue(query(ref(db, 'content/info'), limitToLast(1)), s => {
                 if(s.exists()){
                     const d = Object.values(s.val())[0];
-                    document.getElementById('info-view').innerHTML = `<h4 class="text-sm font-black text-[#005461] uppercase mb-1">${d.judul}</h4><p class="text-[14px] text-slate-600 font-medium leading-relaxed">${d.keterangan}</p>`;
+                    document.getElementById('info-view').innerHTML = `<h4 class="text-xs font-black text-[#005461] uppercase mb-1 tracking-tight">${d.judul}</h4><p class="text-[13px] text-slate-800 font-bold leading-relaxed">${d.keterangan}</p>`;
                 }
             });
 
-            // AGENDA: Font Judul Gede
             onValue(query(ref(db, 'content/agenda'), limitToLast(1)), s => {
                 if(s.exists()){
                     const a = Object.values(s.val())[0];
                     document.getElementById('agenda-view').innerHTML = `
-                        <div class="flex items-center gap-4 bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm">
-                            <div class="bg-[#005461] text-[#00B7B5] p-4 rounded-2xl text-center min-w-[65px] font-black text-lg leading-tight">${a.tgl.split(' ')[0]}<br><span class="text-[10px] text-white uppercase">${a.tgl.split(' ')[1] || ''}</span></div>
-                            <div><h4 class="text-sm font-black uppercase text-slate-800 leading-tight">${a.judul}</h4><p class="text-xs font-bold text-slate-400 mt-1">${a.jam} • ${a.lokasi || 'RT'}</p></div>
+                        <div class="flex items-center gap-4 bg-white p-5 rounded-[2.5rem] border border-slate-200 shadow-sm">
+                            <div class="bg-[#005461] text-[#00B7B5] p-3 rounded-2xl text-center min-w-[55px] font-black text-sm leading-tight shadow-md">${a.tgl.split(' ')[0]}<br><span class="text-[9px] text-white uppercase">${a.tgl.split(' ')[1] || ''}</span></div>
+                            <div><h4 class="text-[11px] font-black uppercase text-slate-900 leading-tight">${a.judul}</h4><p class="text-[10px] font-black text-slate-400 mt-1">${a.jam} • ${a.lokasi || 'RT'}</p></div>
                         </div>`;
                 }
             });
 
-            // BLOG
             onValue(query(ref(db, 'content/blog'), limitToLast(5)), s => {
                 const bL = document.getElementById('blog-list'); bL.innerHTML = "";
                 s.forEach(c => {
                     const b = c.val();
-                    bL.innerHTML += `<div class="min-w-[280px] bg-white p-6 rounded-[2.5rem] border border-slate-50 shadow-sm"><span class="text-[10px] font-black text-[#00B7B5] uppercase bg-[#00B7B5]/10 px-2 py-1 rounded-full">${b.kategori || 'Warga'}</span><h4 class="text-sm font-black text-[#005461] uppercase mt-3 line-clamp-1">${b.judul}</h4><p class="text-xs text-slate-500 mt-2 line-clamp-2">${b.isi}</p></div>`;
+                    bL.innerHTML += `<div class="min-w-[260px] bg-white p-5 rounded-[2.5rem] border border-slate-100 shadow-sm"><span class="text-[9px] font-black text-[#00B7B5] uppercase bg-[#00B7B5]/10 px-2 py-0.5 rounded-full">${b.kategori || 'Warga'}</span><h4 class="text-[11px] font-black text-[#005461] uppercase mt-2 line-clamp-1">${b.judul}</h4><p class="text-[10px] text-slate-700 font-bold mt-1 line-clamp-2">${b.isi}</p></div>`;
                 });
             });
 
-            // CUITAN
             onValue(query(ref(db, 'content/cuit'), limitToLast(3)), snapshot => {
                 const feed = document.getElementById('index-feed'); feed.innerHTML = "";
                 let items = []; snapshot.forEach(c => { items.push(c.val()); });
                 items.reverse().forEach(data => {
                     feed.innerHTML += `
-                        <div class="bg-white p-5 rounded-[2.2rem] border border-slate-50 shadow-sm cuit-border">
+                        <div class="bg-white p-5 rounded-[2.2rem] border border-slate-100 shadow-sm cuit-border">
                             <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[10px] font-black text-[#00B7B5] bg-[#00B7B5]/10 px-3 py-1 rounded-full uppercase">${data.nama.split(' ')[0]}</span>
-                                <span class="text-[9px] text-slate-300 font-bold uppercase">${data.tgl}</span>
+                                <span class="text-[9px] font-black text-[#00B7B5] bg-[#00B7B5]/10 px-2 py-0.5 rounded-full uppercase">${data.nama.split(' ')[0]}</span>
+                                <span class="text-[8px] text-slate-400 font-black uppercase">${data.tgl}</span>
                             </div>
-                            <p class="text-sm text-slate-600 font-medium line-clamp-2">${data.teks}</p>
+                            <p class="text-[12px] text-slate-900 font-bold line-clamp-2 leading-snug">${data.teks}</p>
                         </div>`;
                 });
             });
 
-            // PASAR
             onValue(ref(db, 'lapak'), s => {
                 const list = document.getElementById('lapak-list'); list.innerHTML = "";
                 s.forEach(c => {
                     const i = c.val();
-                    list.innerHTML += `<div class="min-w-[160px] bg-white p-5 rounded-[2.5rem] border border-slate-50 shadow-sm text-center"><h4 class="text-xs font-black text-[#005461] uppercase truncate">${i.produk}</h4><p class="text-sm font-black text-[#00B7B5] mt-1">Rp ${parseInt(i.harga).toLocaleString('id-ID')}</p><a href="https://wa.me/${i.wa}" class="block bg-[#005461] text-white text-[10px] font-black py-3 rounded-full mt-4 uppercase tracking-widest">Beli</a></div>`;
+                    list.innerHTML += `<div class="min-w-[155px] bg-white p-4 rounded-[2.5rem] border border-slate-100 shadow-sm text-center"><h4 class="text-[10px] font-black text-[#005461] uppercase truncate">${i.produk}</h4><p class="text-[11px] font-black text-[#00B7B5] mt-1">Rp ${parseInt(i.harga).toLocaleString('id-ID')}</p><a href="https://wa.me/${i.wa}" class="block bg-[#005461] text-white text-[9px] font-black py-2.5 rounded-full mt-3 uppercase tracking-widest shadow-md">Beli</a></div>`;
                 });
             });
         }
@@ -214,20 +217,19 @@
                 const sh = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`);
                 const sD = await sh.json(); const j = sD.data.jadwal;
                 const sl = [{n:'Subuh',t:j.subuh},{n:'Dzuhur',t:j.dzuhur},{n:'Ashar',t:j.ashar},{n:'Maghrib',t:j.maghrib},{n:'Isya',t:j.isya}];
-                // Font Sholat lebih dipertegas
-                document.getElementById('sholat-view').innerHTML = sl.map(x => `<div class="text-center flex-1 bg-white/10 py-3 rounded-2xl"><p class="text-[9px] font-black text-[#00B7B5] uppercase">${x.n}</p><p class="text-xs text-white font-black">${x.t}</p></div>`).join('');
+                document.getElementById('sholat-view').innerHTML = sl.map(x => `<div class="text-center flex-1 bg-white/10 py-2 rounded-2xl"><p class="text-[8px] font-black text-[#00B7B5] uppercase">${x.n}</p><p class="text-[10px] text-white font-black tracking-tighter">${x.t}</p></div>`).join('');
                 
                 const cu = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
                 const cD = await cu.json(); const t = Math.round(cD.current_weather.temperature);
                 document.getElementById('temp').innerText = t + '°C';
-                document.getElementById('weather-icon').innerHTML = t > 30 ? '<i class="fas fa-sun text-amber-400 text-lg"></i>' : '<i class="fas fa-cloud-sun text-blue-400 text-lg"></i>';
+                document.getElementById('weather-icon').innerHTML = t > 30 ? '<i class="fas fa-sun text-amber-400"></i>' : '<i class="fas fa-cloud-sun text-blue-400"></i>';
                 document.getElementById('weather-desc').innerText = t > 30 ? 'Cerah' : 'Berawan';
             } catch(e) {}
         }
 
         window.onload = () => {
             getUI(); initApp();
-            if(localStorage.getItem('userHp')) document.getElementById('auth-btn').innerHTML = '<i class="fas fa-right-from-bracket text-red-400 text-xl"></i>';
+            if(localStorage.getItem('userHp')) document.getElementById('auth-btn').innerHTML = '<i class="fas fa-right-from-bracket text-red-400 text-lg"></i>';
             setInterval(() => {
                 const d = new Date();
                 document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0')+":"+d.getMinutes().toString().padStart(2,'0');
@@ -235,5 +237,4 @@
         };
     </script>
 </body>
-                                                                                                                                                                                              </html>
-  
+</html>
