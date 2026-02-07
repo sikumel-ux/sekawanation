@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Doku Sekawan - Catatan Keuangan</title>
-    
+    <title>Doku - Catatan Keuangan</title>
+    <link rel="manifest" href="manifest.json">
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log("Service Worker Registered"));
+  }
+</script>
+
     <meta name="theme-color" content="#005461">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Doku Sekawan">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="description" content="Catatan Keuangan Pribadi Warga Sekawan">
+    <meta name="description" content="Catatan Keuangan Pribadi Warga">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -43,7 +51,7 @@
         </div>
         
         <div class="bg-white/10 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/10 shadow-inner text-center">
-            <p class="text-[9px] font-black uppercase tracking-[0.2em] opacity-60 mb-1">Sisa Saldo Kamu</p>
+            <p class="text-[9px] font-black uppercase tracking-[0.2em] opacity-60 mb-1">Saldo Kamu</p>
             <h2 id="total-saldo" class="text-3xl font-black italic text-[#00B7B5]">Rp 0</h2>
         </div>
     </header>
