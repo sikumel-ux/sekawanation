@@ -8,16 +8,17 @@
     <meta name="theme-color" content="#005461">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
-        .cake-card { border-top: 4px solid #00B7B5; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .cake-card { border-top: 5px solid #00B7B5; }
+        /* Font digedein dan teks justify */
+        .text-justify { text-align: justify; text-justify: inter-word; }
+        .note-text { font-size: 14px; line-height: 1.6; }
         .fade-up { animation: fadeUp 0.4s ease-out; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -34,32 +35,28 @@
                 <i class="fas fa-book-open text-[#00B7B5]"></i>
             </div>
         </div>
-        <p class="text-[10px] text-white/60 leading-relaxed font-medium">Tempat simpan ide, rencana, atau catatan rahasiamu sendiri, Bro.</p>
+        <p class="text-[11px] text-white/70 leading-relaxed font-medium">Tempat simpan ide, rencana, atau catatan rahasiamu sendiri, Bro.</p>
     </header>
 
     <main class="mt-8 px-6 space-y-6">
 
         <section class="bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-50">
-            <input type="text" id="judul-note" placeholder="Judul Catatan..." class="w-full bg-slate-50 p-4 rounded-2xl text-xs font-black uppercase tracking-widest outline-none border border-transparent focus:border-[#00B7B5] mb-3 transition-all">
-            <textarea id="isi-note" rows="4" placeholder="Tulis sesuatu di sini..." class="w-full bg-slate-50 p-4 rounded-2xl text-sm font-medium outline-none border border-transparent focus:border-[#00B7B5] transition-all resize-none"></textarea>
+            <input type="text" id="judul-note" placeholder="JUDUL CATATAN..." class="w-full bg-slate-50 p-4 rounded-2xl text-[11px] font-black uppercase tracking-widest outline-none border border-transparent focus:border-[#00B7B5] mb-3 transition-all">
+            <textarea id="isi-note" rows="5" placeholder="Tulis di sini..." class="w-full bg-slate-50 p-4 rounded-2xl text-[14px] font-medium outline-none border border-transparent focus:border-[#00B7B5] transition-all resize-none"></textarea>
             
             <button id="btn-save-note" class="w-full bg-[#005461] text-[#00B7B5] py-4 rounded-2xl mt-4 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">
-                Simpan Ke Cakes <i class="fas fa-cookie-bite ml-2"></i>
+                SIMPAN CATATAN <i class="fas fa-cookie-bite ml-2"></i>
             </button>
         </section>
 
         <section>
             <div class="flex items-center justify-between px-2 mb-4">
                 <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest">Koleksi Catatanmu</p>
-                <span id="note-count" class="text-[8px] font-black bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full">0</span>
+                <span id="note-count" class="text-[9px] font-black bg-[#00B7B5] text-[#005461] px-3 py-0.5 rounded-full shadow-sm">0</span>
             </div>
             
-            <div id="cakes-container" class="space-y-4">
-                <div class="text-center py-20">
-                    <i class="fas fa-folder-open text-slate-100 text-4xl mb-4"></i>
-                    <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Belum ada catatan</p>
+            <div id="cakes-container" class="space-y-5">
                 </div>
-            </div>
         </section>
 
     </main>
@@ -88,26 +85,21 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
         const uHp = localStorage.getItem('userHp');
 
-        if(!uHp) {
-            location.href = 'login.html';
-        }
+        if(!uHp) { location.href = 'login.html'; }
 
-        // SAVE NOTE
+        // Simpan
         document.getElementById('btn-save-note').onclick = async () => {
             const judul = document.getElementById('judul-note').value;
             const isi = document.getElementById('isi-note').value;
-
-            if(!judul || !isi) return alert("Judul dan isi jangan kosong, Bro!");
+            if(!judul || !isi) return alert("Isi semua, Bro!");
 
             const btn = document.getElementById('btn-save-note');
             btn.disabled = true; btn.innerText = "MENYIMPAN...";
 
             try {
-                const newNoteRef = push(ref(db, 'cakes_personal'));
-                await set(newNoteRef, {
+                await set(push(ref(db, 'cakes_personal')), {
                     hp: uHp,
                     judul: judul,
                     isi: isi,
@@ -116,53 +108,41 @@
                 });
                 document.getElementById('judul-note').value = "";
                 document.getElementById('isi-note').value = "";
-            } catch (e) {
-                alert("Gagal simpan!");
-            } finally {
-                btn.disabled = false; btn.innerText = "SIMPAN KE CAKES";
-            }
+            } catch (e) { alert("Gagal!"); } 
+            finally { btn.disabled = false; btn.innerText = "SIMPAN CATATAN"; }
         };
 
-        // DELETE NOTE
-        window.hapusNote = (key) => {
-            if(confirm("Hapus catatan ini?")) {
-                remove(ref(db, `cakes_personal/${key}`));
-            }
-        };
+        // Hapus
+        window.hapusNote = (key) => { if(confirm("Hapus catatan ini?")) remove(ref(db, `cakes_personal/${key}`)); };
 
-        // LOAD NOTES
-        const cakeQuery = query(ref(db, 'cakes_personal'), orderByChild('hp'), equalTo(uHp));
-        onValue(cakeQuery, (snapshot) => {
+        // Tampilkan
+        onValue(query(ref(db, 'cakes_personal'), orderByChild('hp'), equalTo(uHp)), (snapshot) => {
             const container = document.getElementById('cakes-container');
             const countView = document.getElementById('note-count');
             container.innerHTML = "";
             
             if(!snapshot.exists()) {
-                container.innerHTML = `<div class="bg-white p-10 rounded-[2.5rem] border border-slate-50 text-center shadow-sm">
-                    <p class="text-[10px] font-black text-slate-300 uppercase">Belum ada koleksi catatan</p>
-                </div>`;
+                container.innerHTML = `<div class="bg-white p-10 rounded-[2.5rem] border border-slate-50 text-center shadow-sm"><p class="text-[10px] font-black text-slate-300 uppercase">Kosong, Bro.</p></div>`;
                 countView.innerText = "0";
                 return;
             }
 
-            let dataArr = [];
-            snapshot.forEach(child => {
-                dataArr.push({ key: child.key, ...child.val() });
-            });
+            let notes = [];
+            snapshot.forEach(child => { notes.push({ key: child.key, ...child.val() }); });
+            countView.innerText = notes.length;
 
-            countView.innerText = dataArr.length;
-            dataArr.reverse().forEach(item => {
+            notes.reverse().forEach(item => {
                 container.innerHTML += `
-                    <div class="bg-white p-6 rounded-[2.2rem] shadow-sm border border-slate-50 cake-card fade-up">
-                        <div class="flex justify-between items-start mb-3">
-                            <h4 class="text-[11px] font-black text-[#005461] uppercase leading-tight pr-4">${item.judul}</h4>
-                            <button onclick="hapusNote('${item.key}')" class="text-rose-300 active:text-rose-500 transition-colors">
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-md border border-slate-50 cake-card fade-up">
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="text-[12px] font-black text-[#005461] uppercase pr-4">${item.judul}</h4>
+                            <button onclick="hapusNote('${item.key}')" class="text-rose-200 active:text-rose-500 transition-colors">
                                 <i class="fas fa-trash-can text-xs"></i>
                             </button>
                         </div>
-                        <p class="text-[12px] text-slate-500 leading-relaxed font-medium mb-4 whitespace-pre-wrap">${item.isi}</p>
-                        <div class="flex justify-between items-center pt-4 border-t border-slate-50">
-                            <span class="text-[8px] font-black text-[#00B7B5] bg-[#00B7B5]/10 px-2 py-1 rounded-lg uppercase tracking-widest">${item.tgl}</span>
+                        <p class="note-text text-justify text-slate-600 font-medium whitespace-pre-wrap">${item.isi}</p>
+                        <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-50">
+                            <span class="text-[8px] font-black text-[#00B7B5] bg-[#00B7B5]/10 px-2 py-1 rounded-lg uppercase tracking-[0.2em]">${item.tgl}</span>
                             <i class="fas fa-cookie text-amber-200"></i>
                         </div>
                     </div>`;
