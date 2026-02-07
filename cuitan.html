@@ -13,8 +13,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
-        .cuit-card { border-left: 4px solid #00B7B5; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .cuit-card { border-left: 4px solid #00B7B5; transition: all 0.2s; }
+        .btn-reaksi:active { transform: scale(1.4); }
     </style>
 </head>
 <body class="pb-32">
@@ -56,7 +56,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, query, limitToLast, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -69,6 +69,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Fungsi Reaksi/Like
+        window.kasihReaksi = (key) => {
+            const reaksiRef = ref(db, `content/cuit/${key}/reaksi`);
+            runTransaction(reaksiRef, (currentValue) => {
+                return (currentValue || 0) + 1;
+            });
+        };
+
         onValue(query(ref(db, 'content/cuit'), limitToLast(50)), (snapshot) => {
             const container = document.getElementById('full-feed');
             container.innerHTML = "";
@@ -79,26 +87,37 @@
             }
 
             let posts = [];
-            snapshot.forEach(c => { posts.push(c.val()); });
+            snapshot.forEach(c => { 
+                posts.push({ key: c.key, ...c.val() }); 
+            });
             
             posts.reverse().forEach(data => {
                 container.innerHTML += `
                     <div class="bg-white p-5 rounded-[2.2rem] shadow-sm border border-slate-50 cuit-card">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-8 h-8 bg-[#005461] rounded-2xl flex items-center justify-center text-[10px] font-black text-[#00B7B5]">
-                                ${data.nama.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <h4 class="text-[11px] font-black text-[#005461] uppercase leading-none">${data.nama}</h4>
-                                <p class="text-[8px] font-bold text-slate-300 uppercase mt-1">${data.tgl}</p>
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-[#005461] rounded-2xl flex items-center justify-center text-[10px] font-black text-[#00B7B5]">
+                                    ${data.nama.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h4 class="text-[11px] font-black text-[#005461] uppercase leading-none">${data.nama}</h4>
+                                    <p class="text-[8px] font-bold text-slate-300 uppercase mt-1">${data.tgl}</p>
+                                </div>
                             </div>
                         </div>
-                        <p class="text-[12px] text-slate-600 font-medium leading-relaxed">${data.teks}</p>
+                        <p class="text-[13px] text-slate-600 font-medium leading-relaxed mb-4">${data.teks}</p>
+                        
+                        <div class="flex items-center gap-4 pt-3 border-t border-slate-50">
+                            <button onclick="kasihReaksi('${data.key}')" class="btn-reaksi flex items-center gap-2 text-[#005461] transition-all">
+                                <i class="fas fa-heart text-rose-400"></i>
+                                <span class="text-[11px] font-black">${data.reaksi || 0}</span>
+                            </button>
+                            <div class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Suka</div>
+                        </div>
                     </div>`;
             });
         });
 
-        // Search Filter
         document.getElementById('search-cuit').oninput = (e) => {
             const val = e.target.value.toLowerCase();
             document.querySelectorAll('.cuit-card').forEach(card => {
