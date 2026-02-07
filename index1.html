@@ -4,61 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sekawan Digital Hub</title>
+    
+    <meta name="theme-color" content="#005461">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href='data:application/json,{"name":"Sekawan","short_name":"Sekawan","start_url":"/index.html","display":"standalone","background_color":"#005461","theme_color":"#005461","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/5968/5968322.png","sizes":"512x512","type":"image/png"}]}'>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .cuit-card-mini { border-left: 3px solid #00B7B5; }
+        .ticker-move { display: inline-block; animation: move 25s linear infinite; white-space: nowrap; }
+        @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        .cuit-border { border-left: 4px solid #00B7B5; }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-36">
 
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl">
-        <h1 class="text-2xl font-black tracking-tighter uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
-        <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest mt-1 text-[#00B7B5]">Digital Hub Warga</p>
+    <div id="splash-screen" class="fixed inset-0 z-[200] flex items-center justify-center p-6 transition-all duration-500">
+        <div class="absolute inset-0 bg-[#005461]/70 backdrop-blur-md"></div>
+        <div class="relative bg-white w-full max-w-xs rounded-[3rem] p-8 text-center shadow-2xl">
+            <div class="w-16 h-16 bg-[#005461] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <h1 class="text-2xl font-black text-[#00B7B5]">S<span class="text-white">.</span></h1>
+            </div>
+            <h2 id="greeting-text" class="text-[#005461] text-lg font-black uppercase tracking-tighter">Halo, Warga!</h2>
+            <p class="text-slate-500 text-[11px] font-bold mt-4 mb-8">Informasi mandiri warga Sekawan dalam genggaman digital.</p>
+            <button onclick="closeSplash()" class="w-full h-12 bg-[#005461] text-[#00B7B5] text-[10px] font-black uppercase tracking-widest rounded-2xl active:scale-95 transition-all">Mulai Eksplor</button>
+        </div>
+    </div>
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative z-20 border-b-4 border-[#00B7B5]">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter uppercase">Sekawan<span class="text-[#00B7B5]">.</span></h1>
+                <div class="flex items-center gap-2 mt-1">
+                    <span id="weather-icon"></span>
+                    <span id="temp" class="text-[10px] font-bold">--°C</span>
+                    <span id="weather-desc" class="text-[8px] font-black uppercase text-[#00B7B5]">Memuat...</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <p id="jam" class="text-2xl font-black">00:00</p>
+                <span class="text-[8px] font-black bg-[#00B7B5] text-[#005461] px-2 py-0.5 rounded-full uppercase italic">Bantul</span>
+            </div>
+        </div>
+        <div id="sholat-view" class="flex gap-2 justify-between"></div>
     </header>
 
-    <main class="mt-8 px-6 space-y-8">
+    <div class="mx-6 -mt-4 bg-white rounded-full py-2 shadow-xl overflow-hidden border border-[#018790]/10 relative z-30 text-center">
+        <div class="ticker-move text-[9px] font-black text-[#018790] uppercase tracking-[0.2em]" id="ticker-text">✦ Memuat Warta Terbaru...</div>
+    </div>
+
+    <main class="mt-8 px-6 space-y-7">
         <section class="grid grid-cols-4 gap-2 text-center">
             <button onclick="location.href='keuangan.html'" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl shadow-sm flex items-center justify-center mb-2"><i class="fas fa-wallet text-white"></i></div>
-                <span class="text-[8px] font-black text-slate-400 uppercase">Kas RT</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-wallet text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase">Kas RT</span>
             </button>
-            <button onclick="location.href='cuit.html'" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#00B7B5] rounded-2xl shadow-sm flex items-center justify-center mb-2"><i class="fas fa-comment-dots text-[#005461]"></i></div>
-                <span class="text-[8px] font-black text-[#00B7B5] uppercase">Cuit</span>
+            <button onclick="location.href='lapor.html'" class="flex flex-col items-center">
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-bullhorn text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase">Lapor</span>
             </button>
             <button onclick="location.href='ronda.html'" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl shadow-sm flex items-center justify-center mb-2"><i class="fas fa-shield-halved text-white"></i></div>
-                <span class="text-[8px] font-black text-slate-400 uppercase">Ronda</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-shield-halved text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase">Ronda</span>
             </button>
             <button onclick="location.href='lapak.html'" class="flex flex-col items-center">
-                <div class="w-14 h-14 bg-[#005461] rounded-2xl shadow-sm flex items-center justify-center mb-2"><i class="fas fa-store text-white"></i></div>
-                <span class="text-[8px] font-black text-slate-400 uppercase">Lapak</span>
+                <div class="w-14 h-14 bg-[#005461] rounded-[1.8rem] shadow-sm flex items-center justify-center mb-2 active:scale-90 transition-all"><i class="fas fa-store text-white text-lg"></i></div>
+                <span class="text-[9px] font-black text-slate-400 uppercase">Lapak</span>
             </button>
         </section>
 
+        <section onclick="location.href='keuangan.html'" class="grid grid-cols-2 gap-3">
+            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
+                <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Kas RT</p>
+                <p id="val-kas" class="text-sm font-black italic">Rp --</p>
+            </div>
+            <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
+                <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Dana Sosial</p>
+                <p id="val-sosial" class="text-sm font-black italic">Rp --</p>
+            </div>
+        </section>
+
         <section>
-            <div class="flex justify-between items-end px-2 mb-4">
+            <div class="flex justify-between items-end px-4 mb-4">
                 <div>
                     <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest">Suara Warga</p>
+                    <p class="text-[7px] font-bold text-slate-300 uppercase">Diskusi Live</p>
                 </div>
-                <a href="cuit.html" class="text-[8px] font-black text-[#00B7B5] uppercase tracking-widest">Lainnya <i class="fas fa-arrow-right ml-1"></i></a>
+                <a href="cuitan.html" class="text-[8px] font-black text-[#00B7B5] uppercase">Lihat Semua <i class="fas fa-arrow-right ml-1"></i></a>
             </div>
-            <div id="index-feed" class="space-y-3">
-                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 text-center italic text-slate-300 text-[10px]">Memuat diskusi...</div>
+            <div id="cuit-feed-index" class="space-y-3">
+                <div class="text-center py-4 text-slate-300 text-[10px] font-black italic uppercase">Memuat Cuitan...</div>
             </div>
+        </section>
+
+        <section>
+            <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest px-4 mb-3">Warta Terbaru</p>
+            <div id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm text-[11px] text-slate-400 italic">Memuat warta...</div>
+        </section>
+
+        <section>
+            <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest px-4 mb-3">Lapak Sekawan</p>
+            <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
         </section>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-around items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="text-[#00B7B5] bg-white w-10 h-10 rounded-full"><i class="fas fa-home"></i></button>
-            <button onclick="location.href='cuit.html'" class="text-white/40"><i class="fas fa-comment-dots text-xl"></i></button>
-            <button onclick="location.href='doku.html'" class="text-white/40"><i class="fas fa-wallet text-xl"></i></button>
-            <button onclick="location.href='login.html'" class="text-white/40"><i class="fas fa-user-gear text-xl"></i></button>
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.reload()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] bg-white rounded-full"><i class="fas fa-home"></i></button>
+            <button onclick="location.href='cuitan.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-comment-dots"></i><span class="text-[6px] uppercase mt-0.5">Cuit</span></button>
+            <button onclick="aksesPrivat('doku.html')" class="flex flex-col items-center text-white/40"><i class="fas fa-wallet text-xl"></i><span class="text-[6px] uppercase mt-0.5 text-amber-400">Doku</span></button>
+            <button onclick="aksesPrivat('cakes.html')" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 text-[#00B7B5]">Cakes</span></button>
+            <button id="auth-btn" onclick="handleAuth()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] border-l border-white/10 ml-1"><i class="fas fa-user-gear"></i></button>
         </nav>
     </div>
 
@@ -77,28 +138,99 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Load 3 Cuitan Terbaru
-        onValue(query(ref(db, 'content/cuit'), limitToLast(3)), (snapshot) => {
-            const feed = document.getElementById('index-feed');
-            feed.innerHTML = "";
-            if(!snapshot.exists()) {
-                feed.innerHTML = "<div class='bg-white p-6 rounded-[2rem] border border-slate-50 text-center text-[10px] text-slate-300 uppercase font-black'>Belum ada cuitan</div>";
-                return;
-            }
-            const data = [];
-            snapshot.forEach(c => { data.push(c.val()); });
-            data.reverse().forEach(item => {
-                feed.innerHTML += `
-                    <div class="bg-white p-4 rounded-[2rem] border border-slate-50 shadow-sm cuit-card-mini">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-[8px] font-black text-[#00B7B5] uppercase bg-[#00B7B5]/10 px-2 py-0.5 rounded-full">${item.nama.split(' ')[0]}</span>
-                            <span class="text-[7px] text-slate-300 font-bold uppercase">${item.tgl}</span>
-                        </div>
-                        <p class="text-[11px] text-slate-600 font-medium line-clamp-2">${item.teks}</p>
-                    </div>
-                `;
+        // --- AUTH & NAV LOGIC ---
+        window.handleAuth = () => {
+            if(localStorage.getItem('userHp')) {
+                if(confirm("Keluar dari akun?")) { localStorage.clear(); location.reload(); }
+            } else { location.href = 'login.html'; }
+        };
+
+        window.aksesPrivat = (h) => {
+            if (localStorage.getItem('userHp')) location.href = h;
+            else if (confirm("Fitur khusus warga. Login dulu?")) location.href = 'login.html';
+        };
+
+        function updateAuthUI() {
+            const btn = document.getElementById('auth-btn');
+            if(localStorage.getItem('userHp')) btn.innerHTML = '<i class="fas fa-right-from-bracket text-red-400"></i>';
+        }
+
+        // --- LOAD FIREBASE DATA ---
+        function loadData() {
+            // Ticker & Kas
+            onValue(ref(db, 'settings'), s => { if(s.val()) document.getElementById('ticker-text').innerText = "✦ " + s.val().ticker; });
+            onValue(ref(db, 'keuangan'), s => {
+                const d = s.val(); if(d) {
+                    document.getElementById('val-kas').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
+                    document.getElementById('val-sosial').innerText = 'Rp ' + (parseInt(d.sosial) || 0).toLocaleString('id-ID');
+                }
             });
-        });
+
+            // Feed Cuitan (3 Terbaru)
+            onValue(query(ref(db, 'content/cuit'), limitToLast(3)), (snapshot) => {
+                const container = document.getElementById('cuit-feed-index');
+                container.innerHTML = "";
+                if(!snapshot.exists()) {
+                    container.innerHTML = "<div class='text-center text-[10px] text-slate-300 font-black uppercase'>Belum ada cuitan</div>";
+                    return;
+                }
+                let items = []; snapshot.forEach(c => { items.push(c.val()); });
+                items.reverse().forEach(data => {
+                    container.innerHTML += `
+                        <div class="bg-white p-4 rounded-[2rem] border border-slate-50 shadow-sm cuit-border">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[8px] font-black text-[#00B7B5] bg-[#00B7B5]/10 px-2 py-0.5 rounded-full uppercase">${data.nama.split(' ')[0]}</span>
+                                <span class="text-[7px] text-slate-300 font-bold uppercase">${data.tgl}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-600 font-medium line-clamp-2">${data.teks}</p>
+                        </div>`;
+                });
+            });
+
+            // Warta
+            onValue(query(ref(db, 'content/info'), limitToLast(1)), s => {
+                if(s.exists()){
+                    const d = Object.values(s.val())[0];
+                    document.getElementById('info-view').innerHTML = `<h4 class="text-[12px] font-black text-black uppercase mb-1">${d.judul}</h4><p class="text-[12px] text-slate-500 leading-relaxed">${d.keterangan}</p>`;
+                }
+            });
+
+            // Lapak
+            onValue(ref(db, 'lapak'), s => {
+                const list = document.getElementById('lapak-list'); list.innerHTML = "";
+                s.forEach(c => {
+                    const i = c.val();
+                    list.innerHTML += `<div class="min-w-[140px] bg-white p-4 rounded-[2rem] border border-slate-50 shadow-sm text-center"><h4 class="text-[10px] font-black text-[#005461] uppercase truncate">${i.produk}</h4><p class="text-[11px] font-black text-[#00B7B5] mt-1">Rp ${parseInt(i.harga).toLocaleString('id-ID')}</p><a href="https://wa.me/${i.wa}" class="block bg-[#005461] text-white text-[8px] font-black py-2 rounded-full mt-3 uppercase">Pesan</a></div>`;
+                });
+            });
+        }
+
+        // --- EXTRAS (WEATHER & SHOLAT) ---
+        async function getExtras() {
+            try {
+                const sholat = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`);
+                const sJ = await sholat.json(); const j = sJ.data.jadwal;
+                const s = [{n:'Subuh',t:j.subuh},{n:'Dzuhur',t:j.dzuhur},{n:'Ashar',t:j.ashar},{n:'Maghrib',t:j.maghrib},{n:'Isya',t:j.isya}];
+                document.getElementById('sholat-view').innerHTML = s.map(x => `<div class="text-center flex-1 bg-white/10 py-2 rounded-2xl"><p class="text-[7px] font-black text-[#00B7B5] uppercase">${x.n}</p><p class="text-[10px] text-white font-bold">${x.t}</p></div>`).join('');
+                
+                const cuaca = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
+                const cJ = await cuaca.json(); const t = Math.round(cJ.current_weather.temperature);
+                document.getElementById('temp').innerText = t + '°C';
+                document.getElementById('weather-icon').innerHTML = t > 30 ? '<i class="fas fa-sun text-amber-400"></i>' : '<i class="fas fa-cloud-sun text-blue-400"></i>';
+                document.getElementById('weather-desc').innerText = t > 30 ? 'Cerah' : 'Berawan';
+            } catch(e) {}
+        }
+
+        window.closeSplash = () => document.getElementById('splash-screen').classList.add('opacity-0', 'pointer-events-none');
+
+        window.onload = () => {
+            getExtras(); loadData(); updateAuthUI();
+            setInterval(() => {
+                const d = new Date();
+                document.getElementById('jam').innerText = d.getHours().toString().padStart(2,'0')+":"+d.getMinutes().toString().padStart(2,'0');
+            }, 1000);
+        };
     </script>
 </body>
-</html>
+    </html>
+    
