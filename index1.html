@@ -20,6 +20,7 @@
         .ticker-move { display: inline-block; animation: move 25s linear infinite; white-space: nowrap; }
         @keyframes move { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
         .link-more { font-weight: 800; font-size: 8px; color: #00B7B5; text-transform: uppercase; letter-spacing: 1px; }
+        .cuit-card { border-left: 4px solid #00B7B5; }
     </style>
 </head>
 <body class="pb-40">
@@ -35,7 +36,7 @@
             </div>
             <h2 id="greeting-text" class="text-[#005461] text-lg font-black uppercase tracking-tighter leading-none">Halo!</h2>
             <div class="w-8 h-1 bg-[#00B7B5] mx-auto my-3 rounded-full"></div>
-            <p class="text-slate-500 text-[11px] font-bold leading-relaxed px-2 mb-8">Informasi transparan dalam genggaman warga Sekawan.</p>
+            <p class="text-slate-500 text-[11px] font-bold leading-relaxed px-2 mb-8">Informasi warga Sekawan dalam satu genggaman digital.</p>
             <button onclick="closeSplash()" class="w-full h-12 bg-[#005461] text-[#00B7B5] text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg active:scale-95 transition-all">Mulai Eksplor</button>
         </div>
     </div>
@@ -82,8 +83,6 @@
             </button>
         </section>
 
-        <p id="quote-text" class="text-center text-[11px] font-bold italic text-[#005461] opacity-60 px-4">"Rukun Warga, Maju Bersama."</p>
-
         <section onclick="location.href='keuangan.html'" class="grid grid-cols-2 gap-3">
             <div class="bg-[#005461] p-5 rounded-[2.5rem] text-white shadow-lg border-b-4 border-[#00B7B5]">
                 <p class="text-[8px] font-bold opacity-50 uppercase mb-1 tracking-widest">Kas Utama</p>
@@ -96,18 +95,24 @@
         </section>
 
         <section>
-            <div class="flex justify-between items-end px-4 mb-3">
-                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Cuitan Warga</p>
-                <a href="cuitan.html" class="link-more">Semua <i class="fas fa-chevron-right ml-1"></i></a>
+            <div class="flex justify-between items-end px-4 mb-4">
+                <div>
+                    <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest">Suara Warga</p>
+                    <p class="text-[7px] font-bold text-slate-300 uppercase">Aspirasi & Kabar Terbaru</p>
+                </div>
+                <a href="cuit.html" class="link-more">Semua <i class="fas fa-chevron-right ml-1"></i></a>
             </div>
-            <div id="cuit-mini-feed" class="space-y-3">
-                <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm text-[11px] text-slate-300 italic">Memuat cuitan...</div>
+            <div id="cuit-index-feed" class="space-y-3">
+                <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm text-center">
+                    <i class="fas fa-spinner fa-spin text-[#00B7B5] mb-2"></i>
+                    <p class="text-[8px] font-black text-slate-300 uppercase italic tracking-widest">Memuat Cuitan...</p>
+                </div>
             </div>
         </section>
 
         <section>
             <div class="flex justify-between items-end px-4 mb-3">
-                <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest">Warta Utama</p>
+                <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest">Warta Sekawan</p>
             </div>
             <div id="info-view" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm text-[11px] text-slate-400 italic">Memuat warta...</div>
         </section>
@@ -116,24 +121,41 @@
         <section id="blog-list"></section>
         
         <section>
-            <p class="text-[9px] font-black text-[#018790] uppercase tracking-widest px-4 mb-3">Lapak Sekawan</p>
+            <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest px-4 mb-3">Pasar Warga</p>
             <div id="lapak-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
         </section>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] bg-white rounded-full"><i class="fas fa-home"></i></button>
-            <button onclick="location.href='cuit.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-comment-dots"></i><span class="text-[6px] uppercase mt-0.5">Cuit</span></button>
-            <button onclick="aksesPrivat('doku.html')" class="flex flex-col items-center text-white/40"><i class="fas fa-wallet"></i><span class="text-[6px] uppercase mt-0.5 text-amber-400">Doku</span></button>
-            <button onclick="aksesPrivat('cakes.html')" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open"></i><span class="text-[6px] uppercase mt-0.5 text-[#00B7B5]">Cakes</span></button>
-            <button id="auth-btn" onclick="handleAuth()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] border-l border-white/10 ml-2"><i class="fas fa-user-gear"></i></button>
+            <button onclick="location.reload()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] bg-white rounded-full shadow-lg active:scale-90 transition-all">
+                <i class="fas fa-home"></i>
+            </button>
+            
+            <button onclick="location.href='cuit.html'" class="flex flex-col items-center justify-center text-white/40 active:scale-90 transition-all">
+                <i class="fas fa-comment-dots text-lg"></i>
+                <span class="text-[6px] font-black uppercase mt-0.5">Cuit</span>
+            </button>
+
+            <button onclick="aksesPrivat('doku.html')" class="flex flex-col items-center justify-center text-white/40 active:scale-90 transition-all">
+                <i class="fas fa-wallet text-lg"></i>
+                <span class="text-[6px] font-black uppercase mt-0.5 text-amber-400">Doku</span>
+            </button>
+
+            <button onclick="aksesPrivat('cakes.html')" class="flex flex-col items-center justify-center text-white/40 active:scale-90 transition-all">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-[6px] font-black uppercase mt-0.5 text-[#00B7B5]">Cakes</span>
+            </button>
+
+            <button id="auth-btn" onclick="handleAuth()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] border-l border-white/10 ml-1">
+                <i class="fas fa-user-gear"></i>
+            </button>
         </nav>
     </div>
 
     <div id="blog-modal" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end justify-center hidden p-4">
         <div class="bg-white w-full max-w-md rounded-[3rem] p-8 relative border-t-4 border-[#00B7B5] mb-10">
-            <h2 id="modal-title" class="text-lg font-black text-[#005461] leading-tight mb-4 uppercase"></h2>
+            <h2 id="modal-title" class="text-lg font-black text-[#005461] leading-tight mb-4 uppercase tracking-tighter"></h2>
             <div id="modal-content" class="text-sm text-slate-600 leading-relaxed max-h-[50vh] overflow-y-auto pr-2 mb-6"></div>
             <button onclick="closeModal()" class="w-full py-4 bg-slate-100 rounded-2xl font-black text-[10px] uppercase tracking-widest">Tutup</button>
         </div>
@@ -154,10 +176,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // AUTH LOGIC
+        // --- AUTH SYSTEM ---
         window.handleAuth = () => {
             if(localStorage.getItem('userHp')) {
-                if(confirm("Logout dari akun kamu?")) {
+                if(confirm("Logout dari sistem Sekawan?")) {
                     localStorage.clear();
                     location.reload();
                 }
@@ -166,9 +188,9 @@
             }
         };
 
-        window.aksesPrivat = (h) => {
-            if (localStorage.getItem('userHp')) location.href = h;
-            else if (confirm("Fitur pribadi. Login dulu?")) location.href = 'login.html';
+        window.aksesPrivat = (target) => {
+            if (localStorage.getItem('userHp')) location.href = target;
+            else if (confirm("Fitur ini khusus warga terdaftar. Login sekarang?")) location.href = 'login.html';
         };
 
         function updateAuthUI() {
@@ -180,15 +202,16 @@
             }
         }
 
-        // FIREBASE LOAD
+        // --- LOAD DATA ---
         function loadFirebaseData() {
+            // Settings & Ticker
             onValue(ref(db, 'settings'), (s) => {
                 const d = s.val(); if(d) {
-                    document.getElementById('ticker-text').innerText = "✦ " + (d.ticker || "Warta Sekawan");
-                    document.getElementById('quote-text').innerText = `"${d.quote || "Rukun Warga, Maju Bersama."}"`;
+                    document.getElementById('ticker-text').innerText = "✦ " + (d.ticker || "Warta Sekawan Digital");
                 }
             });
 
+            // Keuangan
             onValue(ref(db, 'keuangan'), (s) => {
                 const d = s.val(); if(d) {
                     document.getElementById('val-kas').innerText = 'Rp ' + (parseInt(d.kas) || 0).toLocaleString('id-ID');
@@ -196,44 +219,60 @@
                 }
             });
 
-            // LOAD CUITAN MINI
-            onValue(query(ref(db, 'content/cuit'), limitToLast(2)), (s) => {
-                const feed = document.getElementById('cuit-mini-feed'); feed.innerHTML = "";
-                if(s.exists()) {
-                    s.forEach(c => {
-                        const d = c.val();
-                        feed.innerHTML += `<div class="bg-white p-5 rounded-[2rem] border border-slate-50 shadow-sm"><div class="flex items-center gap-2 mb-2"><span class="text-[8px] font-black text-[#00B7B5] uppercase bg-[#00B7B5]/10 px-2 py-0.5 rounded-full">${d.nama.split(' ')[0]}</span><span class="text-[7px] text-slate-300 font-bold">${d.tgl}</span></div><p class="text-[12px] text-slate-600 font-medium line-clamp-2 leading-snug">${d.teks}</p></div>`;
-                    });
+            // LIVE FEED CUITAN (Update terbaru!)
+            onValue(query(ref(db, 'content/cuit'), limitToLast(3)), (snapshot) => {
+                const container = document.getElementById('cuit-index-feed');
+                container.innerHTML = "";
+                if(!snapshot.exists()) {
+                    container.innerHTML = `<div class="bg-white p-8 rounded-[2rem] border border-slate-100 text-center"><p class="text-[9px] font-black text-slate-300 uppercase">Belum ada diskusi hari ini</p></div>`;
+                    return;
                 }
+                const items = []; snapshot.forEach(c => { items.push(c.val()); });
+                items.reverse().forEach(data => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-5 rounded-[2.5rem] border border-slate-50 shadow-sm cuit-card";
+                    card.innerHTML = `
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[8px] font-black text-[#00B7B5] bg-[#00B7B5]/10 px-2 py-0.5 rounded-full uppercase italic">${data.nama.split(' ')[0]}</span>
+                            <span class="text-[7px] text-slate-300 font-bold">${data.tgl}</span>
+                        </div>
+                        <p class="text-[12px] text-slate-600 font-medium leading-snug line-clamp-2 px-1">${data.teks}</p>
+                    `;
+                    container.appendChild(card);
+                });
             });
 
-            // Warta & Lainnya
+            // Warta / Info
             onValue(query(ref(db, 'content/info'), limitToLast(1)), (s) => {
                 if(s.exists()){
                     const d = Object.values(s.val())[0];
-                    document.getElementById('info-view').innerHTML = `<h4 class="text-sm font-black text-black uppercase">${d.judul}</h4><p class="text-[13px] text-slate-600 mt-2">${d.keterangan}</p>`;
+                    document.getElementById('info-view').innerHTML = `<h4 class="text-[12px] font-black text-black uppercase mb-1">${d.judul}</h4><p class="text-[12px] text-slate-500 leading-relaxed">${d.keterangan}</p>`;
                 }
             });
 
+            // Agenda
             onValue(query(ref(db, 'content/agenda'), limitToLast(1)), (s) => {
                 if(s.exists()){
                     const a = Object.values(s.val())[0];
-                    document.getElementById('agenda-view').innerHTML = `<div class="flex items-center gap-4 bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm"><div class="bg-[#005461] text-white p-4 rounded-3xl text-center min-w-[60px] font-black">${a.tgl}</div><div><h4 class="text-sm font-black uppercase">${a.judul}</h4><p class="text-[11px] font-bold text-[#00B7B5] mt-1">${a.jam} WIB</p></div></div>`;
+                    document.getElementById('agenda-view').innerHTML = `<div class="flex items-center gap-4 bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm"><div class="bg-[#005461] text-white p-4 rounded-3xl text-center min-w-[60px] font-black">${a.tgl}</div><div><h4 class="text-[11px] font-black uppercase text-slate-800">${a.judul}</h4><p class="text-[10px] font-bold text-[#00B7B5] mt-0.5 italic">${a.jam} WIB</p></div></div>`;
                 }
             });
         }
 
         async function getUIExtras() {
             try {
+                // Jadwal Sholat
                 const sholat = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1501/${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`);
                 const sJ = await sholat.json(); const j = sJ.data.jadwal;
                 const s = [{n:'Subuh',t:j.subuh},{n:'Dzuhur',t:j.dzuhur},{n:'Ashar',t:j.ashar},{n:'Maghrib',t:j.maghrib},{n:'Isya',t:j.isya}];
-                document.getElementById('sholat-view').innerHTML = s.map(x => `<div class="text-center flex-1 bg-white/10 py-2 rounded-2xl"><p class="text-[7px] font-black text-[#00B7B5]">${x.n}</p><p class="text-[10px] text-white font-bold">${x.t}</p></div>`).join('');
+                document.getElementById('sholat-view').innerHTML = s.map(x => `<div class="text-center flex-1 bg-white/10 py-2 rounded-2xl"><p class="text-[7px] font-black text-[#00B7B5] uppercase">${x.n}</p><p class="text-[10px] text-white font-bold">${x.t}</p></div>`).join('');
                 
+                // Cuaca
                 const cuaca = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-7.84&longitude=110.36&current_weather=true');
                 const cJ = await cuaca.json(); const t = Math.round(cJ.current_weather.temperature);
                 document.getElementById('temp').innerText = t + '°C';
                 document.getElementById('weather-icon').innerHTML = t > 30 ? '<i class="fas fa-sun text-amber-400"></i>' : '<i class="fas fa-cloud-sun text-blue-400"></i>';
+                document.getElementById('weather-desc').innerText = t > 30 ? 'Cerah' : 'Berawan';
             } catch(e) {}
         }
 
@@ -251,5 +290,4 @@
         };
     </script>
 </body>
-                </html>
-            
+</html>
