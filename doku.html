@@ -4,16 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Doku Sekawan - Catatan Keuangan</title>
+    
+    <meta name="theme-color" content="#005461">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Doku Sekawan">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Catatan Keuangan Pribadi Warga Sekawan">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #F8FAFB; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none;
+        }
         .tab-active { background: #00B7B5; color: #005461; box-shadow: 0 4px 15px rgba(0, 183, 181, 0.2); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Smooth transition for PWA feel */
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-32 fade-in">
 
     <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-center mb-6">
@@ -46,7 +64,7 @@
 
                 <div class="group">
                     <label class="text-[8px] font-black text-slate-400 uppercase ml-4 mb-1 block">Nominal (Rp)</label>
-                    <input type="number" id="nominal" placeholder="Contoh: 50000" class="w-full bg-slate-50 p-4 rounded-2xl text-sm font-bold outline-none border border-transparent focus:border-[#00B7B5]">
+                    <input type="number" id="nominal" inputmode="numeric" placeholder="Contoh: 50000" class="w-full bg-slate-50 p-4 rounded-2xl text-sm font-bold outline-none border border-transparent focus:border-[#00B7B5]">
                 </div>
 
                 <div class="group">
@@ -104,7 +122,6 @@
         const uHp = localStorage.getItem('userHp');
         let tipeAktif = 'masuk';
 
-        // Cek Login
         if(!uHp) {
             location.href = 'login.html';
         } else {
@@ -112,26 +129,23 @@
             document.getElementById('tgl-input').value = new Date().toISOString().split('T')[0];
         }
 
-        // Switcher Masuk/Keluar
         window.setTipe = (t) => {
             tipeAktif = t;
             document.getElementById('tab-masuk').className = `flex-1 py-2.5 rounded-full text-[9px] font-black uppercase transition-all ${t === 'masuk' ? 'tab-active' : 'text-slate-400'}`;
             document.getElementById('tab-keluar').className = `flex-1 py-2.5 rounded-full text-[9px] font-black uppercase transition-all ${t === 'keluar' ? 'tab-active' : 'text-slate-400'}`;
         };
 
-        // Format Tanggal Indonesia
         const tglIndo = (str) => {
             const date = new Date(str);
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
         };
 
-        // Simpan Data
         document.getElementById('btn-simpan').onclick = async () => {
             const nom = document.getElementById('nominal').value;
             const ket = document.getElementById('keterangan').value;
             const tgl = document.getElementById('tgl-input').value;
 
-            if(!nom || !ket || !tgl) return alert("Lengkapi datanya dulu, Pak RT/Bu RT!");
+            if(!nom || !ket || !tgl) return alert("Lengkapi datanya dulu, Bro!");
 
             const btn = document.getElementById('btn-simpan');
             btn.disabled = true; btn.innerText = "MENYIMPAN...";
@@ -149,19 +163,17 @@
                 document.getElementById('nominal').value = "";
                 document.getElementById('keterangan').value = "";
             } catch (e) {
-                alert("Gagal simpan! Cek koneksi.");
+                alert("Gagal simpan!");
             } finally {
                 btn.disabled = false; btn.innerText = "SIMPAN CATATAN";
             }
         };
 
-        // Load Data (Khusus milik user ini)
         const myQuery = query(ref(db, 'doku_personal'), orderByChild('hp'), equalTo(uHp));
         onValue(myQuery, (snapshot) => {
             const list = document.getElementById('doku-list');
             const totalSaldoView = document.getElementById('total-saldo');
             list.innerHTML = "";
-            
             let saldo = 0;
             let dataArr = [];
 
@@ -175,34 +187,29 @@
             totalSaldoView.innerText = "Rp " + saldo.toLocaleString('id-ID');
 
             if(dataArr.length === 0) {
-                list.innerHTML = `<div class="bg-white p-10 rounded-[2.5rem] border border-slate-50 text-center shadow-sm">
-                    <i class="fas fa-wallet text-slate-100 text-3xl mb-3 block"></i>
-                    <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Belum ada catatan keuangan</p>
-                </div>`;
+                list.innerHTML = `<div class="bg-white p-10 rounded-[2.5rem] border border-slate-50 text-center shadow-sm"><p class="text-[10px] font-black text-slate-300 uppercase">Belum ada catatan</p></div>`;
                 return;
             }
 
-            // Urutkan dari yang terbaru (berdasarkan timestamp)
             dataArr.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
                 const isMasuk = item.tipe === 'masuk';
                 list.innerHTML += `
-                    <div class="bg-white p-5 rounded-[2.2rem] border border-slate-50 shadow-sm flex justify-between items-center transition-all active:scale-[0.98]">
+                    <div class="bg-white p-5 rounded-[2.2rem] border border-slate-50 shadow-sm flex justify-between items-center active:scale-[0.98] transition-all">
                         <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 ${isMasuk ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'} rounded-2xl flex items-center justify-center text-xs shadow-sm">
+                            <div class="w-10 h-10 ${isMasuk ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'} rounded-2xl flex items-center justify-center text-xs">
                                 <i class="fas ${isMasuk ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i>
                             </div>
                             <div>
                                 <h4 class="text-[11px] font-black text-[#005461] uppercase leading-tight">${item.keterangan}</h4>
-                                <p class="text-[8px] font-bold text-slate-300 uppercase mt-1 tracking-tighter">${item.tgl}</p>
+                                <p class="text-[8px] font-bold text-slate-300 uppercase mt-1 italic">${item.tgl}</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-[12px] font-black ${isMasuk ? 'text-emerald-500' : 'text-rose-500'} italic">
+                            <p class="text-[12px] font-black ${isMasuk ? 'text-emerald-500' : 'text-rose-500'}">
                                 ${isMasuk ? '+' : '-'} ${item.nominal.toLocaleString('id-ID')}
                             </p>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         });
     </script>
