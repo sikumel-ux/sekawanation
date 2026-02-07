@@ -3,116 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cuit Sekawan</title>
+    <title>Tulis Cuitan - Sekawan</title>
+    
+    <meta name="theme-color" content="#005461">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
     </style>
 </head>
-<body class="pb-32">
+<body class="p-6">
 
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] sticky top-0 z-50">
-        <div class="flex justify-between items-center">
-            <h1 class="text-xl font-black italic uppercase">Cuit<span class="text-[#00B7B5]">.</span></h1>
-            <div id="user-badge" class="hidden bg-white/10 px-3 py-1 rounded-full border border-white/10 text-[10px] font-black text-[#00B7B5] uppercase tracking-widest">
-                <i class="fas fa-circle text-[6px] animate-pulse mr-1"></i> <span id="display-nama">Warga</span>
-            </div>
-        </div>
+    <header class="flex justify-between items-center mb-8">
+        <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center bg-white rounded-2xl shadow-sm text-[#005461]">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1 class="text-sm font-black uppercase tracking-widest text-[#005461]">Buat Cuitan</h1>
+        <div class="w-10"></div>
     </header>
 
-    <main class="mt-6 px-6 space-y-6">
-        <section id="input-section" class="hidden bg-white p-6 rounded-[2.5rem] shadow-lg border border-slate-100">
-            <textarea id="cuit-text" rows="2" placeholder="Apa kabar hari ini, Pak/Bu?" 
-                class="w-full text-sm font-bold text-[#005461] outline-none placeholder:text-slate-200 resize-none"></textarea>
-            <div class="flex justify-end mt-4">
-                <button id="btn-cuit" class="bg-[#00B7B5] text-[#005461] px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md active:scale-95 transition-all">
-                    Kirim Cuit
-                </button>
+    <main class="space-y-6">
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-50">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-[#005461] font-black shadow-sm" id="avatar">
+                    ?
+                </div>
+                <div>
+                    <h2 class="text-[11px] font-black text-[#005461] uppercase leading-none" id="nama-warga">Warga Sekawan</h2>
+                    <p class="text-[8px] font-bold text-slate-300 uppercase mt-1">Berbagi info atau sapa warga</p>
+                </div>
             </div>
-        </section>
 
-        <section id="login-banner" class="bg-amber-50 p-6 rounded-[2.5rem] border border-amber-200 text-center">
-            <p class="text-[10px] font-black text-amber-700 uppercase mb-3">Login untuk ikut bercuit</p>
-            <button onclick="location.href='login.html'" class="bg-amber-600 text-white px-8 py-2.5 rounded-full text-[9px] font-black uppercase shadow-lg">Login</button>
-        </section>
-
-        <section id="full-feed" class="space-y-4"></section>
+            <textarea id="teks-cuit" rows="6" class="w-full bg-slate-50 rounded-3xl p-5 text-sm font-medium outline-none border-2 border-transparent focus:border-[#00B7B5] transition-all resize-none" placeholder="Apa yang ingin kamu sampaikan hari ini, Bro?"></textarea>
+            
+            <button id="btn-kirim" class="w-full bg-[#005461] text-[#00B7B5] py-4 rounded-2xl mt-6 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">
+                Kirim Cuitan <i class="fas fa-paper-plane ml-2"></i>
+            </button>
+        </div>
     </main>
-
-    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-around items-center shadow-2xl">
-            <button onclick="location.href='index.html'" class="text-white/40"><i class="fas fa-home text-xl"></i></button>
-            <button onclick="location.reload()" class="text-[#00B7B5] bg-white w-10 h-10 rounded-full"><i class="fas fa-comment-dots"></i></button>
-            <button onclick="location.href='doku.html'" class="text-white/40"><i class="fas fa-wallet text-xl"></i></button>
-            <button onclick="location.href='login.html'" class="text-white/40"><i class="fas fa-user-gear text-xl"></i></button>
-        </nav>
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
-          authDomain: "websekawan.firebaseapp.com",
-          projectId: "websekawan",
-          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
-          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+            authDomain: "websekawan.firebaseapp.com",
+            projectId: "websekawan",
+            databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const uNama = localStorage.getItem('userSekawan');
-        const uHp = localStorage.getItem('userHp');
+        const nama = localStorage.getItem('userSekawan');
+        const hp = localStorage.getItem('userHp');
 
-        if(uNama) {
-            document.getElementById('input-section').classList.remove('hidden');
-            document.getElementById('login-banner').classList.add('hidden');
-            document.getElementById('user-badge').classList.remove('hidden');
-            document.getElementById('display-nama').innerText = uNama.split(' ')[0];
+        if(!hp) {
+            alert("Login dulu ya!");
+            location.href = 'login.html';
+        } else {
+            document.getElementById('nama-warga').innerText = nama;
+            document.getElementById('avatar').innerText = nama.charAt(0);
         }
 
-        // POSTING
-        document.getElementById('btn-cuit').onclick = async () => {
-            const teks = document.getElementById('cuit-text').value;
-            if(!teks.trim()) return;
-            
+        document.getElementById('btn-kirim').onclick = async () => {
+            const teks = document.getElementById('teks-cuit').value;
+            if(!teks) return alert("Tulis sesuatu dulu, Bro!");
+
+            const btn = document.getElementById('btn-kirim');
+            btn.disabled = true;
+            btn.innerText = "MENGIRIM...";
+
             try {
                 const newRef = push(ref(db, 'content/cuit'));
                 await set(newRef, {
-                    nama: uNama,
+                    nama: nama,
+                    hp: hp,
                     teks: teks,
-                    tgl: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }),
+                    tgl: new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}),
                     timestamp: Date.now()
                 });
-                document.getElementById('cuit-text').value = "";
-            } catch(e) { alert("Cek Rules Firebase!"); }
+                
+                // Redirect ke halaman feed setelah sukses
+                location.href = 'cuitan.html';
+            } catch (e) {
+                alert("Gagal kirim!");
+                btn.disabled = false;
+                btn.innerText = "KIRIM CUITAN";
+            }
         };
-
-        // LOAD SEMUA
-        onValue(query(ref(db, 'content/cuit'), limitToLast(20)), (snapshot) => {
-            const container = document.getElementById('full-feed');
-            container.innerHTML = "";
-            const data = [];
-            snapshot.forEach(c => { data.push(c.val()); });
-            data.reverse().forEach(item => {
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-50 shadow-sm">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-8 h-8 bg-[#005461] rounded-full flex items-center justify-center text-[10px] font-black text-[#00B7B5]">${item.nama.charAt(0)}</div>
-                            <div>
-                                <h4 class="text-[11px] font-black text-[#005461] uppercase">${item.nama}</h4>
-                                <p class="text-[8px] font-bold text-slate-300 uppercase">${item.tgl}</p>
-                            </div>
-                        </div>
-                        <p class="text-[13px] text-slate-700 font-medium leading-relaxed">${item.teks}</p>
-                    </div>
-                `;
-            });
-        });
     </script>
 </body>
-    </html>
+</html>
