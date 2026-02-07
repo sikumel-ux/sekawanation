@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grup Chat Sekawan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
+        .cuit-card { border-left: 5px solid #00B7B5; transition: all 0.3s; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl sticky top-0 z-50 border-b-4 border-[#00B7B5]">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-black italic uppercase tracking-tighter">Suara Warga<span class="text-[#00B7B5]">.</span></h1>
+                <p class="text-[9px] font-bold text-[#00B7B5] uppercase tracking-widest mt-1">Obrolan Live Sekawan</p>
+            </div>
+            <button onclick="location.href='cuit.html'" class="bg-[#00B7B5] text-[#005461] w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="mt-6 px-6">
+        <div class="mb-6 relative">
+            <input type="text" id="search-cuit" placeholder="Cari obrolan..." class="w-full bg-white border border-slate-100 p-4 rounded-3xl text-xs font-bold shadow-sm outline-none focus:border-[#00B7B5]">
+            <i class="fas fa-search absolute right-5 top-4 text-slate-300"></i>
+        </div>
+
+        <div id="full-feed" class="space-y-4">
+            <div class="text-center py-20">
+                <div class="animate-spin text-[#00B7B5] text-2xl mb-4"><i class="fas fa-circle-notch"></i></div>
+                <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Menarik data obrolan...</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-home"></i></button>
+            <button onclick="location.reload()" class="w-11 h-11 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg"><i class="fas fa-comment-dots"></i></button>
+            <button onclick="location.href='doku.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-wallet text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Doku</span></button>
+            <button onclick="location.href='cakes.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cakes</span></button>
+            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-arrow-left"></i></button>
+        </nav>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // LOAD SEMUA CUITAN
+        const cuitRef = query(ref(db, 'content/cuit'), limitToLast(50)); // Ambil 50 cuitan terakhir
+        onValue(cuitRef, (snapshot) => {
+            const container = document.getElementById('full-feed');
+            container.innerHTML = "";
+
+            if(!snapshot.exists()) {
+                container.innerHTML = `
+                    <div class="bg-white p-10 rounded-[3rem] text-center border border-slate-50">
+                        <i class="fas fa-comments text-slate-100 text-4xl mb-4 block"></i>
+                        <p class="text-[10px] font-black text-slate-300 uppercase">Belum ada obrolan warga.</p>
+                        <button onclick="location.href='cuit.html'" class="mt-4 text-[9px] font-black text-[#00B7B5] border-b-2 border-[#00B7B5] pb-1">JADI YANG PERTAMA CUIT</button>
+                    </div>`;
+                return;
+            }
+
+            let posts = [];
+            snapshot.forEach(child => {
+                posts.push(child.val());
+            });
+
+            // Urutkan dari yang paling baru
+            posts.reverse().forEach(data => {
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-50 cuit-card mb-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-[#005461] rounded-2xl flex items-center justify-center text-[10px] font-black text-[#00B7B5]">
+                                    ${data.nama.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h4 class="text-[11px] font-black text-[#005461] uppercase leading-none">${data.nama}</h4>
+                                    <p class="text-[8px] font-bold text-slate-300 uppercase mt-1">${data.tgl}</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 px-2 py-1 rounded-lg">
+                                <i class="fas fa-quote-right text-[#00B7B5] text-[8px] opacity-30"></i>
+                            </div>
+                        </div>
+                        <p class="text-[12px] text-slate-600 leading-relaxed font-medium">
+                            ${data.teks}
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-slate-50 flex gap-4">
+                            <button class="text-[9px] font-black text-slate-300 uppercase flex items-center gap-1">
+                                <i class="far fa-heart"></i> Suka
+                            </button>
+                            <button class="text-[9px] font-black text-slate-300 uppercase flex items-center gap-1">
+                                <i class="far fa-comment"></i> Balas
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+
+        // Search Logic
+        document.getElementById('search-cuit').addEventListener('input', function(e) {
+            const val = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.cuit-card');
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(val) ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
