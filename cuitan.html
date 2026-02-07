@@ -19,8 +19,10 @@
         .btn-vote:active { transform: scale(1.4); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .user-pic { width: 42px; height: 42px; object-fit: cover; border-radius: 14px; }
     </style>
 </head>
 <body class="pb-32 fade-in">
@@ -31,21 +33,27 @@
                 <h1 class="text-xl font-black italic uppercase tracking-tighter">Timeline<span class="text-[#00B7B5]">.</span></h1>
                 <p class="text-[9px] font-bold text-[#00B7B5] uppercase mt-1 tracking-widest">Kabar Warga Sekawan</p>
             </div>
-            <button onclick="location.href='cuit.html'" class="bg-[#00B7B5] text-[#005461] w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
-                <i class="fas fa-plus"></i>
-            </button>
+            <div class="flex gap-3">
+                <button onclick="location.href='profile.html'" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center border border-white/5 active:scale-90 transition-all">
+                    <i class="fas fa-user-circle text-[#00B7B5]"></i>
+                </button>
+                <button onclick="location.href='cuit.html'" class="bg-[#00B7B5] text-[#005461] w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
         </div>
     </header>
 
     <main class="mt-6 px-6">
         <div class="mb-6 relative">
-            <input type="text" id="search-cuit" placeholder="Cari percakapan..." class="w-full bg-white border-none p-4 pl-12 rounded-3xl text-xs font-bold shadow-sm outline-none ring-2 ring-transparent focus:ring-[#00B7B5] transition-all">
+            <input type="text" id="search-cuit" placeholder="Cari percakapan warga..." class="w-full bg-white border-none p-4 pl-12 rounded-3xl text-xs font-bold shadow-sm outline-none ring-2 ring-transparent focus:ring-[#00B7B5] transition-all">
             <i class="fas fa-search absolute left-5 top-4 text-slate-300 text-xs"></i>
         </div>
 
         <div id="full-feed" class="space-y-5">
-            <div class="text-center py-20 text-slate-200 italic text-[10px] font-black uppercase tracking-widest animate-pulse">
-                Menarik data terbaru...
+            <div class="text-center py-20">
+                <div class="inline-block w-8 h-8 border-4 border-slate-200 border-t-[#00B7B5] rounded-full animate-spin"></div>
+                <p class="text-[10px] font-black text-slate-300 uppercase mt-4 tracking-widest">Sinkronisasi Data...</p>
             </div>
         </div>
     </main>
@@ -56,7 +64,7 @@
             <button onclick="location.reload()" class="w-11 h-11 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg"><i class="fas fa-comment-dots"></i></button>
             <button onclick="location.href='doku.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-wallet text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Doku</span></button>
             <button onclick="location.href='cakes.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cakes</span></button>
-            <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-arrow-left"></i></button>
+            <button onclick="location.href='profile.html'" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-user-gear"></i></button>
         </nav>
     </div>
 
@@ -83,52 +91,69 @@
             });
         };
 
-        // Load Feed secara Real-time
+        // LOAD SEMUA DATA (Users & Cuitan)
         const cuitRef = query(ref(db, 'content/cuit'), limitToLast(50));
+        const usersRef = ref(db, 'users');
+
         onValue(cuitRef, (snapshot) => {
-            const container = document.getElementById('full-feed');
-            container.innerHTML = "";
+            // Ambil data users untuk mapping foto profil
+            onValue(usersRef, (userSnapshot) => {
+                const allUsers = userSnapshot.val() || {};
+                const container = document.getElementById('full-feed');
+                container.innerHTML = "";
 
-            if(!snapshot.exists()) {
-                container.innerHTML = "<div class='bg-white p-10 rounded-[2.5rem] text-center shadow-sm'><p class='text-[10px] font-black text-slate-300 uppercase'>Belum ada cuitan pagi ini.</p></div>";
-                return;
-            }
+                if(!snapshot.exists()) {
+                    container.innerHTML = "<div class='bg-white p-10 rounded-[2.5rem] text-center shadow-sm'><p class='text-[10px] font-black text-slate-300 uppercase'>Belum ada cuitan.</p></div>";
+                    return;
+                }
 
-            let posts = [];
-            snapshot.forEach(c => { posts.push({ id: c.key, ...c.val() }); });
-            
-            posts.reverse().forEach(data => {
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-[2.5rem] shadow-md border border-slate-50 cuit-card fade-in">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-9 h-9 bg-[#005461] rounded-2xl flex items-center justify-center text-[11px] font-black text-[#00B7B5]">
-                                ${data.nama ? data.nama.charAt(0).toUpperCase() : 'W'}
-                            </div>
-                            <div>
-                                <h4 class="text-[11px] font-black text-[#005461] uppercase leading-none">${data.nama || 'Warga'}</h4>
-                                <p class="text-[8px] font-bold text-slate-300 uppercase mt-1 tracking-tighter">${data.tgl || 'Baru saja'}</p>
-                            </div>
-                        </div>
-                        
-                        <p class="text-[14px] text-slate-600 font-medium leading-relaxed mb-6">${data.teks}</p>
-                        
-                        <div class="flex items-center gap-5 pt-4 border-t border-slate-50">
-                            <button onclick="reaksiCuit('${data.id}', 'up')" class="btn-vote flex items-center gap-2 group">
-                                <div class="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center text-[#00B7B5] group-active:bg-[#00B7B5] group-active:text-white transition-all">
-                                    <i class="fas fa-thumbs-up text-[11px]"></i>
+                let posts = [];
+                snapshot.forEach(c => { posts.push({ id: c.key, ...c.val() }); });
+                
+                posts.reverse().forEach(data => {
+                    // Cari data profil user berdasarkan nomor HP yang tersimpan di cuitan
+                    const userData = allUsers[data.hp] || {};
+                    const userFoto = userData.foto;
+                    const inisial = data.nama ? data.nama.charAt(0).toUpperCase() : '?';
+
+                    // Template Foto Profil atau Inisial
+                    const avatarHtml = userFoto 
+                        ? `<img src="${userFoto}" class="user-pic">`
+                        : `<div class="user-pic bg-[#005461] flex items-center justify-center text-[12px] font-black text-[#00B7B5]">${inisial}</div>`;
+
+                    container.innerHTML += `
+                        <div class="bg-white p-5 rounded-[2.5rem] shadow-md border border-slate-50 cuit-card fade-in">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="relative">
+                                    ${avatarHtml}
+                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 border-2 border-white rounded-full"></div>
                                 </div>
-                                <span class="text-[11px] font-black text-[#005461]">${data.up || 0}</span>
-                            </button>
-
-                            <button onclick="reaksiCuit('${data.id}', 'lol')" class="btn-vote flex items-center gap-2 group">
-                                <div class="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 group-active:bg-amber-400 group-active:text-white transition-all">
-                                    <i class="fas fa-face-laugh-squint text-[11px]"></i>
+                                <div>
+                                    <h4 class="text-[12px] font-black text-[#005461] uppercase leading-none tracking-tighter">${data.nama || 'Warga'}</h4>
+                                    <p class="text-[8px] font-bold text-slate-300 uppercase mt-1 tracking-tighter">${data.tgl || 'Baru saja'}</p>
                                 </div>
-                                <span class="text-[11px] font-black text-[#005461]">${data.lol || 0}</span>
-                            </button>
-                        </div>
-                    </div>`;
-            });
+                            </div>
+                            
+                            <p class="text-[14px] text-slate-600 font-medium leading-relaxed mb-6 px-1">${data.teks}</p>
+                            
+                            <div class="flex items-center gap-5 pt-4 border-t border-slate-50">
+                                <button onclick="reaksiCuit('${data.id}', 'up')" class="btn-vote flex items-center gap-2 group">
+                                    <div class="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center text-[#00B7B5] group-active:bg-[#00B7B5] group-active:text-white transition-all shadow-sm">
+                                        <i class="fas fa-thumbs-up text-[11px]"></i>
+                                    </div>
+                                    <span class="text-[11px] font-black text-[#005461]">${data.up || 0}</span>
+                                </button>
+
+                                <button onclick="reaksiCuit('${data.id}', 'lol')" class="btn-vote flex items-center gap-2 group">
+                                    <div class="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 group-active:bg-amber-400 group-active:text-white transition-all shadow-sm">
+                                        <i class="fas fa-face-laugh-squint text-[11px]"></i>
+                                    </div>
+                                    <span class="text-[11px] font-black text-[#005461]">${data.lol || 0}</span>
+                                </button>
+                            </div>
+                        </div>`;
+                });
+            }, { onlyOnce: true }); // Mengambil data user sekali saja tiap update feed
         });
 
         // Search Filter
