@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cuit Sekawan - Diskusi Warga</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
+        .cuit-card { transition: all 0.3s ease; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="pb-32">
+
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] shadow-xl sticky top-0 z-50">
+        <div class="flex justify-between items-center">
+            <h1 class="text-xl font-black tracking-tighter uppercase italic">Cuit<span class="text-[#00B7B5]">.</span></h1>
+            <div id="user-badge" class="hidden bg-white/10 px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+                <div class="w-2 h-2 bg-[#00B7B5] rounded-full animate-pulse"></div>
+                <span id="display-nama" class="text-[10px] font-black uppercase tracking-widest text-[#00B7B5]">Warga</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="mt-6 px-6 space-y-6">
+        
+        <section id="input-section" class="hidden bg-white p-6 rounded-[2.5rem] shadow-lg border border-slate-100">
+            <div class="flex gap-4">
+                <div class="w-10 h-10 bg-[#005461] rounded-2xl flex items-center justify-center text-white shrink-0">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <div class="w-full">
+                    <textarea id="cuit-text" rows="2" placeholder="Apa yang terjadi di RT kita hari ini?" 
+                        class="w-full text-sm font-bold text-[#005461] outline-none placeholder:text-slate-300 resize-none mt-2"></textarea>
+                    <div class="flex justify-end mt-4">
+                        <button id="btn-cuit" class="bg-[#00B7B5] text-[#005461] px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-md">
+                            Kirim Cuit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="login-banner" class="bg-amber-50 p-6 rounded-[2.5rem] border border-amber-200 text-center">
+            <p class="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-3">Mau ikut diskusi warga?</p>
+            <button onclick="location.href='login.html'" class="bg-amber-600 text-white px-8 py-3 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg">Login / Daftar</button>
+        </section>
+
+        <section id="cuit-feed" class="space-y-4">
+            <div class="text-center py-20 text-slate-300 italic text-[10px] font-black uppercase tracking-widest">
+                <i class="fas fa-spinner fa-spin mb-3 text-2xl block text-[#00B7B5]"></i>
+                Memuat Cuitan...
+            </div>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40 active:scale-90 transition-all"><i class="fas fa-home"></i></button>
+            <button onclick="location.reload()" class="flex flex-col items-center justify-center text-[#00B7B5] active:scale-90 transition-all">
+                <i class="fas fa-comment-dots text-lg"></i>
+                <span class="text-[6px] font-black uppercase mt-0.5">Cuit</span>
+            </button>
+            <button onclick="location.href='doku.html'" class="flex flex-col items-center justify-center text-white/40 active:scale-90 transition-all">
+                <i class="fas fa-wallet text-lg"></i>
+                <span class="text-[6px] font-black uppercase mt-0.5 text-amber-400">Doku</span>
+            </button>
+            <button onclick="location.href='cakes.html'" class="flex flex-col items-center justify-center text-white/40 active:scale-90 transition-all">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-[6px] font-black uppercase mt-0.5 text-[#00B7B5]">Cakes</span>
+            </button>
+            <button onclick="location.href='login.html'" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] border-l border-white/10 ml-1"><i class="fas fa-user-gear"></i></button>
+        </nav>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+          authDomain: "websekawan.firebaseapp.com",
+          projectId: "websekawan",
+          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const userNama = localStorage.getItem('userSekawan');
+        const userHp = localStorage.getItem('userHp');
+
+        // UI Logic berdasarkan login
+        if(userNama) {
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('login-banner').classList.add('hidden');
+            document.getElementById('user-badge').classList.remove('hidden');
+            document.getElementById('display-nama').innerText = userNama.split(' ')[0];
+        }
+
+        // Fungsi Kirim Cuit
+        document.getElementById('btn-cuit').onclick = async () => {
+            const text = document.getElementById('cuit-text').value;
+            if(!text.trim()) return alert("Cuitan tidak boleh kosong!");
+
+            const newCuitRef = push(ref(db, 'content/cuit'));
+            await set(newCuitRef, {
+                nama: userNama,
+                hp: userHp,
+                teks: text,
+                tgl: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }),
+                timestamp: Date.now()
+            });
+
+            document.getElementById('cuit-text').value = "";
+        };
+
+        // Load Feed Cuitan
+        onValue(query(ref(db, 'content/cuit'), limitToLast(20)), (snapshot) => {
+            const feed = document.getElementById('cuit-feed');
+            feed.innerHTML = "";
+            
+            const rawData = [];
+            snapshot.forEach(c => { rawData.push(c.val()); });
+            
+            rawData.reverse().forEach(data => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm cuit-card";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-[10px] font-black text-[#005461]">
+                                ${data.nama.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 class="text-[11px] font-black text-[#005461] uppercase">${data.nama}</h4>
+                                <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">${data.tgl}</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-ellipsis-v text-slate-200 text-[10px]"></i>
+                    </div>
+                    <p class="text-[13px] text-slate-700 font-medium leading-relaxed mb-4">${data.teks}</p>
+                    <div class="flex gap-4 border-t border-slate-50 pt-4 mt-2">
+                        <button class="text-[10px] font-black text-slate-300 uppercase flex items-center gap-2">
+                            <i class="far fa-heart"></i> Suka
+                        </button>
+                        <button onclick="alert('Fitur komentar segera hadir!')" class="text-[10px] font-black text-slate-300 uppercase flex items-center gap-2">
+                            <i class="far fa-comment"></i> Komentar
+                        </button>
+                    </div>
+                `;
+                feed.appendChild(card);
+            });
+        });
+    </script>
+</body>
+                  </html>
+                  
