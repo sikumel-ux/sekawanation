@@ -7,23 +7,29 @@
     
     <meta name="theme-color" content="#005461">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
-        .cuit-card { border-left: 4px solid #00B7B5; transition: all 0.2s; }
-        .btn-reaksi:active { transform: scale(1.4); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
+        .cuit-card { border-left: 5px solid #00B7B5; transition: all 0.3s ease; }
+        .btn-vote:active { transform: scale(1.4); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-32 fade-in">
 
     <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl sticky top-0 z-50 border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-xl font-black italic uppercase tracking-tighter">Timeline<span class="text-[#00B7B5]">.</span></h1>
-                <p class="text-[9px] font-bold text-[#00B7B5] uppercase mt-1">Obrolan Warga Sekawan</p>
+                <p class="text-[9px] font-bold text-[#00B7B5] uppercase mt-1 tracking-widest">Kabar Warga Sekawan</p>
             </div>
             <button onclick="location.href='cuit.html'" class="bg-[#00B7B5] text-[#005461] w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
                 <i class="fas fa-plus"></i>
@@ -37,9 +43,9 @@
             <i class="fas fa-search absolute left-5 top-4 text-slate-300 text-xs"></i>
         </div>
 
-        <div id="full-feed" class="space-y-4">
-            <div class="text-center py-20 text-slate-300 italic text-[10px] font-black uppercase tracking-widest animate-pulse">
-                Menarik data...
+        <div id="full-feed" class="space-y-5">
+            <div class="text-center py-20 text-slate-200 italic text-[10px] font-black uppercase tracking-widest animate-pulse">
+                Menarik data terbaru...
             </div>
         </div>
     </main>
@@ -50,13 +56,13 @@
             <button onclick="location.reload()" class="w-11 h-11 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg"><i class="fas fa-comment-dots"></i></button>
             <button onclick="location.href='doku.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-wallet text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Doku</span></button>
             <button onclick="location.href='cakes.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cakes</span></button>
-            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-arrow-left"></i></button>
+            <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-arrow-left"></i></button>
         </nav>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, query, limitToLast, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, query, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -69,55 +75,63 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Fungsi Reaksi/Like
-        window.kasihReaksi = (key) => {
-            const reaksiRef = ref(db, `content/cuit/${key}/reaksi`);
-            runTransaction(reaksiRef, (currentValue) => {
-                return (currentValue || 0) + 1;
+        // Fungsi Reaksi (tipe: 'up' atau 'lol')
+        window.reaksiCuit = (key, tipe) => {
+            const path = `content/cuit/${key}/${tipe}`;
+            runTransaction(ref(db, path), (val) => {
+                return (val || 0) + 1;
             });
         };
 
-        onValue(query(ref(db, 'content/cuit'), limitToLast(50)), (snapshot) => {
+        // Load Feed secara Real-time
+        const cuitRef = query(ref(db, 'content/cuit'), limitToLast(50));
+        onValue(cuitRef, (snapshot) => {
             const container = document.getElementById('full-feed');
             container.innerHTML = "";
 
             if(!snapshot.exists()) {
-                container.innerHTML = "<p class='text-center text-[10px] font-black text-slate-300 uppercase py-10'>Belum ada cuitan.</p>";
+                container.innerHTML = "<div class='bg-white p-10 rounded-[2.5rem] text-center shadow-sm'><p class='text-[10px] font-black text-slate-300 uppercase'>Belum ada cuitan pagi ini.</p></div>";
                 return;
             }
 
             let posts = [];
-            snapshot.forEach(c => { 
-                posts.push({ key: c.key, ...c.val() }); 
-            });
+            snapshot.forEach(c => { posts.push({ id: c.key, ...c.val() }); });
             
             posts.reverse().forEach(data => {
                 container.innerHTML += `
-                    <div class="bg-white p-5 rounded-[2.2rem] shadow-sm border border-slate-50 cuit-card">
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-[#005461] rounded-2xl flex items-center justify-center text-[10px] font-black text-[#00B7B5]">
-                                    ${data.nama.charAt(0).toUpperCase()}
-                                </div>
-                                <div>
-                                    <h4 class="text-[11px] font-black text-[#005461] uppercase leading-none">${data.nama}</h4>
-                                    <p class="text-[8px] font-bold text-slate-300 uppercase mt-1">${data.tgl}</p>
-                                </div>
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-md border border-slate-50 cuit-card fade-in">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-9 h-9 bg-[#005461] rounded-2xl flex items-center justify-center text-[11px] font-black text-[#00B7B5]">
+                                ${data.nama ? data.nama.charAt(0).toUpperCase() : 'W'}
+                            </div>
+                            <div>
+                                <h4 class="text-[11px] font-black text-[#005461] uppercase leading-none">${data.nama || 'Warga'}</h4>
+                                <p class="text-[8px] font-bold text-slate-300 uppercase mt-1 tracking-tighter">${data.tgl || 'Baru saja'}</p>
                             </div>
                         </div>
-                        <p class="text-[13px] text-slate-600 font-medium leading-relaxed mb-4">${data.teks}</p>
                         
-                        <div class="flex items-center gap-4 pt-3 border-t border-slate-50">
-                            <button onclick="kasihReaksi('${data.key}')" class="btn-reaksi flex items-center gap-2 text-[#005461] transition-all">
-                                <i class="fas fa-heart text-rose-400"></i>
-                                <span class="text-[11px] font-black">${data.reaksi || 0}</span>
+                        <p class="text-[14px] text-slate-600 font-medium leading-relaxed mb-6">${data.teks}</p>
+                        
+                        <div class="flex items-center gap-5 pt-4 border-t border-slate-50">
+                            <button onclick="reaksiCuit('${data.id}', 'up')" class="btn-vote flex items-center gap-2 group">
+                                <div class="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center text-[#00B7B5] group-active:bg-[#00B7B5] group-active:text-white transition-all">
+                                    <i class="fas fa-thumbs-up text-[11px]"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-[#005461]">${data.up || 0}</span>
                             </button>
-                            <div class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Suka</div>
+
+                            <button onclick="reaksiCuit('${data.id}', 'lol')" class="btn-vote flex items-center gap-2 group">
+                                <div class="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 group-active:bg-amber-400 group-active:text-white transition-all">
+                                    <i class="fas fa-face-laugh-squint text-[11px]"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-[#005461]">${data.lol || 0}</span>
+                            </button>
                         </div>
                     </div>`;
             });
         });
 
+        // Search Filter
         document.getElementById('search-cuit').oninput = (e) => {
             const val = e.target.value.toLowerCase();
             document.querySelectorAll('.cuit-card').forEach(card => {
