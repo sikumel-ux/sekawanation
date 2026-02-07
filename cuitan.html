@@ -3,116 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cuit Sekawan</title>
+    <title>Timeline Sekawan</title>
+    
+    <meta name="theme-color" content="#005461">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
+        .cuit-card { border-left: 4px solid #00B7B5; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="pb-32">
 
-    <header class="p-6 bg-[#005461] text-white rounded-b-[3rem] sticky top-0 z-50">
+    <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl sticky top-0 z-50 border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-center">
-            <h1 class="text-xl font-black italic uppercase">Cuit<span class="text-[#00B7B5]">.</span></h1>
-            <div id="user-badge" class="hidden bg-white/10 px-3 py-1 rounded-full border border-white/10 text-[10px] font-black text-[#00B7B5] uppercase tracking-widest">
-                <i class="fas fa-circle text-[6px] animate-pulse mr-1"></i> <span id="display-nama">Warga</span>
+            <div>
+                <h1 class="text-xl font-black italic uppercase tracking-tighter">Timeline<span class="text-[#00B7B5]">.</span></h1>
+                <p class="text-[9px] font-bold text-[#00B7B5] uppercase mt-1">Obrolan Warga Sekawan</p>
             </div>
+            <button onclick="location.href='cuit.html'" class="bg-[#00B7B5] text-[#005461] w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
     </header>
 
-    <main class="mt-6 px-6 space-y-6">
-        <section id="input-section" class="hidden bg-white p-6 rounded-[2.5rem] shadow-lg border border-slate-100">
-            <textarea id="cuit-text" rows="2" placeholder="Apa kabar hari ini, Pak/Bu?" 
-                class="w-full text-sm font-bold text-[#005461] outline-none placeholder:text-slate-200 resize-none"></textarea>
-            <div class="flex justify-end mt-4">
-                <button id="btn-cuit" class="bg-[#00B7B5] text-[#005461] px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md active:scale-95 transition-all">
-                    Kirim Cuit
-                </button>
+    <main class="mt-6 px-6">
+        <div class="mb-6 relative">
+            <input type="text" id="search-cuit" placeholder="Cari percakapan..." class="w-full bg-white border-none p-4 pl-12 rounded-3xl text-xs font-bold shadow-sm outline-none ring-2 ring-transparent focus:ring-[#00B7B5] transition-all">
+            <i class="fas fa-search absolute left-5 top-4 text-slate-300 text-xs"></i>
+        </div>
+
+        <div id="full-feed" class="space-y-4">
+            <div class="text-center py-20 text-slate-300 italic text-[10px] font-black uppercase tracking-widest animate-pulse">
+                Menarik data...
             </div>
-        </section>
-
-        <section id="login-banner" class="bg-amber-50 p-6 rounded-[2.5rem] border border-amber-200 text-center">
-            <p class="text-[10px] font-black text-amber-700 uppercase mb-3">Login untuk ikut bercuit</p>
-            <button onclick="location.href='login.html'" class="bg-amber-600 text-white px-8 py-2.5 rounded-full text-[9px] font-black uppercase shadow-lg">Login</button>
-        </section>
-
-        <section id="full-feed" class="space-y-4"></section>
+        </div>
     </main>
 
     <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-md p-3 rounded-full flex justify-around items-center shadow-2xl">
-            <button onclick="location.href='index.html'" class="text-white/40"><i class="fas fa-home text-xl"></i></button>
-            <button onclick="location.reload()" class="text-[#00B7B5] bg-white w-10 h-10 rounded-full"><i class="fas fa-comment-dots"></i></button>
-            <button onclick="location.href='doku.html'" class="text-white/40"><i class="fas fa-wallet text-xl"></i></button>
-            <button onclick="location.href='login.html'" class="text-white/40"><i class="fas fa-user-gear text-xl"></i></button>
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-home"></i></button>
+            <button onclick="location.reload()" class="w-11 h-11 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg"><i class="fas fa-comment-dots"></i></button>
+            <button onclick="location.href='doku.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-wallet text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Doku</span></button>
+            <button onclick="location.href='cakes.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cakes</span></button>
+            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-arrow-left"></i></button>
         </nav>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
-          authDomain: "websekawan.firebaseapp.com",
-          projectId: "websekawan",
-          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
-          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+            authDomain: "websekawan.firebaseapp.com",
+            projectId: "websekawan",
+            databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const uNama = localStorage.getItem('userSekawan');
-        const uHp = localStorage.getItem('userHp');
-
-        if(uNama) {
-            document.getElementById('input-section').classList.remove('hidden');
-            document.getElementById('login-banner').classList.add('hidden');
-            document.getElementById('user-badge').classList.remove('hidden');
-            document.getElementById('display-nama').innerText = uNama.split(' ')[0];
-        }
-
-        // POSTING
-        document.getElementById('btn-cuit').onclick = async () => {
-            const teks = document.getElementById('cuit-text').value;
-            if(!teks.trim()) return;
-            
-            try {
-                const newRef = push(ref(db, 'content/cuit'));
-                await set(newRef, {
-                    nama: uNama,
-                    teks: teks,
-                    tgl: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }),
-                    timestamp: Date.now()
-                });
-                document.getElementById('cuit-text').value = "";
-            } catch(e) { alert("Cek Rules Firebase!"); }
-        };
-
-        // LOAD SEMUA
-        onValue(query(ref(db, 'content/cuit'), limitToLast(20)), (snapshot) => {
+        onValue(query(ref(db, 'content/cuit'), limitToLast(50)), (snapshot) => {
             const container = document.getElementById('full-feed');
             container.innerHTML = "";
-            const data = [];
-            snapshot.forEach(c => { data.push(c.val()); });
-            data.reverse().forEach(item => {
+
+            if(!snapshot.exists()) {
+                container.innerHTML = "<p class='text-center text-[10px] font-black text-slate-300 uppercase py-10'>Belum ada cuitan.</p>";
+                return;
+            }
+
+            let posts = [];
+            snapshot.forEach(c => { posts.push(c.val()); });
+            
+            posts.reverse().forEach(data => {
                 container.innerHTML += `
-                    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-50 shadow-sm">
+                    <div class="bg-white p-5 rounded-[2.2rem] shadow-sm border border-slate-50 cuit-card">
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="w-8 h-8 bg-[#005461] rounded-full flex items-center justify-center text-[10px] font-black text-[#00B7B5]">${item.nama.charAt(0)}</div>
+                            <div class="w-8 h-8 bg-[#005461] rounded-2xl flex items-center justify-center text-[10px] font-black text-[#00B7B5]">
+                                ${data.nama.charAt(0).toUpperCase()}
+                            </div>
                             <div>
-                                <h4 class="text-[11px] font-black text-[#005461] uppercase">${item.nama}</h4>
-                                <p class="text-[8px] font-bold text-slate-300 uppercase">${item.tgl}</p>
+                                <h4 class="text-[11px] font-black text-[#005461] uppercase leading-none">${data.nama}</h4>
+                                <p class="text-[8px] font-bold text-slate-300 uppercase mt-1">${data.tgl}</p>
                             </div>
                         </div>
-                        <p class="text-[13px] text-slate-700 font-medium leading-relaxed">${item.teks}</p>
-                    </div>
-                `;
+                        <p class="text-[12px] text-slate-600 font-medium leading-relaxed">${data.teks}</p>
+                    </div>`;
             });
         });
+
+        // Search Filter
+        document.getElementById('search-cuit').oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            document.querySelectorAll('.cuit-card').forEach(card => {
+                card.style.display = card.innerText.toLowerCase().includes(val) ? 'block' : 'none';
+            });
+        };
     </script>
 </body>
 </html>
