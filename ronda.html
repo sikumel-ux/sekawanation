@@ -2,108 +2,140 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal Ronda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jadwal Ronda - Sekawan</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#005461">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Active"));
+      }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F4F4; color: #005461; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
+        
+        /* Efek Stabilo untuk Hari Ini */
+        .hari-ini { 
+            background: #00B7B5 !important; 
+            border-color: #005461 !important;
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(0, 183, 181, 0.4);
+        }
+        .hari-ini h3, .hari-ini p, .hari-ini span { color: #005461 !important; }
+        .hari-ini .badge { background: #005461 !important; color: #00B7B5 !important; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="pb-32">
-    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative overflow-hidden">
-        <div class="relative z-10">
-            <p class="text-[10px] font-black tracking-[0.3em] opacity-60 uppercase mb-2 text-[#00B7B5]">Keamanan Lingkungan</p>
-            <h1 class="text-3xl font-black tracking-tighter italic uppercase leading-none">Jadwal<br>Ronda.</h1>
+<body class="pb-40">
+
+    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative border-b-4 border-[#00B7B5]">
+        <div class="flex justify-between items-start mb-2">
+            <div>
+                <h1 class="text-2xl font-black italic uppercase tracking-tighter">Jadwal Ronda<span class="text-[#00B7B5]">.</span></h1>
+                <p id="tgl-skrg" class="text-[9px] font-bold text-[#00B7B5] uppercase tracking-[0.2em] mt-1">Memuat Hari...</p>
+            </div>
+            <i class="fas fa-shield-halved text-4xl opacity-20 rotate-12"></i>
         </div>
-        <i class="fas fa-shield-halved absolute -right-4 -bottom-4 text-9xl text-white/5 rotate-12"></i>
     </header>
 
-    <main class="p-6 -mt-6">
-        <a href="https://pos.sekawan.my.id" class="block bg-orange-500 text-white p-6 rounded-[2.5rem] shadow-lg shadow-orange-500/30 mb-8 relative overflow-hidden active:scale-95 transition-all">
-            <div class="relative z-10 flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-black uppercase tracking-tighter">Ambil Jimpitan</h2>
-                    <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Klik untuk input data jimpitan</p>
+    <main class="mt-[-30px] px-6 space-y-6 relative z-10">
+        
+        <a href="https://pos.sekawan.com" class="block bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-[#00B7B5] active:scale-95 transition-all overflow-hidden relative">
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-12 h-12 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-[#005461] shadow-lg">
+                    <i class="fas fa-coins text-xl"></i>
                 </div>
-                <i class="fas fa-coins text-3xl opacity-80"></i>
+                <div>
+                    <h2 class="text-sm font-black text-[#005461] uppercase italic">Input Jimpitan</h2>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Lapor setoran warga di sini</p>
+                </div>
             </div>
-            <i class="fas fa-sack-dollar absolute -right-2 -top-2 text-6xl text-white/10 -rotate-12"></i>
+            <i class="fas fa-sack-dollar absolute -right-4 -bottom-4 text-6xl text-[#00B7B5]/10 -rotate-12"></i>
         </a>
 
-        <div id="container-ronda" class="space-y-4">
-            <p class="text-center text-xs font-bold opacity-50 py-10">MEMUAT JADWAL...</p>
+        <div id="container-ronda" class="space-y-3">
+            <div class="text-center py-20 opacity-20"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
         </div>
+
     </main>
 
-    <nav class="fixed bottom-6 left-6 right-6 bg-[#005461]/90 backdrop-blur-lg rounded-[2.5rem] p-4 shadow-2xl z-50 border border-white/10 text-white/50">
-        <div class="flex justify-around items-center">
-            <a href="index.html" class="flex flex-col items-center hover:text-[#00B7B5] transition-all">
-                <i class="fas fa-home text-xl"></i>
-                <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Home</span>
-            </a>
-            <a href="ronda.html" class="text-[#00B7B5] flex flex-col items-center">
-                <i class="fas fa-shield-halved text-xl"></i>
-                <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Ronda</span>
-            </a>
-            <div id="nav-auth">
-                <a href="admin.html" class="flex flex-col items-center hover:text-[#00B7B5] transition-all">
-                    <i class="fas fa-sign-in-alt text-xl"></i>
-                    <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Login</span>
-                </a>
-            </div>
-        </div>
-    </nav>
+    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-home"></i></button>
+            <button onclick="location.href='cuitan.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-comment-dots text-lg"></i></button>
+            
+            <button onclick="location.reload()" class="w-11 h-11 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg">
+                <i class="fas fa-shield-halved"></i>
+            </button>
+            
+            <button onclick="location.href='cakes.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cakes</span></button>
+            <button onclick="location.href='profile.html'" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-user-gear"></i></button>
+        </nav>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
-          authDomain: "websekawan.firebaseapp.com",
-          projectId: "websekawan",
-          databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
-          appId: "1:407413490869:web:093f8a187261c68ea36afc"
+            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+            authDomain: "websekawan.firebaseapp.com",
+            projectId: "websekawan",
+            databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            appId: "1:407413490869:web:093f8a187261c68ea36afc"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- CEK STATUS LOGIN DI NAVBAR ---
-        const session = localStorage.getItem('isAdmin');
-        if (session === 'true') {
-            document.getElementById('nav-auth').innerHTML = `
-                <button onclick="handleLogout()" class="flex flex-col items-center text-red-400">
-                    <i class="fas fa-power-off text-xl"></i>
-                    <span class="text-[8px] font-black uppercase mt-1 tracking-widest">Logout</span>
-                </button>
-            `;
-        }
-        window.handleLogout = () => {
-            localStorage.removeItem('isAdmin');
-            window.location.href = 'index.html';
-        };
+        // --- LOGIC HARI INI ---
+        const listHari = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
+        const d = new Date();
+        const hariIni = listHari[d.getDay()];
+        const tglStr = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+        document.getElementById('tgl-skrg').innerText = tglStr;
 
         // --- AMBIL DATA JADWAL ---
         onValue(ref(db, 'content/ronda'), (snap) => {
             const container = document.getElementById('container-ronda');
             container.innerHTML = "";
+            
             if(!snap.exists()) {
-                container.innerHTML = "<p class='text-center text-xs font-bold opacity-40 py-10 uppercase tracking-widest'>Belum ada jadwal ronda</p>";
+                container.innerHTML = "<p class='text-center text-[10px] font-black opacity-30 py-20 uppercase tracking-[0.3em]'>Jadwal Belum Diatur</p>";
                 return;
             }
-            snap.forEach(child => {
-                const d = child.val();
-                container.innerHTML += `
-                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-xs font-black text-[#018790] uppercase tracking-widest">${d.hari}</h3>
-                        <span class="bg-[#00B7B5]/10 text-[#018790] text-[9px] px-3 py-1 rounded-full font-black uppercase">Regu Jaga</span>
-                    </div>
-                    <p class="text-lg font-black leading-tight text-slate-800 uppercase">${d.petugas}</p>
-                </div>`;
+
+            // Urutan hari biar enak dilihat (Senin -> Minggu)
+            const urutan = ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu", "minggu"];
+            const dataRonda = snap.val();
+
+            urutan.forEach(h => {
+                // Cari data yang harinya cocok
+                const key = Object.keys(dataRonda).find(k => dataRonda[k].hari.toLowerCase() === h);
+                if (key) {
+                    const item = dataRonda[key];
+                    const isToday = h === hariIni;
+                    
+                    container.innerHTML += `
+                    <div class="bg-white p-5 rounded-[2.2rem] shadow-sm border border-slate-100 transition-all duration-500 ${isToday ? 'hari-ini' : ''}">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] ${isToday ? '' : 'text-[#018790]'}">${item.hari}</h3>
+                            <span class="badge ${isToday ? '' : 'bg-slate-50 text-slate-400'} text-[8px] px-3 py-1 rounded-full font-black uppercase">
+                                ${isToday ? 'Sedang Bertugas' : 'Jadwal Rutin'}
+                            </span>
+                        </div>
+                        <p class="text-[13px] font-bold leading-tight ${isToday ? '' : 'text-slate-600'} uppercase">
+                            ${item.petugas}
+                        </p>
+                    </div>`;
+                }
             });
         });
     </script>
