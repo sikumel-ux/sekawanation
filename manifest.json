@@ -1,0 +1,22 @@
+{
+  "short_name": "Sekawan",
+  "name": "Sekawan - Media Warga",
+  "icons": [
+    {
+      "src": "sekawan.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "sekawan.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#F8FAFB",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#005461",
+  "description": "Aplikasi komunitas warga Sekawan."
+}
