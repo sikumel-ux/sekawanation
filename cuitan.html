@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Timeline Sekawan</title>
+    <title>Cuitan Sekawan</title>
+    <link rel="manifest" href="manifest.json">
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log("Service Worker Registered"));
+  }
+</script>
     
     <meta name="theme-color" content="#005461">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,8 +34,8 @@
     <header class="p-6 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl sticky top-0 z-50 border-b-4 border-[#00B7B5]">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-black italic uppercase tracking-tighter">Timeline<span class="text-[#00B7B5]">.</span></h1>
-                <p class="text-[9px] font-bold text-[#00B7B5] uppercase mt-1 tracking-widest">Kabar Warga Sekawan</p>
+                <h1 class="text-xl font-black italic uppercase tracking-tighter">Cuitan<span class="text-[#00B7B5]">.</span></h1>
+                <p class="text-[9px] font-bold text-[#00B7B5] uppercase mt-1 tracking-widest">Cuitan Warga</p>
             </div>
             <button onclick="location.href='cuit.html'" class="bg-[#00B7B5] text-[#005461] w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
                 <i class="fas fa-plus"></i>
