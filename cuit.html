@@ -7,7 +7,6 @@
     
     <meta name="theme-color" content="#005461">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -15,20 +14,16 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
-        .fade-up { animation: fadeUp 0.4s ease-out; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Efek fokus pada textarea */
-        textarea:focus { background: #ffffff !important; border-color: #00B7B5 !important; }
+        textarea:focus { background: white !important; border-color: #00B7B5 !important; }
     </style>
 </head>
-<body class="pb-32 fade-up">
+<body class="pb-32">
 
     <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative border-b-4 border-[#00B7B5]">
-        <div class="flex justify-between items-start mb-4">
+        <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-black italic tracking-tighter uppercase">Cuit<span class="text-[#00B7B5]">.</span></h1>
-                <p class="text-[9px] font-bold text-[#00B7B5] uppercase tracking-[0.3em] mt-1 text-justify">Bagikan Pikiranmu</p>
+                <h1 class="text-2xl font-black italic uppercase tracking-tighter">Cuit Baru<span class="text-[#00B7B5]">.</span></h1>
+                <p class="text-[9px] font-bold text-[#00B7B5] uppercase mt-1">Apa kabar hari ini, Bro?</p>
             </div>
             <button onclick="history.back()" class="bg-white/10 p-3 rounded-2xl border border-white/5 active:scale-90 transition-all">
                 <i class="fas fa-times text-[#00B7B5]"></i>
@@ -38,28 +33,22 @@
 
     <main class="mt-8 px-6">
         <section class="bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-50">
-            <div class="mb-4">
-                <label class="text-[8px] font-black text-slate-400 uppercase ml-4 mb-2 block">Apa yang ingin kamu sampaikan?</label>
-                <textarea id="teks-cuitan" rows="8" placeholder="Tuliskan di sini, Bro..." class="w-full bg-slate-50 p-6 rounded-[2rem] text-[15px] font-medium outline-none border-2 border-transparent transition-all resize-none shadow-inner"></textarea>
-            </div>
+            <textarea id="teks-cuitan" rows="8" placeholder="Tuliskan di sini, Bro..." class="w-full bg-slate-50 p-6 rounded-[2rem] text-[15px] font-medium outline-none border-2 border-transparent transition-all resize-none shadow-inner mb-6"></textarea>
 
             <button id="btn-post-cuit" class="w-full bg-[#005461] text-[#00B7B5] py-5 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all flex items-center justify-center gap-3">
                 POSTING SEKARANG <i class="fas fa-paper-plane text-xs"></i>
             </button>
         </section>
-
-        <div class="mt-8 bg-amber-50 p-6 rounded-[2rem] border border-amber-100/50">
-            <div class="flex gap-4">
-                <div class="bg-amber-100 w-10 h-10 rounded-2xl flex items-center justify-center flex-none">
-                    <i class="fas fa-lightbulb text-amber-600"></i>
-                </div>
-                <div>
-                    <h5 class="text-[10px] font-black text-amber-900 uppercase">Tips Cuit</h5>
-                    <p class="text-[11px] text-amber-800/70 font-medium leading-relaxed mt-1">Gunakan bahasa yang sopan dan asik biar warga lain senang kasih Like dan LOL! 🤣</p>
-                </div>
-            </div>
-        </div>
     </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-around items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-home"></i></button>
+            <button onclick="location.href='cuitan.html'" class="w-10 h-10 flex items-center justify-center text-[#00B7B5]"><i class="fas fa-arrow-left"></i></button>
+            <div class="w-12 h-1 bg-white/10 rounded-full"></div>
+            <button onclick="location.href='profile.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-user-gear"></i></button>
+        </nav>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -81,46 +70,33 @@
 
         if(!uHp) location.href = 'login.html';
 
-        // LOGIC POSTING
         document.getElementById('btn-post-cuit').onclick = async () => {
             const teks = document.getElementById('teks-cuitan').value.trim();
-            
-            if(!teks) return alert("Waduh, masa cuitannya kosong? Tulis sesuatu dong, Bro!");
+            if(!teks) return alert("Cuitan jangan kosong dong!");
 
             const btn = document.getElementById('btn-post-cuit');
             btn.disabled = true;
-            btn.innerHTML = `MENGIRIM... <i class="fas fa-spinner fa-spin ml-2"></i>`;
+            btn.innerText = "MENGIRIM...";
 
             try {
-                // Mendapatkan format tanggal & jam yang rapi
                 const skrg = new Date();
-                const tglFormat = skrg.toLocaleDateString('id-ID', { 
-                    day: 'numeric', 
-                    month: 'short', 
-                    year: 'numeric' 
-                });
-                const jamFormat = skrg.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                }).replace('.', ':');
+                const tglStr = skrg.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                const jamStr = skrg.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
 
                 await set(push(ref(db, 'content/cuit')), {
                     hp: uHp,
                     nama: uNama,
                     teks: teks,
-                    tgl: `${tglFormat} • ${jamFormat}`,
+                    tgl: `${tglStr} • ${jamStr}`,
                     timestamp: Date.now(),
                     up: 0,
                     lol: 0
-                    // foto_post ditiadakan agar performa enteng
                 });
-                
-                // Berhasil, balik ke Timeline
                 location.href = 'cuitan.html';
             } catch (err) {
-                alert("Gagal memposting. Coba cek sinyal lu, Bro!");
+                alert("Gagal posting!");
                 btn.disabled = false;
-                btn.innerHTML = `POSTING SEKARANG <i class="fas fa-paper-plane ml-2"></i>`;
+                btn.innerText = "POSTING SEKARANG";
             }
         };
     </script>
