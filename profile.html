@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Profil Warga - Sekawan</title>
+    
+    <meta name="theme-color" content="#005461">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
+        .profile-ring { border: 4px solid #00B7B5; padding: 4px; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body class="pb-32 fade-in">
+
+    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative border-b-4 border-[#00B7B5] text-center">
+        <h1 class="text-xl font-black italic uppercase tracking-tighter mb-1">Profil Warga<span class="text-[#00B7B5]">.</span></h1>
+        <p class="text-[9px] font-bold text-[#00B7B5] uppercase tracking-widest">Identitas Digital Sekawan</p>
+    </header>
+
+    <main class="mt-[-40px] px-8 relative z-10">
+        <section class="bg-white p-8 rounded-[3rem] shadow-xl border border-slate-50 text-center">
+            <div class="relative w-32 h-32 mx-auto mb-6">
+                <div class="w-full h-full rounded-[2.5rem] bg-slate-100 overflow-hidden profile-ring shadow-inner">
+                    <img id="avatar-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Warga" class="w-full h-full object-cover">
+                </div>
+                <label for="input-foto" class="absolute bottom-0 right-0 bg-[#00B7B5] text-[#005461] w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg border-4 border-white cursor-pointer active:scale-90 transition-all">
+                    <i class="fas fa-camera text-sm"></i>
+                </label>
+                <input type="file" id="input-foto" class="hidden" accept="image/*">
+            </div>
+
+            <div class="space-y-1 mb-8">
+                <h2 id="view-nama" class="text-xl font-black text-[#005461] uppercase italic">---</h2>
+                <p id="view-hp" class="text-[10px] font-bold text-slate-300 tracking-[0.2em]">08XX-XXXX-XXXX</p>
+            </div>
+
+            <div class="space-y-4 text-left">
+                <div class="group">
+                    <label class="text-[8px] font-black text-slate-400 uppercase ml-4 mb-1 block">Link Foto (Opsional)</label>
+                    <input type="text" id="foto-url" placeholder="Paste link foto kamu di sini..." class="w-full bg-slate-50 p-4 rounded-2xl text-xs font-bold outline-none border border-transparent focus:border-[#00B7B5]">
+                </div>
+                
+                <button id="btn-update" class="w-full bg-[#005461] text-[#00B7B5] py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">
+                    Simpan Perubahan
+                </button>
+            </div>
+        </section>
+
+        <div class="mt-6 bg-[#00B7B5]/10 p-5 rounded-[2rem] border border-[#00B7B5]/20">
+            <p class="text-[10px] text-[#005461] font-medium leading-relaxed italic text-center">
+                "Warga yang keren adalah warga yang profilnya nggak kosong!"
+            </p>
+        </div>
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-home"></i></button>
+            <button onclick="location.href='cuitan.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-comment-dots"></i></button>
+            <div class="w-11 h-11 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg"><i class="fas fa-user-gear"></i></div>
+            <button onclick="location.href='cakes.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-book-open"></i></button>
+            <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-arrow-left"></i></button>
+        </nav>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+            authDomain: "websekawan.firebaseapp.com",
+            projectId: "websekawan",
+            databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        const uHp = localStorage.getItem('userHp');
+        const uNama = localStorage.getItem('userSekawan');
+
+        if(!uHp) location.href = 'login.html';
+
+        document.getElementById('view-nama').innerText = uNama;
+        document.getElementById('view-hp').innerText = uHp;
+
+        // LOAD DATA PROFILE SAAT INI
+        onValue(ref(db, `users/${uHp}`), (snapshot) => {
+            if(snapshot.exists()) {
+                const data = snapshot.val();
+                if(data.foto) {
+                    document.getElementById('avatar-img').src = data.foto;
+                    document.getElementById('foto-url').value = data.foto;
+                }
+            }
+        });
+
+        // UPDATE PROFILE
+        document.getElementById('btn-update').onclick = async () => {
+            const newFoto = document.getElementById('foto-url').value;
+            if(!newFoto) return alert("Masukkan link foto dulu, Bro!");
+
+            const btn = document.getElementById('btn-update');
+            btn.disabled = true; btn.innerText = "UPDATING...";
+
+            try {
+                await update(ref(db, `users/${uHp}`), {
+                    foto: newFoto
+                });
+                alert("Profil berhasil diupdate!");
+            } catch (e) {
+                alert("Gagal update profil!");
+            } finally {
+                btn.disabled = false; btn.innerText = "SIMPAN PERUBAHAN";
+            }
+        };
+    </script>
+</body>
+                                                                                                                                                                               </html>
+  
