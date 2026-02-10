@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catet!</title>
+    <title>Sekawan - Catet!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; }
         
-        /* Efek Animate-in */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -25,9 +24,9 @@
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-black tracking-tighter uppercase">CATET<span class="text-[#00B7B5]">!</span></h1>
-                <p class="text-[9px] font-bold text-[#00B7B5] uppercase tracking-[0.2em]">Catatan Pengeluaran</p>
+                <p class="text-[9px] font-bold text-[#00B7B5] uppercase tracking-[0.2em]">Pencatatan Pengeluaran</p>
             </div>
-            <i class="fas fa-pen-fancy text-2xl text-[#00B7B5]"></i>
+            <i class="fas fa-wallet text-2xl text-[#00B7B5]"></i>
         </div>
     </header>
 
@@ -39,18 +38,18 @@
 
         <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 mb-8 space-y-4">
             <div>
-                <label class="text-[9px] font-black text-[#00B7B5] uppercase ml-2 mb-1 block">Tanggal Transaksi</label>
+                <label class="text-[9px] font-black text-[#00B7B5] uppercase ml-2 mb-1 block">Tanggal</label>
                 <input type="date" id="catet-tgl" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none focus:ring-2 focus:ring-[#00B7B5]">
             </div>
             
             <div>
                 <label class="text-[9px] font-black text-[#00B7B5] uppercase ml-2 mb-1 block">Keterangan</label>
-                <input type="text" id="catet-item" placeholder="Kuota internet" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
+                <input type="text" id="catet-item" placeholder="Beli apa hari ini?" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
             </div>
 
             <div>
                 <label class="text-[9px] font-black text-[#00B7B5] uppercase ml-2 mb-1 block">Nominal (Rp)</label>
-                <input type="number" id="catet-nominal" placeholder="Nominal" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
+                <input type="number" id="catet-nominal" placeholder="Contoh: 50000" class="w-full px-5 py-4 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
             </div>
             
             <button onclick="simpanCatatan()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl shadow-lg uppercase text-xs active:scale-95 transition-all mt-2">
@@ -70,7 +69,13 @@
             <button onclick="location.href='index.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white rounded-full shadow-lg">
                 <i class="fas fa-home text-lg"></i>
             </button>
-            <div id="auth-section"></div>
+            
+            <button onclick="location.href='profile.html'" class="w-12 h-12 flex items-center justify-center text-white bg-white/10 rounded-full">
+                <i class="fas fa-user text-lg"></i>
+            </button>
+
+            <div id="auth-section">
+                </div>
         </nav>
     </div>
 
@@ -90,19 +95,17 @@
         const db = getDatabase(app);
         const userHp = localStorage.getItem('userHp');
 
-        // Logic Auth Navbar
+        // Logic Navbar Logout
         const authSection = document.getElementById('auth-section');
         if(userHp) {
             authSection.innerHTML = `
-                <button onclick="handleLogout()" class="flex items-center gap-3 bg-red-500/20 px-6 py-2 rounded-full text-red-400 border border-red-500/20">
-                    <i class="fas fa-right-from-bracket text-lg"></i>
-                    <span class="text-[10px] font-black uppercase tracking-widest">Logout</span>
+                <button onclick="handleLogout()" class="w-12 h-12 flex items-center justify-center text-red-400 bg-white rounded-full shadow-lg">
+                    <i class="fas fa-power-off text-lg"></i>
                 </button>`;
         } else {
             authSection.innerHTML = `
-                <button onclick="location.href='login.html'" class="flex items-center gap-3 bg-white/10 px-6 py-2 rounded-full text-white">
-                    <i class="fas fa-user-circle text-lg text-[#00B7B5]"></i>
-                    <span class="text-[10px] font-black uppercase tracking-widest">Login</span>
+                <button onclick="location.href='login.html'" class="w-12 h-12 flex items-center justify-center text-[#00B7B5] bg-white rounded-full shadow-lg">
+                    <i class="fas fa-right-to-bracket text-lg"></i>
                 </button>`;
             alert("Harap login terlebih dahulu!");
             location.href = 'login.html';
@@ -169,5 +172,5 @@
         };
     </script>
 </body>
-    </html>
-        
+                </html>
+            
