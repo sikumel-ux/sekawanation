@@ -68,16 +68,11 @@
                 <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Update Jadwal Ronda</h3>
                 <div class="space-y-3">
                     <select id="ronda-id" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold uppercase border-none text-[#005461]">
-                        <option value="senin">Senin</option>
-                        <option value="selasa">Selasa</option>
-                        <option value="rabu">Rabu</option>
-                        <option value="kamis">Kamis</option>
-                        <option value="jumat">Jumat</option>
-                        <option value="sabtu">Sabtu</option>
-                        <option value="minggu">Minggu</option>
+                        <option value="senin">Senin</option><option value="selasa">Selasa</option><option value="rabu">Rabu</option>
+                        <option value="kamis">Kamis</option><option value="jumat">Jumat</option><option value="sabtu">Sabtu</option><option value="minggu">Minggu</option>
                     </select>
                     <textarea id="ronda-petugas" placeholder="Nama-nama Petugas..." class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold h-20 border-none"></textarea>
-                    <button onclick="saveRonda()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] shadow-lg active:scale-95 transition-all">Update Petugas Ronda</button>
+                    <button onclick="saveRonda()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px] shadow-lg">Update Petugas Ronda</button>
                 </div>
                 <div id="list-ronda-preview" class="mt-4 grid grid-cols-2 gap-2"></div>
             </div>
@@ -96,12 +91,40 @@
                 <button onclick="saveInfo()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px]">Terbitkan Berita</button>
                 <div id="list-info" class="mt-4 space-y-2"></div>
             </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Agenda RT</h3>
+                <input type="text" id="agenda-judul" placeholder="Kegiatan" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 border-none">
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <input type="text" id="agenda-tgl" placeholder="Tgl" class="px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
+                    <input type="text" id="agenda-jam" placeholder="Jam" class="px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold border-none">
+                </div>
+                <button onclick="saveAgenda()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px]">Tambah Agenda</button>
+                <div id="list-agenda" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Blog & Artikel</h3>
+                <input type="text" id="blog-judul" placeholder="Judul" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 border-none">
+                <textarea id="blog-isi" placeholder="Isi..." class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold h-24 mb-4 border-none"></textarea>
+                <button onclick="saveBlog()" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl uppercase text-[10px]">Posting Blog</button>
+                <div id="list-blog" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#018790]/10">
+                <h3 class="text-xs font-black text-[#018790] uppercase mb-4 tracking-widest">Lapak Warga</h3>
+                <input type="text" id="lapak-produk" placeholder="Nama Barang" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 border-none">
+                <input type="number" id="lapak-harga" placeholder="Harga" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-2 border-none">
+                <input type="number" id="lapak-wa" placeholder="WA Penjual" class="w-full px-5 py-3 bg-[#F4F4F4] rounded-2xl text-sm font-bold mb-4 border-none">
+                <button onclick="saveLapak()" class="w-full bg-[#005461] text-white font-black py-4 rounded-2xl uppercase text-[10px]">Posting Barang</button>
+                <div id="list-lapak" class="mt-4 space-y-2"></div>
+            </div>
         </section>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove, push, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
@@ -114,7 +137,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- TAB LOGIC ---
         window.openTab = (tabName) => {
             const contents = document.getElementsByClassName('tab-content');
             const btns = document.getElementsByClassName('tab-btn');
@@ -128,20 +150,14 @@
             event.currentTarget.classList.add('bg-[#00B7B5]', 'text-[#005461]');
         };
 
-        // --- RONDA LOGIC ---
+        // --- RONDA ---
         window.saveRonda = () => {
             const id = document.getElementById('ronda-id').value;
             const petugas = document.getElementById('ronda-petugas').value;
             const hari = document.querySelector(`#ronda-id option[value="${id}"]`).text;
-
             if(petugas) {
-                // Cari key berdasarkan field 'hari' atau buat key baru yang konsisten
-                set(ref(db, `content/ronda/${id}`), {
-                    hari: hari,
-                    petugas: petugas
-                }).then(() => {
-                    alert("Jadwal " + hari + " Terupdate!");
-                    document.getElementById('ronda-petugas').value = "";
+                set(ref(db, `content/ronda/${id}`), { hari, petugas }).then(() => {
+                    alert("Ronda " + hari + " Update!"); document.getElementById('ronda-petugas').value = "";
                 });
             }
         };
@@ -149,11 +165,7 @@
             const preview = document.getElementById('list-ronda-preview');
             preview.innerHTML = "";
             snap.forEach(c => {
-                preview.innerHTML += `
-                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
-                    <p class="text-[8px] font-black text-[#00B7B5] uppercase">${c.val().hari}</p>
-                    <p class="text-[9px] font-bold text-slate-600 truncate">${c.val().petugas}</p>
-                </div>`;
+                preview.innerHTML += `<div class="bg-slate-50 p-2 rounded-xl border border-slate-100"><p class="text-[8px] font-black text-[#00B7B5] uppercase">${c.val().hari}</p><p class="text-[9px] font-bold text-slate-600 truncate">${c.val().petugas}</p></div>`;
             });
         });
 
@@ -161,19 +173,12 @@
         window.saveWarga = () => {
             const nama = document.getElementById('warga-nama').value;
             const nohp = document.getElementById('warga-nohp').value;
-            if(nama && nohp) {
-                push(ref(db, 'users'), { nama, nohp }).then(() => {
-                    alert("Warga Disimpan!"); document.getElementById('warga-nama').value = "";
-                });
-            }
+            if(nama && nohp) push(ref(db, 'users'), { nama, nohp }).then(() => alert("Warga Disimpan!"));
         };
         onValue(ref(db, 'users'), (snap) => {
             const list = document.getElementById('list-warga'); list.innerHTML = "";
             snap.forEach(c => {
-                list.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between shadow-sm border border-slate-100 mb-2 text-black">
-                    <p class="text-xs font-black uppercase">${c.val().nama}</p>
-                    <button onclick="deleteItem('users/${c.key}')" class="text-red-500"><i class="fas fa-trash"></i></button>
-                </div>`;
+                list.innerHTML += `<div class="bg-white p-4 rounded-2xl flex justify-between shadow-sm border mb-2 text-black"><p class="text-xs font-black uppercase">${c.val().nama}</p><button onclick="deleteItem('users/${c.key}')" class="text-red-500"><i class="fas fa-trash"></i></button></div>`;
             });
         });
 
@@ -182,10 +187,7 @@
             const tipe = document.getElementById('fin-tipe').value;
             const bulan = document.getElementById('fin-bulan').value;
             const nominal = document.getElementById('fin-nominal').value;
-            if(nominal) {
-                push(ref(db, `history/${tipe}`), { bulan, nominal: parseInt(nominal) })
-                .then(() => { alert("Laporan Update!"); document.getElementById('fin-nominal').value = ""; });
-            }
+            if(nominal) push(ref(db, `history/${tipe}`), { bulan, nominal: parseInt(nominal) }).then(() => alert("Laporan Update!"));
         };
         onValue(ref(db, 'history'), (snap) => {
             let total = 0;
@@ -193,10 +195,7 @@
             snap.forEach(tipe => {
                 tipe.forEach(item => {
                     total += parseInt(item.val().nominal);
-                    list.innerHTML += `<div class="bg-white p-3 rounded-xl border-l-4 ${tipe.key === 'kas' ? 'border-[#005461]' : 'border-[#00B7B5]'} flex justify-between items-center mb-2 text-black text-[10px] font-black uppercase">
-                        <span>${tipe.key} - ${item.val().bulan}: ${item.val().nominal}</span>
-                        <button onclick="deleteItem('history/${tipe.key}/${item.key}')" class="text-red-400 ml-2"><i class="fas fa-trash"></i></button>
-                    </div>`;
+                    list.innerHTML += `<div class="bg-white p-3 rounded-xl border-l-4 ${tipe.key === 'kas' ? 'border-[#005461]' : 'border-[#00B7B5]'} flex justify-between items-center mb-2 text-black text-[10px] font-black uppercase"><span>${tipe.key} - ${item.val().bulan}: ${item.val().nominal}</span><button onclick="deleteItem('history/${tipe.key}/${item.key}')" class="text-red-400 ml-2"><i class="fas fa-trash"></i></button></div>`;
                 });
             });
             document.getElementById('view-total-gabungan').innerText = 'Rp ' + total.toLocaleString('id-ID');
@@ -214,11 +213,62 @@
             }
         });
 
-        // --- DELETE ---
-        window.deleteItem = (path) => { if(confirm("Hapus data ini?")) remove(ref(db, path)); };
+        // --- WARTA ---
+        window.saveInfo = () => {
+            const judul = document.getElementById('info-judul').value;
+            const keterangan = document.getElementById('info-ket').value;
+            if(judul && keterangan) push(ref(db, 'content/info'), { judul, keterangan }).then(() => alert("Warta Terbit!"));
+        };
+        onValue(ref(db, 'content/info'), (snap) => {
+            const list = document.getElementById('list-info'); list.innerHTML = "";
+            snap.forEach(c => {
+                list.innerHTML += `<div class="bg-slate-50 p-2 flex justify-between rounded-lg mb-1 text-[10px] font-bold text-black"><span class="truncate">${c.val().judul}</span><button onclick="deleteItem('content/info/${c.key}')" class="text-red-400"><i class="fas fa-times"></i></button></div>`;
+            });
+        });
 
-        // Expose functions to window
-        window.saveInfo = () => { /* Logic Info */ };
+        // --- AGENDA ---
+        window.saveAgenda = () => {
+            const judul = document.getElementById('agenda-judul').value;
+            const tgl = document.getElementById('agenda-tgl').value;
+            const jam = document.getElementById('agenda-jam').value;
+            if(judul && tgl) push(ref(db, 'content/agenda'), { judul, tgl, jam }).then(() => alert("Agenda Masuk!"));
+        };
+        onValue(ref(db, 'content/agenda'), (snap) => {
+            const list = document.getElementById('list-agenda'); list.innerHTML = "";
+            snap.forEach(c => {
+                list.innerHTML += `<div class="bg-slate-50 p-2 flex justify-between rounded-lg mb-1 text-[10px] font-bold text-black"><span>${c.val().tgl} - ${c.val().judul}</span><button onclick="deleteItem('content/agenda/${c.key}')" class="text-red-400"><i class="fas fa-times"></i></button></div>`;
+            });
+        });
+
+        // --- BLOG ---
+        window.saveBlog = () => {
+            const judul = document.getElementById('blog-judul').value;
+            const isi = document.getElementById('blog-isi').value;
+            if(judul && isi) push(ref(db, 'content/blog'), { judul, isi, tgl: new Date().toLocaleDateString('id-ID') }).then(() => alert("Blog Posting!"));
+        };
+        onValue(ref(db, 'content/blog'), (snap) => {
+            const list = document.getElementById('list-blog'); list.innerHTML = "";
+            snap.forEach(c => {
+                list.innerHTML += `<div class="bg-slate-50 p-2 flex justify-between rounded-lg mb-1 text-[10px] font-bold text-black"><span class="truncate">${c.val().judul}</span><button onclick="deleteItem('content/blog/${c.key}')" class="text-red-400"><i class="fas fa-times"></i></button></div>`;
+            });
+        });
+
+        // --- LAPAK ---
+        window.saveLapak = () => {
+            const produk = document.getElementById('lapak-produk').value;
+            const harga = document.getElementById('lapak-harga').value;
+            const wa = document.getElementById('lapak-wa').value;
+            if(produk) push(ref(db, 'lapak'), { produk, harga, wa }).then(() => alert("Lapak Update!"));
+        };
+        onValue(ref(db, 'lapak'), (snap) => {
+            const list = document.getElementById('list-lapak'); list.innerHTML = "";
+            snap.forEach(c => {
+                list.innerHTML += `<div class="bg-slate-50 p-2 flex justify-between rounded-lg mb-1 text-[10px] font-bold text-black"><span>${c.val().produk}</span><button onclick="deleteItem('lapak/${c.key}')" class="text-red-400"><i class="fas fa-times"></i></button></div>`;
+            });
+        });
+
+        window.deleteItem = (path) => { if(confirm("Hapus?")) remove(ref(db, path)); };
     </script>
 </body>
-</html>
+                    </html>
+                    
