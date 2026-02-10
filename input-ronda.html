@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Input Jadwal Ronda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body class="bg-slate-100 p-6">
+
+    <div class="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+        <div class="bg-[#005461] p-6 text-white">
+            <h1 class="text-xl font-black italic uppercase">Update Jadwal<span class="text-[#00B7B5]">.</span></h1>
+            <p class="text-[10px] opacity-70 tracking-widest uppercase">Panel Petugas Sekawan</p>
+        </div>
+
+        <form id="formRonda" class="p-6 space-y-4">
+            <div>
+                <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Pilih Urutan/ID (1-7)</label>
+                <select id="rondaId" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-[#005461]">
+                    <option value="1">1 (Senin)</option>
+                    <option value="2">2 (Selasa)</option>
+                    <option value="3">3 (Rabu)</option>
+                    <option value="4">4 (Kamis)</option>
+                    <option value="5">5 (Jumat)</option>
+                    <option value="6">6 (Sabtu)</option>
+                    <option value="7">7 (Minggu)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Nama Hari</label>
+                <input type="text" id="hari" placeholder="Contoh: Senin" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" required>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Nama Petugas</label>
+                <textarea id="petugas" rows="3" placeholder="Contoh: Pak RT, Budi, Iwan" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" required></textarea>
+            </div>
+
+            <button type="submit" id="btnSimpan" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-widest text-sm">
+                Simpan Jadwal
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const DB_URL = "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/content/ronda";
+
+        document.getElementById('formRonda').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSimpan');
+            const id = document.getElementById('rondaId').value;
+            
+            const data = {
+                hari: document.getElementById('hari').value,
+                petugas: document.getElementById('petugas').value
+            };
+
+            btn.disabled = true;
+            btn.innerText = "MENYIMPAN...";
+
+            try {
+                // Menggunakan PATCH agar tidak menimpa hari lain
+                const response = await fetch(`${DB_URL}/${id}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert("✅ Jadwal berhasil diupdate!");
+                    document.getElementById('hari').value = "";
+                    document.getElementById('petugas').value = "";
+                } else {
+                    throw new Error("Gagal menyimpan");
+                }
+            } catch (error) {
+                alert("❌ Error: " + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "SIMPAN JADWAL";
+            }
+        });
+    </script>
+</body>
+</html>
