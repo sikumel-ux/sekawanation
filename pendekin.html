@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekawan Shortener - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 font-sans">
+
+    <nav class="bg-white shadow-sm border-b border-slate-200 px-8 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-indigo-600 tracking-tight">Sekawan<span class="text-slate-800">URL</span></h1>
+        <div class="flex items-center gap-4">
+            <span id="user-email" class="text-sm text-slate-500">admin@email.com</span>
+            <button class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 transition">Logout</button>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto mt-12 px-6">
+        <section class="bg-white p-8 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
+            <h2 class="text-xl font-semibold mb-6 text-slate-800">Buat Link Baru</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" placeholder="URL Asli (https://...)" class="md:col-span-1 border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="text" placeholder="Custom Slug (opsional)" class="border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                <button class="bg-indigo-600 text-white p-3 rounded-xl font-medium hover:bg-indigo-700 transition">Pendekkan!</button>
+            </div>
+        </section>
+
+        <section class="mt-12">
+            <div class="flex justify-between items-end mb-6">
+                <h2 class="text-xl font-semibold text-slate-800">Daftar Link Kamu</h2>
+                <button class="text-sm text-indigo-600 font-medium hover:underline">Export ke Google Sheets</button>
+            </div>
+            
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th class="p-4 text-sm font-semibold text-slate-600">Short Link</th>
+                            <th class="p-4 text-sm font-semibold text-slate-600">Original URL</th>
+                            <th class="p-4 text-sm font-semibold text-slate-600">Klik</th>
+                            <th class="p-4 text-sm font-semibold text-slate-600 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-4 text-indigo-600 font-medium">skwn.id/promo-kopi</td>
+                            <td class="p-4 text-slate-500 text-sm truncate max-w-[200px]">https://toko-online.com/produk/diskon-spesial...</td>
+                            <td class="p-4 text-slate-700 font-bold">1,204</td>
+                            <td class="p-4 text-right">
+                                <button class="text-slate-400 hover:text-red-500 mx-2"><i class="fa-solid fa-trash"></i></button>
+                                <button class="text-slate-400 hover:text-indigo-600 mx-2"><i class="fa-solid fa-copy"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
