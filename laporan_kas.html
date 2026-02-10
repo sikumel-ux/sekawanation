@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Keuangan - Sekawan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-item { animation: fadeUp 0.4s ease forwards; }
+    </style>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = { databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const formatRp = (v) => 'Rp ' + (parseInt(v) || 0).toLocaleString('id-ID');
+
+        // REUSABLE SYNC FUNCTION DENGAN EMPTY STATE
+        function syncTable(path, tableId, totalId) {
+            onValue(ref(db, `history/${path}`), (snap) => {
+                const tbody = document.getElementById(tableId);
+                let total = 0;
+                tbody.innerHTML = "";
+
+                if(snap.exists()){
+                    snap.forEach(child => {
+                        const item = child.val();
+                        const nominal = parseInt(item.nominal) || 0;
+                        total += nominal;
+
+                        tbody.innerHTML += `
+                            <tr class="border-b border-slate-50 animate-item">
+                                <td class="py-4 text-[13px] font-bold text-black uppercase">${item.bulan}</td>
+                                <td class="py-4 text-[13px] font-black text-black text-right">${formatRp(nominal)}</td>
+                            </tr>`;
+                    });
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="2" class="py-12 text-center">
+                                <i class="fas fa-folder-open text-slate-100 text-4xl mb-3 block"></i>
+                                <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Data Belum Masuk</p>
+                            </td>
+                        </tr>`;
+                }
+                document.getElementById(totalId).innerText = formatRp(total);
+            });
+        }
+
+        window.onload = () => {
+            syncTable('kas', 'tbody-kas', 'total-kas');
+            syncTable('sosial', 'tbody-sosial', 'total-sosial');
+            syncTable('tuntas', 'tbody-tuntas', 'total-tuntas');
+            syncTable('inventaris', 'tbody-inventaris', 'total-inventaris');
+            
+            // Handle Login/Logout Button Text & Icon
+            const userHp = localStorage.getItem('userHp');
+            const authText = document.getElementById('auth-text');
+            const authIcon = document.getElementById('auth-icon');
+            
+            if(userHp) {
+                authText.innerText = "Logout";
+                authIcon.className = "fas fa-power-off text-lg text-red-400";
+            }
+        };
+
+        window.handleAuth = () => {
+            const userHp = localStorage.getItem('userHp');
+            if(userHp) {
+                if(confirm("Yakin mau keluar?")) {
+                    localStorage.clear();
+                    location.href = 'index.html';
+                }
+            } else {
+                location.href = 'login.html';
+            }
+        };
+    </script>
+</head>
+<body class="bg-[#F8FAFB] pb-44">
+
+    <header class="p-8 pb-16 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-10 border-b-4 border-[#00B7B5]">
+        <button onclick="history.back()" class="mb-4 opacity-70 text-[10px] font-black uppercase tracking-widest"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
+        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none">LAPORAN <span class="text-[#00B7B5]">KEUANGAN.</span></h1>
+    </header>
+
+    <section class="relative z-30 -mt-8 px-8">
+        <div class="bg-white p-3 rounded-[2rem] shadow-xl border border-slate-50 flex justify-between items-center gap-2">
+            <a href="keuangan.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-[#005461]"><i class="fas fa-wallet text-white text-sm"></i></a>
+            <a href="lapor.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-bullhorn text-[#005461] text-sm"></i></a>
+            <a href="pengurus.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-users-cog text-[#005461] text-sm"></i></a>
+            <a href="index.html" class="flex-1 flex justify-center py-2 rounded-2xl bg-slate-50"><i class="fas fa-home text-[#005461] text-sm"></i></a>
+        </div>
+    </section>
+
+    <main class="p-6 mt-6 space-y-10">
+        
+        <section>
+            <div class="flex items-center gap-3 mb-4 px-2">
+                <div class="w-1 h-6 bg-[#005461] rounded-full"></div>
+                <h2 class="text-xs font-black text-[#005461] uppercase tracking-widest">Kas Utama</h2>
+            </div>
+            <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
+                <table class="w-full border-collapse">
+                    <tbody id="tbody-kas"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="pt-6 text-[11px] font-black text-slate-400 uppercase">Total Saldo</td>
+                            <td id="total-kas" class="pt-6 text-sm font-black text-[#005461] text-right">Rp 0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center gap-3 mb-4 px-2">
+                <div class="w-1 h-6 bg-[#00B7B5] rounded-full"></div>
+                <h2 class="text-xs font-black text-[#005461] uppercase tracking-widest">Dana Sosial</h2>
+            </div>
+            <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
+                <table class="w-full border-collapse">
+                    <tbody id="tbody-sosial"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="pt-6 text-[11px] font-black text-slate-400 uppercase">Total Saldo</td>
+                            <td id="total-sosial" class="pt-6 text-sm font-black text-black text-right">Rp 0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center gap-3 mb-4 px-2">
+                <div class="w-1 h-6 bg-amber-500 rounded-full"></div>
+                <h2 class="text-xs font-black text-[#005461] uppercase tracking-widest">History Tuntas</h2>
+            </div>
+            <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
+                <table class="w-full border-collapse">
+                    <tbody id="tbody-tuntas"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="pt-6 text-[11px] font-black text-slate-400 uppercase">Total Dana</td>
+                            <td id="total-tuntas" class="pt-6 text-sm font-black text-amber-600 text-right">Rp 0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center gap-3 mb-4 px-2">
+                <div class="w-1 h-6 bg-indigo-500 rounded-full"></div>
+                <h2 class="text-xs font-black text-[#005461] uppercase tracking-widest">History Inventaris</h2>
+            </div>
+            <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
+                <table class="w-full border-collapse">
+                    <tbody id="tbody-inventaris"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="pt-6 text-[11px] font-black text-slate-400 uppercase">Total Nominal</td>
+                            <td id="total-inventaris" class="pt-6 text-sm font-black text-indigo-600 text-right">Rp 0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button onclick="location.href='index.html'" class="flex flex-col items-center w-12 group">
+                <i class="fas fa-home text-white/50 group-hover:text-[#00B7B5] transition-colors"></i>
+                <span class="text-[7px] text-white/30 uppercase font-black mt-1">Home</span>
+            </button>
+            <button onclick="location.href='cuitan.html'" class="flex flex-col items-center w-12 group">
+                <i class="fas fa-comment-dots text-white/50 group-hover:text-[#00B7B5] transition-colors"></i>
+                <span class="text-[7px] text-white/30 uppercase font-black mt-1">Cuitan</span>
+            </button>
+            <button onclick="location.href='keuangan.html'" class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg -mt-8 border-4 border-[#F8FAFB]">
+                <i class="fas fa-wallet text-[#005461] text-xl"></i>
+            </button>
+            <button onclick="location.href='catet.html'" class="flex flex-col items-center w-12 group">
+                <i class="fas fa-book text-[#00B7B5] transition-colors"></i>
+                <span class="text-[7px] text-[#00B7B5] uppercase font-black mt-1">Cakes</span>
+            </button>
+            <button onclick="handleAuth()" class="flex flex-col items-center w-12 group">
+                <i id="auth-icon" class="fas fa-user-circle text-white/50 group-hover:text-[#00B7B5] transition-colors"></i>
+                <span id="auth-text" class="text-[7px] text-white/30 uppercase font-black mt-1">Akun</span>
+            </button>
+        </nav>
+    </div>
+
+</body>
+</html>
