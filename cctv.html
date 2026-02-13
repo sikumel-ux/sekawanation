@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekwan - Live Streaming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body class="bg-[#F8FAFB]"> 
+    
+    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative z-20">
+        <button onclick="history.back()" class="mb-4 opacity-70 text-sm italic">
+            <i class="fas fa-arrow-left mr-2"></i> Kembali
+        </button>
+        <h1 class="text-2xl font-black tracking-tighter uppercase">LIVE <span class="text-[#00B7B5]">STREAMING.</span></h1>
+    </header>
+
+    <main class="p-6">
+        <div class="w-full overflow-hidden rounded-3xl shadow-lg bg-black aspect-video">
+            <iframe 
+                class="w-full h-full"
+                src="https://www.youtube.com/embed/0cTyOXaLijY" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="mt-6 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+            <h2 class="font-bold text-[#005461]">Informasi Siaran</h2>
+            <p class="text-sm text-slate-500 mt-1">Silakan saksikan siaran langsung melalui pemutar video di atas.</p>
+        </div>
+    </main>
+
+    </body>
+</html>
