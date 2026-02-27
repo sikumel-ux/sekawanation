@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: #F8FAFB; 
+    -webkit-tap-highlight-color: transparent; 
+    overflow-x: hidden; 
+}
+
+.no-scrollbar::-webkit-scrollbar { 
+    display: none; 
+}
+
+.ticker-move { 
+    display: inline-block; 
+    animation: move 25s linear infinite; 
+    white-space: nowrap; 
+}
+
+@keyframes move { 
+    0% { transform: translateX(100vw); } 
+    100% { transform: translateX(-100%); } 
+}
+
+.cuit-border { 
+    border-left: 4px solid #00B7B5; 
+}
