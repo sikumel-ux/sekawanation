@@ -7,11 +7,6 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#005461">
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Active"));
-      }
-    </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -20,15 +15,16 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFB; -webkit-tap-highlight-color: transparent; }
         
-        /* Efek Stabilo untuk Hari Ini */
-        .hari-ini { 
-            background: #00B7B5 !important; 
-            border-color: #005461 !important;
+        /* Gaya Khusus Card Hari Ini */
+        .hari-ini-card { 
+            background: #005461 !important; 
+            border: 3px solid #00B7B5 !important;
             transform: scale(1.02);
-            box-shadow: 0 10px 25px -5px rgba(0, 183, 181, 0.4);
+            box-shadow: 0 15px 30px -10px rgba(0, 84, 97, 0.4);
         }
-        .hari-ini h3, .hari-ini p, .hari-ini span { color: #005461 !important; }
-        .hari-ini .badge { background: #005461 !important; color: #00B7B5 !important; }
+        .hari-ini-card h3, .hari-ini-card p { color: white !important; }
+        .hari-ini-card .label-hari { color: #00B7B5 !important; }
+        .hari-ini-card .badge { background: #00B7B5 !important; color: #005461 !important; }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
@@ -47,7 +43,7 @@
 
     <main class="mt-[-30px] px-6 space-y-6 relative z-10">
         
-        <a href="https://pos.sekawan.com" class="block bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-[#00B7B5] active:scale-95 transition-all overflow-hidden relative">
+        <a href="https://pos.sekawan.com" class="block bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-slate-50 active:scale-95 transition-all overflow-hidden relative">
             <div class="flex items-center gap-4 relative z-10">
                 <div class="w-12 h-12 bg-[#00B7B5] rounded-2xl flex items-center justify-center text-[#005461] shadow-lg">
                     <i class="fas fa-coins text-xl"></i>
@@ -60,7 +56,7 @@
             <i class="fas fa-sack-dollar absolute -right-4 -bottom-4 text-6xl text-[#00B7B5]/10 -rotate-12"></i>
         </a>
 
-        <div id="container-ronda" class="space-y-3">
+        <div id="container-ronda" class="space-y-4">
             <div class="text-center py-20 opacity-20"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
         </div>
 
@@ -70,11 +66,9 @@
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
             <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-home"></i></button>
             <button onclick="location.href='cuitan.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-comment-dots text-lg"></i></button>
-            
             <button onclick="location.reload()" class="w-11 h-11 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg">
                 <i class="fas fa-shield-halved"></i>
             </button>
-            
             <button onclick="location.href='cakes.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cakes</span></button>
             <button onclick="location.href='profile.html'" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-user-gear"></i></button>
         </nav>
@@ -95,14 +89,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- LOGIC HARI INI ---
+        // --- LOGIC WAKTU ---
         const listHari = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
         const d = new Date();
         const hariIni = listHari[d.getDay()];
         const tglStr = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
         document.getElementById('tgl-skrg').innerText = tglStr;
 
-        // --- AMBIL DATA JADWAL ---
+        // --- AMBIL DATA ---
         onValue(ref(db, 'content/ronda'), (snap) => {
             const container = document.getElementById('container-ronda');
             container.innerHTML = "";
@@ -112,31 +106,44 @@
                 return;
             }
 
-            // Urutan hari biar enak dilihat (Senin -> Minggu)
-            const urutan = ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu", "minggu"];
             const dataRonda = snap.val();
+            const urutanHari = ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu", "minggu"];
+            
+            // 1. Pisahkan Data: Hari ini vs Hari Lainnya
+            let htmlHariIni = "";
+            let htmlLainnya = "";
 
-            urutan.forEach(h => {
-                // Cari data yang harinya cocok
+            urutanHari.forEach(h => {
                 const key = Object.keys(dataRonda).find(k => dataRonda[k].hari.toLowerCase() === h);
                 if (key) {
                     const item = dataRonda[key];
                     const isToday = h === hariIni;
-                    
-                    container.innerHTML += `
-                    <div class="bg-white p-5 rounded-[2.2rem] shadow-sm border border-slate-100 transition-all duration-500 ${isToday ? 'hari-ini' : ''}">
+
+                    const cardHtml = `
+                    <div class="p-5 rounded-[2.2rem] transition-all duration-500 ${isToday ? 'hari-ini-card' : 'bg-white shadow-sm border border-slate-100'}">
                         <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] ${isToday ? '' : 'text-[#018790]'}">${item.hari}</h3>
-                            <span class="badge ${isToday ? '' : 'bg-slate-50 text-slate-400'} text-[8px] px-3 py-1 rounded-full font-black uppercase">
-                                ${isToday ? 'Sedang Bertugas' : 'Jadwal Rutin'}
+                            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] ${isToday ? 'label-hari' : 'text-[#018790]'}">
+                                ${isToday ? '<i class="fas fa-star mr-1"></i> Petugas Hari Ini' : item.hari}
+                            </h3>
+                            <span class="badge text-[8px] px-3 py-1 rounded-full font-black uppercase ${isToday ? '' : 'bg-slate-50 text-slate-300'}">
+                                ${isToday ? 'Standby' : 'Rutin'}
                             </span>
                         </div>
-                        <p class="text-[13px] font-bold leading-tight ${isToday ? '' : 'text-slate-600'} uppercase">
+                        <p class="text-[13px] font-bold leading-tight uppercase ${isToday ? '' : 'text-slate-600'}">
                             ${item.petugas}
                         </p>
                     </div>`;
+
+                    if (isToday) {
+                        htmlHariIni = cardHtml;
+                    } else {
+                        htmlLainnya += cardHtml;
+                    }
                 }
             });
+
+            // 2. Gabungkan (Hari ini selalu di atas)
+            container.innerHTML = htmlHariIni + (htmlLainnya ? `<div class="pt-4 pb-2 px-2 text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">Jadwal Lainnya</div>` + htmlLainnya : "");
         });
     </script>
 </body>
