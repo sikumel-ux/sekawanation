@@ -74,15 +74,8 @@
         </nav>
     </div>
     -->
-<div class="fixed bottom-6 left-0 right-0 px-6 z-50">
-        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.reload()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] bg-white rounded-full"><i class="fas fa-home"></i></button>
-            <button onclick="location.href='cuitan.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-comment-dots"></i><span class="text-[6px] uppercase mt-0.5">Cuit</span></button>
-            <button onclick="aksesPrivat('doku.html')" class="flex flex-col items-center text-white/40"><i class="fas fa-wallet text-xl"></i><span class="text-[6px] uppercase mt-0.5 text-amber-400">Doku</span></button>
-            <button onclick="aksesPrivat('cakes.html')" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 text-[#00B7B5]">Cakes</span></button>
-            <button id="auth-btn" onclick="handleAuth()" class="w-10 h-10 flex items-center justify-center text-[#00B7B5] border-l border-white/10 ml-1"><i class="fas fa-user-gear"></i></button>
-        </nav>
-</div>
+
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
