@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Input Jadwal Ronda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 pb-20">
+
+    <div class="max-w-2xl mx-auto space-y-6">
+        <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-200">
+            <div class="bg-[#005461] p-6 text-white flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-black italic uppercase">Update Jadwal<span class="text-[#00B7B5]">.</span></h1>
+                    <p class="text-[10px] opacity-70 tracking-widest uppercase">Panel Petugas Sekawan</p>
+                </div>
+                <i class="fas fa-shield-halved text-3xl text-[#00B7B5]"></i>
+            </div>
+
+            <form id="formRonda" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Pilih Urutan/ID (1-7)</label>
+                    <select id="rondaId" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-[#005461] outline-none focus:border-[#00B7B5]">
+                        <option value="1">1 (Senin)</option>
+                        <option value="2">2 (Selasa)</option>
+                        <option value="3">3 (Rabu)</option>
+                        <option value="4">4 (Kamis)</option>
+                        <option value="5">5 (Jumat)</option>
+                        <option value="6">6 (Sabtu)</option>
+                        <option value="7">7 (Minggu)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Nama Hari</label>
+                    <input type="text" id="hari" placeholder="Contoh: Senin" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:border-[#00B7B5]" required>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Nama Petugas</label>
+                    <textarea id="petugas" rows="1" placeholder="Contoh: Pak RT, Budi, Iwan" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:border-[#00B7B5]" required></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <button type="submit" id="btnSimpan" class="w-full bg-[#00B7B5] text-[#005461] font-black py-4 rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-widest text-sm">
+                        Simpan Jadwal
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] p-6 shadow-xl border border-slate-200">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1 h-6 bg-[#00B7B5] rounded-full"></div>
+                <h2 class="text-xs font-black text-[#005461] uppercase tracking-widest">Daftar Jadwal Saat Ini</h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-slate-100">
+                            <th class="pb-4 text-[10px] font-black text-slate-400 uppercase">ID</th>
+                            <th class="pb-4 text-[10px] font-black text-slate-400 uppercase">Hari</th>
+                            <th class="pb-4 text-[10px] font-black text-slate-400 uppercase">Petugas</th>
+                            <th class="pb-4 text-[10px] font-black text-slate-400 uppercase text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyRonda" class="divide-y divide-slate-50">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DB_URL = "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/content/ronda";
+
+        // --- AMBIL DATA & TAMPILKAN DI TABEL ---
+        async function loadData() {
+            const tbody = document.getElementById('tbodyRonda');
+            try {
+                const response = await fetch(`${DB_URL}.json`);
+                const data = await response.json();
+                tbody.innerHTML = "";
+
+                if (data) {
+                    // Filter null (karena ID dimulai dari 1)
+                    Object.keys(data).forEach(id => {
+                        if (data[id]) {
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td class="py-4 text-xs font-black text-[#00B7B5]">#${id}</td>
+                                    <td class="py-4 text-[13px] font-bold text-slate-700">${data[id].hari}</td>
+                                    <td class="py-4 text-[12px] text-slate-500 font-medium">${data[id].petugas}</td>
+                                    <td class="py-4 text-center">
+                                        <button onclick="editData('${id}', '${data[id].hari}', '${data[id].petugas}')" 
+                                                class="w-8 h-8 bg-slate-100 text-[#005461] rounded-full hover:bg-[#005461] hover:text-white transition-all active:scale-90">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>`;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Gagal load data:", error);
+            }
+        }
+
+        // --- FUNGSI EDIT (NAIK KE FORM) ---
+        window.editData = (id, hari, petugas) => {
+            document.getElementById('rondaId').value = id;
+            document.getElementById('hari').value = hari;
+            document.getElementById('petugas').value = petugas;
+            
+            // Scroll halus ke atas form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Highlight efek
+            const form = document.getElementById('formRonda');
+            form.classList.add('ring-2', 'ring-[#00B7B5]', 'ring-opacity-50');
+            setTimeout(() => form.classList.remove('ring-2'), 2000);
+        };
+
+        // --- SIMPAN DATA ---
+        document.getElementById('formRonda').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSimpan');
+            const id = document.getElementById('rondaId').value;
+            
+            const data = {
+                hari: document.getElementById('hari').value,
+                petugas: document.getElementById('petugas').value
+            };
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> MENYIMPAN...`;
+
+            try {
+                const response = await fetch(`${DB_URL}/${id}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert("✅ Jadwal ID #" + id + " Berhasil Diperbarui!");
+                    document.getElementById('hari').value = "";
+                    document.getElementById('petugas').value = "";
+                    loadData(); // Refresh tabel
+                } else {
+                    throw new Error("Gagal menyimpan");
+                }
+            } catch (error) {
+                alert("❌ Error: " + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "SIMPAN JADWAL";
+            }
+        });
+
+        // Load data saat halaman pertama kali dibuka
+        loadData();
+    </script>
+</body>
+  </html>
+  
