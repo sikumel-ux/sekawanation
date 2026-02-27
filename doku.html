@@ -14,7 +14,7 @@
         .btn-expense { background: #FEE2E2; color: #EF4444; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-36">
 
     <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-xl relative overflow-hidden">
         <div class="absolute top-0 right-0 p-4 opacity-10 text-8xl"><i class="fas fa-wallet"></i></div>
@@ -73,74 +73,18 @@
             </div>
         </div>
     </main>
-<div class="fixed bottom-6 left-0 right-0 px-6 z-50">
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
         <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
-            <button onclick="location.href='index.html'" class="w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-home"></i></button>
-            <button onclick="location.reload()" class="w-11 h-11 flex items-center justify-center text-[#005461] bg-[#00B7B5] rounded-full shadow-lg"><i class="fas fa-comment-dots text-lg"></i></button>
-            <button onclick="location.href='doku.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-wallet text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Doku</span></button>
-            <button onclick="location.href='cakes.html'" class="flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cakes</span></button>
-            <button onclick="location.href='profile.html'" class="w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-user-gear"></i></button>
+            <button id="nav-index" onclick="location.href='index.html'" class="nav-item w-10 h-10 flex items-center justify-center text-white/40"><i class="fas fa-home"></i></button>
+            <button id="nav-cuitan" onclick="location.href='cuitan.html'" class="nav-item flex flex-col items-center text-white/40"><i class="fas fa-comment-dots text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cuit</span></button>
+            <button id="nav-doku" onclick="location.href='doku.html'" class="nav-item flex flex-col items-center text-white/40"><i class="fas fa-wallet text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Doku</span></button>
+            <button id="nav-cakes" onclick="location.href='cakes.html'" class="nav-item flex flex-col items-center text-white/40"><i class="fas fa-book-open text-xl"></i><span class="text-[6px] uppercase mt-0.5 font-bold">Cakes</span></button>
+            <button id="nav-profile" onclick="location.href='profile.html'" class="nav-item w-10 h-10 flex items-center justify-center text-white/40 border-l border-white/10 ml-1"><i class="fas fa-user-gear"></i></button>
         </nav>
     </div>
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
-        const userHp = localStorage.getItem('userHp');
-        const userNama = localStorage.getItem('userSekawan');
 
-        if (!userHp) {
-            alert("Harap login dulu!");
-            location.href = 'login.html';
-        }
-
-        function setType(type) {
-            document.getElementById('transType').value = type;
-            const bM = document.getElementById('btn-masuk');
-            const bK = document.getElementById('btn-keluar');
-            
-            if(type === 'masuk') {
-                bM.className = "flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-[#005461] btn-income";
-                bK.className = "flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-transparent bg-slate-100 text-slate-400";
-            } else {
-                bK.className = "flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-red-500 btn-expense";
-                bM.className = "flex-1 py-3 rounded-2xl font-black text-[10px] uppercase border-2 border-transparent bg-slate-100 text-slate-400";
-            }
-        }
-
-        document.getElementById('dokuForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btnSimpan');
-            const data = {
-                action: 'tambahDoku', // Pastikan di Apps Script kamu ada handler action ini
-                hp: userHp,
-                nama: userNama,
-                jenis: document.getElementById('transType').value,
-                nominal: document.getElementById('nominal').value,
-                keterangan: document.getElementById('catatan').value,
-                tanggal: new Date().toISOString()
-            };
-
-            btn.innerText = "MENYIMPAN...";
-            btn.disabled = true;
-
-            try {
-                // Gunakan mode no-cors jika Apps Script hanya membalas simpel, 
-                // tapi disarankan Apps Script membalas dengan JSON + CORS header.
-                await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(data)
-                });
-                
-                alert("Catatan tersimpan di Google Sheets!");
-                document.getElementById('dokuForm').reset();
-                // Opsional: Muat ulang data saldo di sini
-            } catch (err) {
-                alert("Gagal konek ke API: " + err.message);
-            } finally {
-                btn.innerText = "SIMPAN KE DOKU";
-                btn.disabled = false;
-            }
-        };
-    </script>
+    <script src="nav.js"></script>
+    <script src="doku.js"></script>
 </body>
 </html>
