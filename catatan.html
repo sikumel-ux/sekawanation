@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cakes - Personal Note Hub</title>
+    <link rel="manifest" href="manifest.json">
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log("Service Worker Registered"));
+      }
+    </script>
+
+    <meta name="theme-color" content="#005461">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Cakes Sekawan">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #F8FAFB; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        .cake-card { border-top: 5px solid #00B7B5; transition: all 0.3s ease; }
+        .text-justify { text-align: justify; text-justify: inter-word; }
+        .note-text { font-size: 14px; line-height: 1.6; }
+        .fade-up { animation: fadeUp 0.4s ease-out; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Gaya khusus saat elemen difokuskan untuk edit */
+        .editing { border-color: #00B7B5 !important; ring: 2px; ring-color: #00B7B5; }
+    </style>
+</head>
+<body class="pb-36 fade-up">
+
+    <header class="p-8 bg-[#005461] text-white rounded-b-[3.5rem] shadow-2xl relative border-b-4 border-[#00B7B5]">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <h1 class="text-2xl font-black italic tracking-tighter uppercase">Cakes<span class="text-[#00B7B5]">.</span></h1>
+                <p class="text-[9px] font-bold text-[#00B7B5] uppercase tracking-[0.3em] mt-1">Personal Note Hub</p>
+            </div>
+            <div class="bg-white/10 p-3 rounded-2xl border border-white/5">
+                <i class="fas fa-cookie-bite text-[#00B7B5]"></i>
+            </div>
+        </div>
+        <p class="text-[11px] text-white/70 leading-relaxed font-medium">Simpan ide, coretan, atau rencana rahasiamu, Bro. Aman & Privat!</p>
+    </header>
+
+    <main class="mt-8 px-6 space-y-6">
+
+        <section class="bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-50">
+            <div id="edit-indicator" class="hidden mb-3 px-4 py-1 bg-amber-50 rounded-full border border-amber-100 flex items-center justify-between">
+                <span class="text-[8px] font-black text-amber-600 uppercase italic">Mode Edit Aktif</span>
+                <button onclick="cancelEdit()" class="text-[8px] font-black text-rose-500 uppercase">Batal</button>
+            </div>
+            
+            <input type="text" id="judul-note" placeholder="JUDUL CATATAN..." class="w-full bg-slate-50 p-4 rounded-2xl text-[11px] font-black uppercase tracking-widest outline-none border border-transparent focus:border-[#00B7B5] mb-3 transition-all">
+            
+            <textarea id="isi-note" rows="5" placeholder="Tulis sesuatu di sini..." class="w-full bg-slate-50 p-4 rounded-2xl text-[14px] font-medium outline-none border border-transparent focus:border-[#00B7B5] transition-all resize-none"></textarea>
+            
+            <button id="btn-save-note" class="w-full bg-[#005461] text-[#00B7B5] py-4 rounded-2xl mt-4 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">
+                SIMPAN CATATAN <i class="fas fa-cookie-bite ml-2"></i>
+            </button>
+        </section>
+
+        <section>
+            <div class="flex items-center justify-between px-2 mb-4">
+                <p class="text-[10px] font-black text-[#018790] uppercase tracking-widest">Koleksi Catatanmu</p>
+                <span id="note-count" class="text-[9px] font-black bg-[#00B7B5] text-[#005461] px-3 py-0.5 rounded-full shadow-sm">0</span>
+            </div>
+            
+            <div id="cakes-container" class="space-y-5">
+                <div class="text-center py-10 opacity-20 animate-pulse">
+                    <i class="fas fa-spinner fa-spin text-2xl"></i>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 z-50">
+        <nav class="bg-[#005461]/95 backdrop-blur-xl p-3 rounded-full flex justify-between items-center shadow-2xl border border-white/10">
+            <button id="nav-index" onclick="location.href='index.html'" class="nav-item w-10 h-10 flex items-center justify-center text-white/40">
+                <i class="fas fa-home"></i>
+            </button>
+            
+            <button id="nav-cuitan" onclick="location.href='cuitan.html'" class="nav-item flex flex-col items-center text-white/40">
+                <i class="fas fa-comment-dots text-xl"></i>
+                <span class="text-[6px] uppercase mt-0.5 font-bold">Cuit</span>
+            </button>
+            
+            <button id="nav-doku" onclick="location.href='doku.html'" class="nav-item flex flex-col items-center text-white/40">
+                <i class="fas fa-wallet text-xl"></i>
+                <span class="text-[6px] uppercase mt-0.5 font-bold">Doku</span>
+            </button>
+            
+            <button id="nav-cakes" onclick="location.href='cakes.html'" class="nav-item w-11 h-11 flex items-center justify-center text-white/40">
+                <i class="fas fa-book-open"></i>
+            </button>
+            
+            <button onclick="if(confirm('Keluar?')){localStorage.clear();location.href='login.html'}" class="w-10 h-10 flex items-center justify-center text-rose-400 border-l border-white/10 ml-1">
+                <i class="fas fa-right-from-bracket"></i>
+            </button>
+        </nav>
+    </div>
+
+    <script src="nav.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, query, orderByChild, equalTo, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD7rGI9iL0M889t6PR8za1-PxvjA_6jdHQ",
+            authDomain: "websekawan.firebaseapp.com",
+            projectId: "websekawan",
+            databaseURL: "https://websekawan-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            appId: "1:407413490869:web:093f8a187261c68ea36afc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const uHp = localStorage.getItem('userHp');
+        
+        let editKey = null;
+
+        if(!uHp) { location.href = 'login.html'; }
+
+        // Fungsi Batal Edit
+        window.cancelEdit = () => {
+            editKey = null;
+            document.getElementById('judul-note').value = "";
+            document.getElementById('isi-note').value = "";
+            document.getElementById('edit-indicator').classList.add('hidden');
+            document.getElementById('btn-save-note').innerHTML = 'SIMPAN CATATAN <i class="fas fa-cookie-bite ml-2"></i>';
+        };
+
+        // Fungsi Simpan / Update Catatan
+        document.getElementById('btn-save-note').onclick = async () => {
+            const judul = document.getElementById('judul-note').value;
+            const isi = document.getElementById('isi-note').value;
+            
+            if(!judul || !isi) return alert("Woy, isi dulu dong judul & catatannya!");
+
+            const btn = document.getElementById('btn-save-note');
+            btn.disabled = true;
+            btn.innerText = "PROSES...";
+
+            try {
+                if(editKey) {
+                    await update(ref(db, `cakes_personal/${editKey}`), {
+                        judul: judul,
+                        isi: isi,
+                        last_edit: true
+                    });
+                    alert("Berhasil diperbarui!");
+                    cancelEdit();
+                } else {
+                    await set(push(ref(db, 'cakes_personal')), {
+                        hp: uHp,
+                        judul: judul,
+                        isi: isi,
+                        tgl: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+                        timestamp: Date.now()
+                    });
+                }
+                document.getElementById('judul-note').value = "";
+                document.getElementById('isi-note').value = "";
+            } catch (e) {
+                alert("Waduh, gagal simpan!");
+            } finally {
+                btn.disabled = false;
+                if(!editKey) btn.innerHTML = 'SIMPAN CATATAN <i class="fas fa-cookie-bite ml-2"></i>';
+            }
+        };
+
+        // Fungsi Persiapan Edit
+        window.prepareEdit = (key, judul, isi) => {
+            editKey = key;
+            document.getElementById('judul-note').value = judul;
+            document.getElementById('isi-note').value = isi;
+            document.getElementById('edit-indicator').classList.remove('hidden');
+            document.getElementById('btn-save-note').innerHTML = 'UPDATE CATATAN <i class="fas fa-check-circle ml-2"></i>';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Fungsi Hapus Catatan
+        window.hapusNote = (key) => {
+            if(confirm("Yakin mau hapus catatan ini?")) {
+                if(editKey === key) cancelEdit();
+                remove(ref(db, `cakes_personal/${key}`));
+            }
+        };
+
+        // Stream Data Catatan
+        onValue(query(ref(db, 'cakes_personal'), orderByChild('hp'), equalTo(uHp)), (snapshot) => {
+            const container = document.getElementById('cakes-container');
+            const countView = document.getElementById('note-count');
+            container.innerHTML = "";
+            
+            if(!snapshot.exists()) {
+                container.innerHTML = `
+                    <div class="bg-white p-12 rounded-[2.5rem] text-center border border-slate-50 shadow-sm">
+                        <i class="fas fa-feather-pointed text-slate-100 text-4xl mb-4 block"></i>
+                        <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Belum ada koleksi Cakes</p>
+                    </div>`;
+                countView.innerText = "0";
+                return;
+            }
+
+            let notes = [];
+            snapshot.forEach(c => { notes.push({ key: c.key, ...c.val() }); });
+            countView.innerText = notes.length;
+
+            notes.reverse().forEach(item => {
+                const safeJudul = item.judul.replace(/'/g, "\\'");
+                const safeIsi = item.isi.replace(/'/g, "\\'").replace(/\n/g, "\\n");
+
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-md border border-slate-50 cake-card fade-up">
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="text-[12px] font-black text-[#005461] uppercase leading-tight pr-4">${item.judul}</h4>
+                            <div class="flex gap-4">
+                                <button onclick="prepareEdit('${item.key}', '${safeJudul}', '${safeIsi}')" class="text-[#00B7B5] active:scale-90 transition-all">
+                                    <i class="fas fa-pen-to-square text-xs"></i>
+                                </button>
+                                <button onclick="hapusNote('${item.key}')" class="text-rose-200 active:text-rose-500 transition-colors">
+                                    <i class="fas fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="note-text text-justify text-slate-600 font-medium whitespace-pre-wrap">${item.isi}</p>
+                        <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-50">
+                            <span class="text-[8px] font-black text-[#00B7B5] bg-[#00B7B5]/10 px-2 py-1 rounded-lg uppercase tracking-[0.2em]">
+                                ${item.tgl} ${item.last_edit ? '(Edit)' : ''}
+                            </span>
+                            <i class="fas fa-cookie text-amber-200 opacity-50"></i>
+                        </div>
+                    </div>`;
+            });
+        });
+    </script>
+</body>
+          </html>
+  
