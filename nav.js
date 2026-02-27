@@ -1,39 +1,43 @@
-/**
- * Logika Navigasi Otomatis
- * Menentukan menu mana yang aktif berdasarkan URL halaman saat ini.
- */
+// Simpan kode ini di file nav.js
 document.addEventListener("DOMContentLoaded", function() {
-    // 1. Ambil nama file dari URL (contoh: 'doku.html')
+    // 1. Deteksi halaman saat ini
     const path = window.location.pathname.split("/").pop() || 'index.html';
     
-    // 2. Mapping antara nama file dan ID button yang kamu buat di HTML
+    // 2. Daftar ID tombol sesuai halaman
     const navMap = {
         'index.html': 'nav-index',
+        'cuitan.html': 'nav-cuitan',
         'doku.html': 'nav-doku',
-        'cakes.html': 'nav-cakes',
-        'profile.html': 'nav-profile'
+        'cakes.html': 'nav-cakes'
     };
 
-    // 3. Reset semua tombol ke tampilan "tidak aktif" (abu-abu/transparan)
-    const allButtons = document.querySelectorAll('.nav-item');
-    allButtons.forEach(btn => {
-        btn.classList.remove('bg-[#00B7B5]', 'text-[#005461]', 'rounded-full', 'shadow-lg');
-        btn.classList.add('text-white/40');
-    });
-
-    // 4. Berikan style "Aktif" pada tombol yang sesuai dengan halaman saat ini
     const activeId = navMap[path];
-    const activeBtn = document.getElementById(activeId);
 
-    if (activeBtn) {
-        activeBtn.classList.remove('text-white/40');
-        activeBtn.classList.add('text-[#005461]', 'bg-[#00B7B5]', 'rounded-full', 'shadow-lg');
-        
-        // Atur warna teks (span) jika ada agar tetap terbaca gelap
-        const span = activeBtn.querySelector('span');
-        if (span) {
-            span.classList.add('text-[#005461]');
-            span.classList.remove('text-white/40');
+    // 3. Atur tampilan semua tombol navigasi
+    const allButtons = document.querySelectorAll('.nav-item');
+    
+    allButtons.forEach(btn => {
+        if (btn.id === activeId) {
+            // TAMPILAN JIKA AKTIF: Hijau Toska Terang + Icon Gelap
+            btn.classList.remove('text-white/40');
+            btn.classList.add('text-[#005461]', 'bg-[#00B7B5]', 'rounded-full', 'shadow-lg', 'scale-110');
+            
+            // Jika ada teks (span) di bawah icon, buat jadi gelap biar kebaca
+            const span = btn.querySelector('span');
+            if (span) {
+                span.classList.add('text-[#005461]');
+                span.classList.remove('text-white/40');
+            }
+        } else {
+            // TAMPILAN JIKA TIDAK AKTIF: Redup/Transparan
+            btn.classList.add('text-white/40');
+            btn.classList.remove('text-[#005461]', 'bg-[#00B7B5]', 'rounded-full', 'shadow-lg', 'scale-110');
+            
+            const span = btn.querySelector('span');
+            if (span) {
+                span.classList.add('text-white/40');
+                span.classList.remove('text-[#005461]');
+            }
         }
-    }
+    });
 });
