@@ -3,182 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarif Lebaran 2026 - Brave Trans</title>
+    <title>Tarif Brave Trans 2026</title>
     <style>
-        :root {
-            --primary-color: #ff5500; /* Warna khas Brave Trans */
-            --bg-dark: #0a0a0a;
-            --text-light: #f4f4f4;
-            --accent-gold: #d4af37;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d0d0d;
+            color: #efefef;
+            font-family: 'Arial Narrow', sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            padding: 15px;
             margin: 0;
-            padding: 20px;
         }
 
-        .container {
-            max-width: 500px;
+        .card {
             width: 100%;
-            border: 1px solid rgba(255, 85, 0, 0.3);
-            border-radius: 15px;
-            padding: 30px;
-            background: linear-gradient(145deg, #111, #050505);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            position: relative;
+            max-width: 400px;
+            border: 1px solid #ff5500;
+            border-radius: 8px;
             overflow: hidden;
+            background: #151515;
         }
 
-        .container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--primary-color);
-        }
-
-        h1 {
-            color: var(--primary-color);
+        .header {
+            background: #ff5500;
+            color: #000;
             text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 5px;
-            font-size: 2.5em;
-            font-style: italic;
-            text-shadow: 2px 2px 0px #fff;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: var(--text-light);
-            font-weight: 300;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--primary-color);
-            padding-bottom: 15px;
-        }
-
-        .price-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .price-item {
-            margin-bottom: 15px;
-            padding: 12px;
-            border-left: 3px solid var(--primary-color);
-            background: rgba(255, 255, 255, 0.03);
-            transition: transform 0.3s ease;
-        }
-
-        .price-item:hover {
-            transform: translateX(10px);
-            background: rgba(255, 85, 0, 0.05);
-        }
-
-        .date {
+            padding: 8px;
             font-weight: bold;
-            color: var(--accent-gold);
-            display: block;
-            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
         }
 
-        .details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.95em;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px; /* Font kecil biar ga melebar */
         }
 
-        .class-type { color: #bbb; }
-        .price { color: #fff; font-weight: bold; }
+        th {
+            background: #222;
+            color: #ff5500;
+            text-transform: uppercase;
+            padding: 8px 4px;
+            border-bottom: 2px solid #333;
+            text-align: left;
+        }
 
-        .footer {
-            margin-top: 30px;
+        td {
+            padding: 6px 4px;
+            border-bottom: 1px solid #222;
+        }
+
+        tr:nth-child(even) {
+            background: #1a1a1a;
+        }
+
+        .date-col { width: 40%; font-weight: bold; color: #d4af37; }
+        .price-col { width: 30%; text-align: right; padding-right: 10px; }
+
+        .promo { color: #4caf50; font-weight: bold; }
+        
+        footer {
             text-align: center;
-            font-size: 0.8em;
+            font-size: 9px;
+            padding: 10px;
             color: #666;
-            font-style: italic;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>BRAVE Trans</h1>
-    <div class="subtitle">TARIF LEBARAN 2026</div>
-
-    <div class="price-list">
-        <div class="price-item">
-            <span class="date">21 MARET '26</span>
-            <div class="details">
-                <span class="class-type">EXECUTIVE</span>
-                <span class="price">Rp 330.000</span>
-            </div>
-        </div>
-
-        <div class="price-item">
-            <span class="date">22 MARET '26</span>
-            <div class="details">
-                <span class="class-type">EXECUTIVE</span>
-                <span class="price">Rp 420.000</span>
-            </div>
-        </div>
-
-        <div class="price-item">
-            <span class="date">23 MARET '26</span>
-            <div class="details">
-                <span class="class-type">EXECUTIVE / AC PATAS</span>
-                <span class="price">Rp 480rb / 385rb</span>
-            </div>
-        </div>
-
-        <div class="price-item">
-            <span class="date">24 - 29 MARET '26</span>
-            <div class="details">
-                <span class="class-type">EXECUTIVE / AC PATAS</span>
-                <span class="price">Rp 610rb / 400rb</span>
-            </div>
-        </div>
-
-        <div class="price-item">
-            <span class="date">30 MARET '26</span>
-            <div class="details">
-                <span class="class-type">EXECUTIVE / AC PATAS</span>
-                <span class="price">Rp 510rb / 360rb</span>
-            </div>
-        </div>
-
-        <div class="price-item">
-            <span class="date">31 MARET - 05 APRIL '26</span>
-            <div class="details">
-                <span class="class-type">EXECUTIVE / AC PATAS</span>
-                <span class="price">Rp 480rb / 360rb</span>
-            </div>
-        </div>
-
-        <div class="price-item" style="border-left-color: #4caf50;">
-            <span class="date">06 APRIL '26</span>
-            <div class="details">
-                <span class="class-type">NORMAL (EXECUTIVE)</span>
-                <span class="price">Rp 260.000</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer">
-        *Tarif dapat berubah sesuai kebijakan manajemen Brave Trans.
-    </div>
+<div class="card">
+    <div class="header">Tarif Lebaran 2026 - Brave Trans</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th style="text-align: right;">Executive</th>
+                <th style="text-align: right;">Patas AC</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="date-col">21 Mar</td>
+                <td class="price-col">330rb</td>
+                <td class="price-col">-</td>
+            </tr>
+            <tr>
+                <td class="date-col">22 Mar</td>
+                <td class="price-col">420rb</td>
+                <td class="price-col">-</td>
+            </tr>
+            <tr>
+                <td class="date-col">23 Mar</td>
+                <td class="price-col">480rb</td>
+                <td class="price-col">385rb</td>
+            </tr>
+            <tr>
+                <td class="date-col">24 - 29 Mar</td>
+                <td class="price-col">610rb</td>
+                <td class="price-col">400rb</td>
+            </tr>
+            <tr>
+                <td class="date-col">30 Mar</td>
+                <td class="price-col">510rb</td>
+                <td class="price-col">360rb</td>
+            </tr>
+            <tr>
+                <td class="date-col">31 Mar - 05 Apr</td>
+                <td class="price-col">480rb</td>
+                <td class="price-col">360rb</td>
+            </tr>
+            <tr>
+                <td class="date-col" style="color:#4caf50;">06 Apr (Normal)</td>
+                <td class="price-col promo">260rb</td>
+                <td class="price-col">-</td>
+            </tr>
+        </tbody>
+    </table>
+    <footer>*Jetbus 3+ New Super High Deck</footer>
 </div>
 
 </body>
-  </html>
-  
+</html>
+
