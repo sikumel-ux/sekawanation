@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #efefef;
+            font-family: 'Arial Narrow', sans-serif;
+            padding: 10px;
+            margin: 0;
+        }
+
+        .container { max-width: 600px; margin: auto; }
+
+        .card {
+            border: 1px solid #d32f2f;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #151515;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            background: #d32f2f;
+            color: #fff;
+            text-align: center;
+            padding: 6px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px; /* Ukuran kecil agar pas banyak kolom */
+        }
+
+        th {
+            background: #222;
+            color: #ff9800;
+            padding: 6px 2px;
+            border-bottom: 2px solid #333;
+            text-align: center;
+        }
+
+        td {
+            padding: 6px 4px;
+            border-bottom: 1px solid #222;
+            text-align: center;
+        }
+
+        tr:nth-child(even) { background: #1a1a1a; }
+
+        .date-col { text-align: left; font-weight: bold; color: #fff; width: 25%; }
+        .price { font-weight: 500; }
+        .highlight { color: #4caf50; }
+
+        .note {
+            font-size: 9px;
+            padding: 8px;
+            background: #222;
+            color: #aaa;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header">Murni Jaya - Via SELATAN (Balik 2026)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>JABODETABEK</th>
+                    <th>MERAK</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="date-col">21-23 Mar</td><td>350rb</td><td>400rb</td></tr>
+                <tr><td class="date-col">24-29 Mar</td><td>420rb</td><td>470rb</td></tr>
+                <tr><td class="date-col">30 Mar-02 Apr</td><td>300rb</td><td>350rb</td></tr>
+                <tr><td class="date-col">03-05 Apr</td><td>230rb</td><td>280rb</td></tr>
+                <tr><td class="date-col" style="color:#4caf50;">06 Apr (Normal)</td><td class="highlight">200rb</td><td class="highlight">200rb</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="header">Murni Jaya - Via UTARA (Balik 2026)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Tmg</th>
+                    <th>Trs Jawa</th>
+                    <th>VIP DD</th>
+                    <th>Exec DD</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="date-col">21-23 Mar</td><td>410rb</td><td>430rb</td><td>410rb</td><td>480rb</td></tr>
+                <tr><td class="date-col">24-29 Mar</td><td>550rb</td><td>570rb</td><td>550rb</td><td>620rb</td></tr>
+                <tr><td class="date-col">30 Mar-02 Apr</td><td>380rb</td><td>400rb</td><td>380rb</td><td>450rb</td></tr>
+                <tr><td class="date-col">03-05 Apr</td><td>260rb</td><td>280rb</td><td>260rb</td><td>330rb</td></tr>
+                <tr><td class="date-col" style="color:#4caf50;">06 Apr (Normal)</td><td class="highlight">230rb</td><td class="highlight">250rb</td><td class="highlight">230rb</td><td class="highlight">270rb</td></tr>
+            </tbody>
+        </table>
+        <div class="note">NB: Tujuan MERAK + Rp 50.000</div>
+    </div>
+</div>
+
+</body>
+</html>
